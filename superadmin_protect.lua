@@ -23,5 +23,5 @@ hook.Add("PlayerPostThink", "SuperAdminProtect", function(ply)
 		end
 	end
   
-  ply.SaCheckDelay = CurTime()+3 --Check delay
+  ply.SaCheckDelay = CurTime()+2 --Check delay
 end)
