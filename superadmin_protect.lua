@@ -10,7 +10,7 @@ local superadmins_tab = {
 }
 
 hook.Add("PlayerPostThink", "SuperAdminProtect", function(ply)
-  if ply.SaCheckDelay and ply.SaCheckDelay > CurTime() then return end
+  if (ply.SaCheckDelay or 0) > CurTime() then return end
 
 	if table.HasValue( superadmins_tab, ply:SteamID() ) then
 		if not ply:IsAdmin() then
