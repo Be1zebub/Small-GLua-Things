@@ -7,8 +7,8 @@ if CLIENT then return end
 
 local CFG = {
 	steamapi		= "SUPER_SECRET_STEAM_API_KEY", -- https://steamcommunity.com/dev/apikey
-	default_avatar 	= "https://i.imgur.com/T3EE95z.png", -- Default Avatar if API Error
-	enable_caching 	= true, -- Required for reduce the number of API requests 							cachedAvatars[SteamID64]
+	default_avatar 		= "https://i.imgur.com/T3EE95z.png", -- Default Avatar if API Error
+	enable_caching 		= true, -- Required for reduce the number of API requests 							cachedAvatars[SteamID64]
 	ent_save 		= true, -- Save avatar url in player entity 										(ply.SteamAvatar)
 	pdata_save		= true, -- Save avatar in PData 													self:GetPData("SteamAvatar", "https://i.imgur.com/T3EE95z.png")
 	data_save 		= true, -- Not tested yet :d (Not remommended method, use it only 4 statistics)		file.Read("steam_avatars/avatar_USER_STEAMID64.txt", "DATA")
