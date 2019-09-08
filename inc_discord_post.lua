@@ -1,6 +1,6 @@
 --[[—————————————————————————————————————
-		  Incredible Discord Logging
-        Credits: [INC]Be1zebub
+        Incredible Discord Logging
+          Credits: [INC]Be1zebub
   steam://connect/p.incredible-gmod.ru
 —————————————————————————————————————]]--
 
