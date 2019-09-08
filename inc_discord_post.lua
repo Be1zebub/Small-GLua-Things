@@ -1,6 +1,8 @@
 --[[—————————————————————————————————————
         Incredible Discord Logging
           Credits: [INC]Be1zebub
+
+	Visit my GModDayz Server:
   steam://connect/p.incredible-gmod.ru
 —————————————————————————————————————]]--
 
@@ -9,7 +11,7 @@ local RoflanChelik = "https://i.imgur.com/T3EE95z.png" --Default Avatar (if Stea
 
 function doWebhookPost(txt, nick, webhook, avatar)
 	local nickname = nick or "Roflan Nickname"
-	local postAvatar = avatar or RoflanChelik
+	local postAvatar = avatar or RoflanChelik -- Require my Steam Avatar Library https://github.com/Be1zebub/Small-GLua-Things/blob/master/inc_steam_avatar_lib.lua
 
 	http.Post( phpurl, { content = txt, username = nickname, url = webhook, avatar_url = postAvatar })
 end
