@@ -3,13 +3,13 @@
 -- Примеры: https://i.imgur.com/V4ZBVxG.png https://i.imgur.com/JXGIlb2.png
 
 if SERVER then
-	concommand.Add("CsGoSkinsTest", function(ply, _, args)
+	concommand.Add("csgoskin_example", function(ply, _, args)
 		local model = args[1]
 		local material = args[2]
 
 		ply:SetNWString("skin_"..tostring(model), tostring(material))
 	end)
-  -- Usage Example: CsGoSkinsTest "models/weapons/c_357.mdl" "models/XQM/BoxFull_diffuse"
+  -- Usage Example: csgoskin_example "models/weapons/c_357.mdl" "models/XQM/BoxFull_diffuse"
 else
 	hook.Add("Think", "SkinsLikeCSGO", function()
 		local ply = LocalPlayer()
