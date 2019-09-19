@@ -7,7 +7,7 @@ if SERVER then
 		local model = args[1]
 		local material = args[2]
 
-		ply:SetNWString("skin_"..tostring(model), tostring(material))
+		ply:SetNWString("skin_"..model, tostring(material))
 	end)
   -- Usage Example: csgoskin_example "models/weapons/c_357.mdl" "models/XQM/BoxFull_diffuse"
 else
@@ -17,6 +17,6 @@ else
 		local vm_model = viewmodel:GetModel()
 		
 		local new_material = ply:GetNWString("skin_"..vm_model) or ""
-		viewmodel:SetMaterial( tostring(new_material) )
+		viewmodel:SetMaterial(new_material)
 	end)
 end
