@@ -1,6 +1,6 @@
 -- Shared CSGO Skins
 -- (Данный скрипт - это не готовое решение, а пример реализации так называемых скинов — как в CSGO)
--- https://i.imgur.com/V4ZBVxG.png
+-- Примеры: https://i.imgur.com/V4ZBVxG.png https://i.imgur.com/JXGIlb2.png
 
 if SERVER then
 	concommand.Add("CsGoSkinsTest", function(ply, _, args)
