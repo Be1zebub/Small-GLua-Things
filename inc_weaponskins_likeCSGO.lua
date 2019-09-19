@@ -9,7 +9,7 @@ if SERVER then
 
 		ply:SetNWString("skin_"..model, tostring(material))
 	end)
-  -- Usage Example: csgoskin_example "models/weapons/c_357.mdl" "models/XQM/BoxFull_diffuse"
+  -- Usage Example: csgoskin_example "models/weapons/c_crowbar.mdl"  models/props_combine/combine_monitorbay_disp
 else
 	hook.Add("Think", "SkinsLikeCSGO", function()
 		local ply = LocalPlayer()
