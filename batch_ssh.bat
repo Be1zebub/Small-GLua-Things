@@ -1,5 +1,6 @@
 ::Batch SSH Fast&Simple:
 ::Windows OpenSSH (by windows cmd)
+:: https://i.imgur.com/4XJ4Aqd.png
   @echo off
   :start
   cls
