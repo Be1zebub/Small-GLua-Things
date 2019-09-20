@@ -1,4 +1,5 @@
-Batch SSH Fast&Simple:
+::Batch SSH Fast&Simple:
+::Windows Open SSH
   @echo off
   :start
   cls
@@ -12,7 +13,7 @@ Batch SSH Fast&Simple:
 
 
 
-Exapmle:
+::Exapmle:
   @echo off
   :start
   cls
