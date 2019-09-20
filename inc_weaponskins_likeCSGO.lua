@@ -1,4 +1,4 @@
--- Shared CSGO Skins
+-- Shared CSGO Skins Example
 -- (Данный скрипт - это не готовое решение, а пример реализации так называемых скинов — как в CSGO)
 -- Примеры: https://i.imgur.com/V4ZBVxG.png https://i.imgur.com/JXGIlb2.png
 
