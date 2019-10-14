@@ -7,22 +7,11 @@ if CLIENT then return end
 
 local CFG = {
 	steamapi		= "SUPER_SECRET_STEAM_API_KEY", -- https://steamcommunity.com/dev/apikey
-	default_avatar 		= "https://i.imgur.com/T3EE95z.png", -- Default Avatar if API Error
-	enable_caching 		= true, -- Required for reduce the number of API requests 						cachedAvatars[SteamID64]
+	default_avatar 	= "https://i.imgur.com/T3EE95z.png", -- Default Avatar if API Error
+	enable_caching 	= true, -- Required for reduce the number of API requests 						cachedAvatars[SteamID64]
 	ent_save 		= true, -- Save avatar url in player entity 								(ply.SteamAvatar)
 	pdata_save		= true, -- Save avatar in PData 									self:GetPData("SteamAvatar", "https://i.imgur.com/T3EE95z.png")
-	data_save 		= true, -- Not tested yet :d										file.Read("steam_avatars/avatar_USER_STEAMID64.txt", "DATA")
-	--Bottom Settings not work at this moment. W8 updates!
-	sv_db_save 		= false,
-	mysql_save		= false,
-	mysql = {
-		host 		= "127.0.0.1",
-		bd_name 	= "IncredibleDayz",
-		pass 		= "super_secret_password",
-		user 		= "Incredibe_Be1zebub",
-		port 		= 3306,
-		bdModule 	= "mysqloo"
-	}
+	data_save 		= true, -- Save Avatar in garrysmod/data folder						file.Read("steam_avatars/avatar_USER_STEAMID64.txt", "DATA")
 }
 
 cachedAvatars = cachedAvatars or {}
@@ -88,6 +77,13 @@ function GetAvatarBySteam64(steam64)
 		local currentAvatar = tbl.response.players[1].avatarfull
 
 		cachedAvatars[steam64] = currentAvatar
+
+		if CFG.data_save then
+			if not file.Exists( "steam_avatars", "DATA" ) then
+				file.CreateDir("steam_avatars")
+			end
+			file.Write("steam_avatars/avatar_"..steamid..".txt", currentAvatar)
+		end
 	end)
 
 	return cachedAvatars[steam64] or CFG.default_avatar
