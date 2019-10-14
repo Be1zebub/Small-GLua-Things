@@ -3,7 +3,7 @@
      	  Credists: [INC]Be1zebub
 ————————————————————————————————————————]]--
 
-if CLIENT then return end
+if CLIENT then return end --its server side lib ;)
 
 local CFG = {
 	steamapi		= "SUPER_SECRET_STEAM_API_KEY", -- https://steamcommunity.com/dev/apikey
@@ -95,5 +95,7 @@ end
           [INC]Beelzebub#0281
 --————————————————————————————————————————--
        Visit my GModDayz Server:
-   steam://connect/p.incredible-gmod.ru
+   steam://connect/dayz.incredible-gmod.ru
+	    & Brawl Server:
+   steam://connect/brawl.incredible-gmod.ru
 ————————————————————————————————————————]]--
