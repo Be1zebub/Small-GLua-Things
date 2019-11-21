@@ -98,5 +98,5 @@ function GetAvatarBySteam64(steam64)
 		end
 	end)
 
-	return cachedAvatars[steam64] or CFG.default_avatar
+	return CFG.default_avatar
 end
