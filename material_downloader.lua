@@ -2,8 +2,8 @@
         Incredible Material Downloader
           Credits: [INC]Be1zebub
           
-	        Visit my GModDayz Server:
-         http://incredible-gmod.ru/
+	 Visit my GModDayz Server:
+         http://incredible-gmod.ru
 —————————————————————————————————————]]--
 
 function DownloadMaterial(img_url, path)
