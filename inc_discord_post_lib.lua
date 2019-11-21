@@ -18,10 +18,10 @@ end
 
 -- Usage expample:
 hook.Add("DoPlayerDeath", "IncrdibleLogs_KillDeath", function(ply)
-	local txt4post = "\n> Жертва: " .. ply:Nick() .. "   (||" .. ply:SteamID() .. "||)" .. "\n> Причина смерти: " .. tostring(ply.DeathMsg or "???")
+	local txt4post = "\n> Victim: " .. ply:Nick() .. "   (||" .. ply:SteamID() .. "||)" .. "\n> Death Reason: " .. tostring(ply.DeathMsg or "???")
 	local nickname = "Death: " .. ply:Nick()
     
 	doWebhookPost(txt4post, nickname, "https://discordapp.com/api/webhooks/channelid/webhookid", ply.DsPostAvatar)
 end)
 
---require: https://github.com/Be1zebub/Small-GLua-Things/blob/master/inc_discord_post.php
+--required: https://github.com/Be1zebub/Small-GLua-Things/blob/master/inc_discord_post.php
