@@ -1,5 +1,9 @@
 --[[————————————————————————————————————————
-      Super-Admin Protector for GMod
+      Incredible Super-Admin Protector
+          Credits: [INC]Be1zebub
+          
+	 Visit my GModDayz Server:
+         http://incredible-gmod.ru
 ————————————————————————————————————————]]--
 
 local superadmins_tab = {
