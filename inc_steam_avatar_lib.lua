@@ -37,9 +37,9 @@ function PMETA:GetAvatar()
 	end
 
 	http.Fetch("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key="..CFG.steamapi.."&steamids="..steamid, function(body)
-		if not body or body == "" then return end
+		if not body or body == "" then return CFG.default_avatar end
 		local tbl = util.JSONToTable(body)
-		if not tbl or not tbl.response then return end
+		if not tbl or not tbl.response then return CFG.default_avatar end
 
 		local currentAvatar = tbl.response.players[1].avatarfull
 
@@ -78,9 +78,9 @@ function GetAvatarBySteam64(steam64)
 
 	
 	http.Fetch("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key="..CFG.steamapi.."&steamids="..steam64, function(body)
-		if not body or body == "" then return end
+		if not body or body == "" then return CFG.default_avatar end
 		local tbl = util.JSONToTable(body)
-		if not tbl or not tbl.response then return end
+		if not tbl or not tbl.response then return CFG.default_avatar end
 
 		local currentAvatar = tbl.response.players[1].avatarfull
 
