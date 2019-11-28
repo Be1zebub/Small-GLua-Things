@@ -7,7 +7,9 @@
 —————————————————————————————————————]]--
 
 function DownloadMaterial(img_url, path)
-    if not file.Exists(path, "DATA") then
+    if file.Exists(path, "DATA") then
+    	return Material("data/"..path, "noclamp smooth")
+    else
         http.Fetch(img_url, function(result)
             if (result) then
                 file.Write(path, result)
