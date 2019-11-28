@@ -1,10 +1,10 @@
---[[—————————————————————————————————————
-        Incredible Material Downloader
-          Credits: [INC]Be1zebub
-          
-	 Visit my GModDayz Server:
-         http://incredible-gmod.ru
-—————————————————————————————————————]]--
+--[[———————————————————————————————————————————————————--
+              Автор скрипта: [INC]Be1zebub
+                
+             Сайт: incredible-gmod.ru/owner
+           EMail: beelzebub@incredible-gmod.ru
+           Discord: discord.incredible-gmod.ru
+--———————————————————————————————————————————————————]]--
 
 function DownloadMaterial(img_url, path)
     if file.Exists(path, "DATA") then
