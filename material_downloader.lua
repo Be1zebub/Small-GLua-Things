@@ -25,7 +25,7 @@ end
 
 --———> Usage Exapmle:
 hook.Add("HUDPaint", "IncredibleImgURLExample", function()
-	Mkdir("incredible_materials") -- its a custom func *
+	Mkdir("incredible_materials") -- its a custom func*
 	local mat = DownloadMaterial("https://incredible-gmod.ru/assets/other/be1zebub_pixelart.png", "incredible_materials/be1ze_pixel.png")
 	if not mat then return end
 	
