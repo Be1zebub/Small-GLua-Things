@@ -73,39 +73,44 @@ function PANEL:Paint(w, h)
 		w = w, h = h
 	})
 
-
-	local draw_v, draw_a = VecAngRound(self.VecPosition), VecAngRound(self.AngRotate)
-	local _, tall = draw_SimpleText("Angle("..draw_a.p..", "..draw_a.y..", "..draw_a.r..")", "inc_roboto_medium", w / 2, h, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_BOTTOM_)
-	draw_SimpleText("Vector("..draw_v.x..", "..draw_v.y..", "..draw_v.z..")", "inc_roboto_medium", w / 2, h - tall, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_BOTTOM_)
-
-	if self.ShowControls then
-		local pos = 0
-		local _, tall = draw_SimpleText("Hold [LMB] + Rotate Mouse — Camera Rotate", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-		pos = pos + tall
-		local _, tall = draw_SimpleText("Hold [RMB] — Roll Camera (L.Shift — SpeedUp)", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-		pos = pos + tall
-		local _, tall = draw_SimpleText("Press [WASD] — Move Camera", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-		pos = pos + tall
-		local _, tall = draw_SimpleText("Hold [L.Shift] — SpeedUp Camera Move&Rotate", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-		pos = pos + tall
-		local _, tall = draw_SimpleText("Hold [L.Shift] + [L.Alt] — SpeedUp Only Camera Rotate", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-		pos = pos + tall
-		local _, tall = draw_SimpleText("Scroll [Mouse Whell] — Zoom-in / Zoom-out", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-		pos = pos + tall
-		local _, tall = draw_SimpleText("Press [P] — Save camera position", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-		pos = pos + tall
-		local _, tall = draw_SimpleText("Press [R] — Return to "..(self.saved_position and "saved" or "original").." position", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+	if not self.HideUI then
+		local draw_v, draw_a = VecAngRound(self.VecPosition), VecAngRound(self.AngRotate)
+		local _, tall = draw_SimpleText("Angle("..draw_a.p..", "..draw_a.y..", "..draw_a.r..")", "inc_roboto_medium", w / 2, h, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_BOTTOM_)
+		draw_SimpleText("Vector("..draw_v.x..", "..draw_v.y..", "..draw_v.z..")", "inc_roboto_medium", w / 2, h - tall, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_BOTTOM_)
 	
-		--if self.ReturnToOriginalPos then
+		if self.ShowControls then
+			local pos = 0
+			local _, tall = draw_SimpleText("Hold [LMB] + Rotate Mouse — Camera Rotate", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
 			pos = pos + tall
-			draw_SimpleText("Press [L.Shift]/[L.Alt] — Change return speed", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-		--end
-	else
-		draw_SimpleText("F1 — Show Controls", "inc_roboto_medium", w/2, 0, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-	end
-
-	if self.Saved then
-		draw_SimpleText("Position has been saved", "inc_roboto_superlarge", w/2, h/2, Color(100, 255, 100, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_CENTER_)
+			local _, tall = draw_SimpleText("Hold [RMB] — Roll Camera (L.Shift — SpeedUp)", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+			pos = pos + tall
+			local _, tall = draw_SimpleText("Press [WASD] — Move Camera", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+			pos = pos + tall
+			local _, tall = draw_SimpleText("Hold [L.Shift] — SpeedUp Camera Move&Rotate", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+			pos = pos + tall
+			local _, tall = draw_SimpleText("Hold [L.Shift] + [L.Alt] — SpeedUp Only Camera Rotate", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+			pos = pos + tall
+			local _, tall = draw_SimpleText("Scroll [Mouse Whell] — Zoom-in / Zoom-out", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+			pos = pos + tall
+			local _, tall = draw_SimpleText("Press [P] — Save camera position", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+			pos = pos + tall
+			local _, tall = draw_SimpleText("Press [R] — Return to "..(self.saved_position and "saved" or "original").." position", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+		
+			--if self.ReturnToOriginalPos then
+				pos = pos + tall
+				local _, tall = draw_SimpleText("Press [L.Shift]/[L.Alt] — Change return speed", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+			--end
+			pos = pos + tall
+			draw_SimpleText("Press [F2] — Hide UI", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+			pos = pos + tall
+			draw_SimpleText("Press [F1] — Hide Controls", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+		else
+			draw_SimpleText("[F1] — Show Controls", "inc_roboto_medium", w/2, 0, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+		end
+	
+		if self.Saved then
+			draw_SimpleText("Position has been saved", "inc_roboto_superlarge", w/2, h/2, Color(100, 255, 100, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_CENTER_)
+		end
 	end
 
 	if self.HelpfulEsp then
@@ -162,6 +167,13 @@ function PANEL:Think()
 		if (self.NextControlsSwitch or 0) < CurTime() then
 			self.NextControlsSwitch = CurTime() + 0.2
 			self.ShowControls = not self.ShowControls
+		end
+	end
+
+	if input_IsKeyDown(KEY_F2) then
+		if (self.NextHideUI or 0) < CurTime() then
+			self.NextHideUI = CurTime() + 0.2
+			self.HideUI = not self.HideUI
 		end
 	end
 
