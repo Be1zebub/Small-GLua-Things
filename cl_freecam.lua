@@ -288,7 +288,7 @@ function PANEL:Init()
     end
 end
 
-function PANEL:RebuildSize()
+function PANEL:PerformLayout()
 	if IsValid_(self.WorkSpace) then
 		self.WorkSpace:SetSize(self:GetWide(), self:GetTall() - 25)
 		self.WorkSpace:SetPos(0, 25)
@@ -370,7 +370,7 @@ concommand.Add("freecam_test", function()
 
 	local frame = vgui.Create("incredible-gmod.ru_TestViewFrame")
 	frame:SetSize(ScrW() - 100, ScrH() - 100)
-	frame:RebuildSize()
+	frame:PerformLayout()
 	frame:SetTitle("RenderView FreeCamera Test — incredible-gmod.ru")
 	frame:OpenAnimation()
 	frame:MakePopup()
