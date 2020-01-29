@@ -13,6 +13,7 @@ local input_IsMouseDown, input_IsKeyDown, draw_RoundedBox, input_GetCursorPos, i
 local render_RenderView, Vector_, Angle_, IsValid_, math_Round, isangle_ = render.RenderView, Vector, Angle, IsValid, math.Round, isangle
 local TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_, TEXT_ALIGN_BOTTOM_, TEXT_ALIGN_LEFT_ = TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, TEXT_ALIGN_BOTTOM, TEXT_ALIGN_LEFT
 local MaxDist, color_black, player_GetAll, cam_Start3D, cam_End3D, render_SetColorMaterial, render_SetBlend, render_DrawBox, ColorAlpha_, team_GetColor, render_DrawWireframeBox = 7500*7500, Color(0, 0, 0), player.GetAll, cam.Start3D, cam.End3D, render.SetColorMaterial, render.SetBlend, render.DrawBox, ColorAlpha, team.GetColor, render.DrawWireframeBox
+local LerpAngle_, LerpVector_ = LerpAngle, LerpVector
 
 -- Не хочу запариваться с переносом этих вещей.. Мне чёта в падлу)
 -- Это минифицированный набор типичных штук,которые я юзаю в своих скриптах.
@@ -137,7 +138,7 @@ function PANEL:OnMouseWheeled(delta)
 	local new = delta*mult
 
 	local ang = self.AngRotate
-	self.VecPosition = LerpVector(0.5, self.VecPosition, self.VecPosition + Vector_(0, 0, 0) + ang:Forward()*new)
+	self.VecPosition = LerpVector_(0.5, self.VecPosition, self.VecPosition + Vector_(0, 0, 0) + ang:Forward()*new)
 end
 
 function PANEL:CaptureMouse()
@@ -185,8 +186,8 @@ function PANEL:Think()
 		local dist = self.VecPosition:DistToSqr(way)
 		local mult = 0.025 * (input_IsKeyDown(KEY_LSHIFT) and 1 or input_IsKeyDown(KEY_LALT) and 0.05 or 0.25)--dist > 25000 and 0.025 or 0.1
 
-		self.VecPosition = LerpVector(mult, self.VecPosition, way)
-		self.AngRotate = LerpAngle(mult, self.AngRotate, way_ang)
+		self.VecPosition = LerpVector_(mult, self.VecPosition, way)
+		self.AngRotate = LerpAngle_(mult, self.AngRotate, way_ang)
 
 		if dist < 1000 then
 			self.ReturnToOriginalPos = false
@@ -223,7 +224,7 @@ function PANEL:Think()
 	if input_IsKeyDown(KEY_LCONTROL) then add = add - ang:Up() end
 	add = add * (input_IsKeyDown(KEY_LSHIFT) and not input_IsKeyDown(KEY_LALT) and 20 or 5)
 
-	self.VecPosition = LerpVector(0.5, self.VecPosition, self.VecPosition + add)
+	self.VecPosition = LerpVector_(0.5, self.VecPosition, self.VecPosition + add)
 
 	if input_IsMouseDown(MOUSE_LEFT) then
 		local x, y, capt = self:CaptureMouse()
