@@ -1,9 +1,9 @@
 --[[——————————————————————————————————————————————--
-			 Developer: [INC]Be1zebub
+	     Developer: [INC]Be1zebub
 
-		 Website: incredible-gmod.ru/owner
-		EMail: beelzebub@incredible-gmod.ru
-		Discord: discord.incredible-gmod.ru
+	 Website: incredible-gmod.ru/owner
+	EMail: beelzebub@incredible-gmod.ru
+	Discord: discord.incredible-gmod.ru
 --——————————————————————————————————————————————]]--
 
 local phpurl = "Your self hosted .php api interface, .php script from - https://github.com/Be1zebub/Small-GLua-Things/blob/master/inc_discord_post.php" --Link to your .php
