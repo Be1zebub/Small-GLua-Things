@@ -9,6 +9,9 @@
 -- Написал по фану, за час-полтора.
 -- Полезная утилита для быстрых синематиков / feecam читерства.
 
+-- Для использования введите freecam_frame в консоль
+-- ConCommand: freecam_frame
+
 local input_IsMouseDown, input_IsKeyDown, draw_RoundedBox, input_GetCursorPos, input_SetCursorPos, CurTime_, draw_SimpleText = input.IsMouseDown, input.IsKeyDown, draw.RoundedBox, input.GetCursorPos, input.SetCursorPos, CurTime, draw.SimpleText
 local render_RenderView, Vector_, Angle_, IsValid_, math_Round, isangle_ = render.RenderView, Vector, Angle, IsValid, math.Round, isangle
 local TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_, TEXT_ALIGN_BOTTOM_, TEXT_ALIGN_LEFT_ = TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, TEXT_ALIGN_BOTTOM, TEXT_ALIGN_LEFT
@@ -62,6 +65,14 @@ function PANEL:OnRemove()
     end
 end
 
+local white_transparent = Color(255, 255, 255, 150)
+local frame_w = 0
+local DrawCenterText = function(str, y)
+	local _, tall = draw_SimpleText(str, "inc_roboto_medium", frame_w/2, y, white_transparent, TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+
+	return y + tall
+end
+
 function PANEL:Paint(w, h)
 	local x, y = self:LocalToScreen(self:GetPos())
 	y = y - 25
@@ -75,41 +86,34 @@ function PANEL:Paint(w, h)
 
 	if not self.HideUI then
 		local draw_v, draw_a = VecAngRound(self.VecPosition), VecAngRound(self.AngRotate)
-		local _, tall = draw_SimpleText("Angle("..draw_a.p..", "..draw_a.y..", "..draw_a.r..")", "inc_roboto_medium", w / 2, h, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_BOTTOM_)
-		draw_SimpleText("Vector("..draw_v.x..", "..draw_v.y..", "..draw_v.z..")", "inc_roboto_medium", w / 2, h - tall, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_BOTTOM_)
+		local _, tall = draw_SimpleText("Angle("..draw_a.p..", "..draw_a.y..", "..draw_a.r..")", "inc_roboto_medium", w / 2, h, white_transparent, TEXT_ALIGN_CENTER_, TEXT_ALIGN_BOTTOM_)
+		draw_SimpleText("Vector("..draw_v.x..", "..draw_v.y..", "..draw_v.z..")", "inc_roboto_medium", w / 2, h - tall, white_transparent, TEXT_ALIGN_CENTER_, TEXT_ALIGN_BOTTOM_)
 	
 		if self.ShowControls then
 			local pos = 0
-			local _, tall = draw_SimpleText("Hold [LMB] + Rotate Mouse — Camera Rotate", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-			pos = pos + tall
-			local _, tall = draw_SimpleText("Hold [RMB] — Roll Camera (L.Shift — SpeedUp)", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-			pos = pos + tall
-			local _, tall = draw_SimpleText("Press [WASD] — Move Camera", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-			pos = pos + tall
-			local _, tall = draw_SimpleText("Hold [L.Shift] — SpeedUp Camera Move&Rotate", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-			pos = pos + tall
-			local _, tall = draw_SimpleText("Hold [L.Shift] + [L.Alt] — SpeedUp Only Camera Rotate", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-			pos = pos + tall
-			local _, tall = draw_SimpleText("Scroll [Mouse Whell] — Zoom-in / Zoom-out", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-			pos = pos + tall
-			local _, tall = draw_SimpleText("Press [P] — Save camera position", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-			pos = pos + tall
-			local _, tall = draw_SimpleText("Press [R] — Return to "..(self.saved_position and "saved" or "original").." position", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-		
+			frame_w = w
+
+			pos = DrawCenterText("Hold [LMB] + Rotate Mouse — Camera Rotate", pos)
+			pos = DrawCenterText("Hold [RMB] — Roll Camera (L.Shift — SpeedUp)", pos)
+			pos = DrawCenterText("Press [WASD] — Move Camera", pos)
+			pos = DrawCenterText("Hold [L.Shift] — SpeedUp Camera Move&Rotate", pos)
+			pos = DrawCenterText("Hold [L.Shift] + [L.Alt] — SpeedUp Only Camera Rotate", pos)
+			pos = DrawCenterText("Scroll [Mouse Whell] — Zoom-in / Zoom-out", pos)
+			pos = DrawCenterText("Press [P] — Save camera position", pos)
+			pos = DrawCenterText("Press [R] — Return to "..(self.saved_position and "saved" or "original").." position", pos)
+			pos = DrawCenterText("Press [P] — Save camera position", pos)
+
 			--if self.ReturnToOriginalPos then
-				pos = pos + tall
-				local _, tall = draw_SimpleText("Press [L.Shift]/[L.Alt] — Change return speed", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+				pos = DrawCenterText("Press [L.Shift]/[L.Alt] — Change return speed", pos)
 			--end
-			pos = pos + tall
-			draw_SimpleText("Press [F2] — Hide UI", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
-			pos = pos + tall
-			draw_SimpleText("Press [F1] — Hide Controls", "inc_roboto_medium", w/2, pos, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+			pos = DrawCenterText("Press [F2] — Hide UI", pos)
+			pos = DrawCenterText("Press [F1] — Hide Controls", pos)
 		else
-			draw_SimpleText("[F1] — Show Controls", "inc_roboto_medium", w/2, 0, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+			DrawCenterText("[F1] — Show Controls", 0)
 		end
 	
 		if self.Saved then
-			draw_SimpleText("Position has been saved", "inc_roboto_superlarge", w/2, h/2, Color(100, 255, 100, 150), TEXT_ALIGN_CENTER_, TEXT_ALIGN_CENTER_)
+			DrawCenterText("Position has been saved", h/2)
 		end
 	end
 
@@ -164,15 +168,15 @@ function PANEL:Think()
 	local hide_cursor
 
 	if input_IsKeyDown(KEY_F1) then
-		if (self.NextControlsSwitch or 0) < CurTime() then
-			self.NextControlsSwitch = CurTime() + 0.2
+		if (self.NextControlsSwitch or 0) < CurTime_() then
+			self.NextControlsSwitch = CurTime_() + 0.2
 			self.ShowControls = not self.ShowControls
 		end
 	end
 
 	if input_IsKeyDown(KEY_F2) then
-		if (self.NextHideUI or 0) < CurTime() then
-			self.NextHideUI = CurTime() + 0.2
+		if (self.NextHideUI or 0) < CurTime_() then
+			self.NextHideUI = CurTime_() + 0.2
 			self.HideUI = not self.HideUI
 		end
 	end
@@ -377,7 +381,7 @@ vgui.Register("incredible-gmod.ru_TestViewFrame", PANEL, "Panel")
 
 
 local anti_duplicate
-concommand.Add("freecam_test", function()
+concommand.Add("freecam_frame", function()
 	if IsValid(anti_duplicate) then return end
 
 	local frame = vgui.Create("incredible-gmod.ru_TestViewFrame")
