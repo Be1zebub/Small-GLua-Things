@@ -1,102 +1,40 @@
---[[————————————————————————————————————————
-     	Incredible SteamAvatar Lib
-     	  Credists: [INC]Be1zebub
-          
-	 Visit my GModDayz Server:
-         http://incredible-gmod.ru
-————————————————————————————————————————]]--
+--[[———————————————————————————————————————————————————--
+                Developer: [INC]Be1zebub
+                
+            Website: incredible-gmod.ru/owner
+           EMail: beelzebub@incredible-gmod.ru
+           Discord: discord.incredible-gmod.ru
+--———————————————————————————————————————————————————]]--
 
-if CLIENT then return end --its server side lib ;)
 
-local CFG = {
-	steamapi		= "SUPER_SECRET_STEAM_API_KEY", -- https://steamcommunity.com/dev/apikey
-	default_avatar 	= "https://i.imgur.com/T3EE95z.png", -- Default Avatar if API Error
-	enable_caching 	= true, -- Required for reduce the number of API requests 						cachedAvatars[SteamID64]
-	ent_save 		= true, -- Save avatar url in player entity 								ply.SteamAvatar
-	data_save 		= true, -- Save Avatar in garrysmod/data folder						file.Read("steam_avatars/avatar_USER_STEAMID64.txt", "DATA")
-}
+if CLIENT then return end --its server side lib ;) no reason to use it on the client realm
 
+local apikey = "YOUR STEAM API KEY HERE! https://steamcommunity.com/dev/apikey"
+local default_avatar = "https://i.imgur.com/T3EE95z.png"
+
+local http_Fetch, util_JSONToTable, IsValid_ = http.Fetch, util.JSONToTable, IsValid
 cachedAvatars = cachedAvatars or {}
 
-local PMETA = FindMetaTable("Player")
-
-function PMETA:GetAvatar()
-	if not self:IsValid() then return CFG.default_avatar end
-
-	local steamid = self:SteamID64()
-
+function GetAvatarBySteam64(steamid)	
 	if cachedAvatars[steamid] then
 		return cachedAvatars[steamid]
-	elseif self.SteamAvatar then
-		return self.SteamAvatar
-	else
-		local data_avatar = file.Read("steam_avatars/avatar_"..steamid..".txt", "DATA")
-		if data_avatar then
-			return data_avatar
-		end
 	end
 
-	http.Fetch("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key="..CFG.steamapi.."&steamids="..steamid, function(body)
-		if not body or body == "" then return CFG.default_avatar end
-		local tbl = util.JSONToTable(body)
-		if not tbl or not tbl.response then return CFG.default_avatar end
+	http_Fetch("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key="..apikey.."&steamids="..steamid, function(body)
+		if not body or body == "" then return default_avatar end
+		local tbl = util_JSONToTable(body)
+		if not tbl or not tbl.response or not tbl.response.players or not tbl.response.players[1] or not tbl.response.players[1].avatarfull then return default_avatar end
 
 		local currentAvatar = tbl.response.players[1].avatarfull
 
-		if CFG.enable_caching then
-			cachedAvatars[steamid] = currentAvatar
-		end
-		if CFG.ent_save then
-			self.SteamAvatar = currentAvatar
-		end
-
-		if CFG.data_save then
-			if not file.Exists("steam_avatars", "DATA") then
-				file.CreateDir("steam_avatars")
-			end
-			file.Write("steam_avatars/avatar_"..steamid..".txt", currentAvatar)
-		end
+		cachedAvatars[steamid] = currentAvatar
 	end)
-
-	return CFG.default_avatar
+	
+	return default_avatar
 end
 
-function GetAvatarBySteam64(steam64)
-	local ply = player.GetBySteamID64(steam64)
-	local data_avatar = file.Read("steam_avatars/avatar_"..steam64..".txt", "DATA")
-	if data_avatar then
-		return data_avatar
-	end
+function PMETA:GetAvatar()
+	if not IsValid_(self) then return default_avatar end
 
-	if cachedAvatars[steam64] then
-		return cachedAvatars[steam64]
-	else
-		if IsValid(ply) and ply.SteamAvatar then
-			return ply.SteamAvatar
-		end
-	end
-
-	
-	http.Fetch("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key="..CFG.steamapi.."&steamids="..steam64, function(body)
-		if not body or body == "" then return CFG.default_avatar end
-		local tbl = util.JSONToTable(body)
-		if not tbl or not tbl.response then return CFG.default_avatar end
-
-		local currentAvatar = tbl.response.players[1].avatarfull
-
-		cachedAvatars[steam64] = currentAvatar
-
-		if IsValid(ply) and CFG.data_save then
-			ply.SteamAvatar = currentAvatar
-		end
-
-		if CFG.data_save then
-			if not file.Exists( "steam_avatars", "DATA" ) then
-				file.CreateDir("steam_avatars")
-			end
-			file.Write("steam_avatars/avatar_"..steamid..".txt", currentAvatar)
-		end
-	end)
-
-	return CFG.default_avatar
+	return GetAvatarBySteam64(self:SteamID64())
 end
