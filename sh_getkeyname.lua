@@ -7,14 +7,14 @@ local Mouse2Name = {
 	[NULL] = "UNKNOWN MOUSE"
 }
 
-local __a, __b, __c = isnumber, input.GetKeyName, MOUSE_MIDDLE
+local __a, __b, __c = isnumber, MOUSE_MIDDLE, input.GetKeyName
 
 function GetKeyName(key)
 	if not __a(key) then return "UNKNOWN KEY" end
 
-	if key >= __c then
+	if key >= __b then
 		return Mouse2Name[key]
 	end
 
-	return __b(key) and __b(key):upper() or "UNKNOWN KEY"
+	return __c(key) and __c(key):upper() or "UNKNOWN KEY"
 end
