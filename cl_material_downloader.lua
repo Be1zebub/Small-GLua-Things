@@ -5,13 +5,13 @@
            EMail: beelzebub@incredible-gmod.ru
            Discord: discord.incredible-gmod.ru
 --———————————————————————————————————————————————————]]--
-
+local ImgURL_FetchDelay = 0
 function DownloadMaterial(img_url, path)
     if file.Exists(path, "DATA") then
     	return Material("data/"..path, "noclamp smooth")
     else
-    	if (LocalPlayer().ImgURL_FetchDelay or 0) > CurTime() then return false end
-	LocalPlayer().ImgURL_FetchDelay = CurTime() + 5
+    	if ImgURL_FetchDelay > CurTime() then return false end
+	ImgURL_FetchDelay = CurTime() + 5
         http.Fetch(img_url, function(result)
             if (result) then
                 file.Write(path, result)
