@@ -13,6 +13,7 @@ local apikey = "YOUR STEAM API KEY HERE! https://steamcommunity.com/dev/apikey"
 local default_avatar = "https://i.imgur.com/T3EE95z.png"
 
 local http_Fetch, util_JSONToTable, IsValid_ = http.Fetch, util.JSONToTable, IsValid
+local PMETA = FindMetaTable("Player")
 cachedAvatars = cachedAvatars or {}
 
 function GetAvatarBySteam64(steamid)	
