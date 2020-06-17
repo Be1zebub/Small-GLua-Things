@@ -1,7 +1,7 @@
 ::Batch SSH Fast&Simple:
 ::Windows OpenSSH (by windows cmd)
-:: https://i.imgur.com/4XJ4Aqd.png
-::На самом деле копировать пареоль в клипбоард это тупой костыль, но я не нашёл способа проще быстрее
+::https://i.imgur.com/4XJ4Aqd.png
+::На самом деле копировать пареоль в клипбоард это тупой костыль, но я не нашёл способа проще и быстрее
   @echo off
   :start
   cls
