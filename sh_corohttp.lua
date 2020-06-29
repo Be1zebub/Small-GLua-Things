@@ -1,9 +1,5 @@
---[[——————————————————————————————————————————————--
-               Developer: Be1zebub
-             Website: incredible-gmod.ru
-        EMail: beelzebub@incredible-gmod.ru
-        Discord: discord.incredible-gmod.ru
---——————————————————————————————————————————————]]
+-- incredible-gmod.ru
+-- coroutine http lib
 
 function http.CoroFetch(url, headers)
 	local running = coroutine.running()
