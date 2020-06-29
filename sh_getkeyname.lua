@@ -1,3 +1,6 @@
+-- incredible-gmod.ru
+-- get-keyname func
+
 local Mouse2Name = {
 	[MOUSE_MIDDLE] = "MIDDLE MOUSE",
 	[MOUSE_4] = "MOUSE 4",
