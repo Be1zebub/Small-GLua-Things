@@ -1,15 +1,5 @@
-
---[[———————————————————————————————————————————————————--
-              Автор скрипта: [INC]Be1zebub
-                
-             Сайт: incredible-gmod.ru/owner
-           EMail: beelzebub@incredible-gmod.ru
-           Discord: discord.incredible-gmod.ru
---———————————————————————————————————————————————————]]--
--- Написал по фану, за час-полтора.
--- Полезная утилита для быстрых синематиков / feecam читерства.
-
--- Для использования введите freecam_frame в консоль
+-- incredible-gmod.ru
+-- fun freecam script
 -- ConCommand: freecam_frame
 
 local input_IsMouseDown, input_IsKeyDown, draw_RoundedBox, input_GetCursorPos, input_SetCursorPos, CurTime_, draw_SimpleText = input.IsMouseDown, input.IsKeyDown, draw.RoundedBox, input.GetCursorPos, input.SetCursorPos, CurTime, draw.SimpleText
@@ -19,7 +9,7 @@ local MaxDist, color_black, player_GetAll, cam_Start3D, cam_End3D, render_SetCol
 local LerpAngle_, LerpVector_ = LerpAngle, LerpVector
 
 -- Не хочу запариваться с переносом этих вещей.. Мне чёта в падлу)
--- Это минифицированный набор типичных штук,которые я юзаю в своих скриптах.
+-- Это минифицированный набор типичных штук,которые я юзаю в своих UI.
 Incredible_DsLogs=Incredible_DsLogs or{}Incredible_DsLogs.ColorSchemes={["dark"]={dark=Color(10,10,10),semi_light=Color(39,39,39),light=Color(51,51,51),lighter=Color(60,60,60),health=Color(91,46,186),armor=Color(31,87,231),red=Color(175,50,50),red_hover=Color(200,75,75),green=Color(50,170,80),green_hover=Color(75,195,105),btn=Color(39,62,75),btn_hover=Color(45,68,81)}}local a,b=CreateClientConVar("incdslogs_colorscheme","dark",true),ColorAlpha;Incredible_DsLogs.GetUIColor=function(c,d)local e=Incredible_DsLogs.ColorSchemes[a:GetString()]or Incredible_DsLogs.ColorSchemes["dark"]if d then local f=e[c]if not f then return end;return b(f,d)end;return e[c]end;function LeftText(a,b,c,d,e,f)return draw_SimpleText(a,b or"inc_roboto_small",c,d,e or color_white,TEXT_ALIGN_LEFT_,f and TEXT_ALIGN_TOP_ or TEXT_ALIGN_CENTER_)end function CenterText(a,b,c,d,e,f)return draw_SimpleText(a,b or"inc_roboto_small",c,d,e or color_white,TEXT_ALIGN_CENTER_,f and TEXT_ALIGN_TOP_ or TEXT_ALIGN_CENTER_)end
 surface.CreateFont("inc_roboto_medium",{font="Roboto",extended=true,antialias=true,size=24,weight=500})surface.CreateFont("inc_roboto_semismall",{font="Roboto",extended=true,antialias=true,size=18,weight=500})surface.CreateFont("inc_roboto_small",{font="Roboto",extended=true,antialias=true,size=16,weight=500})surface.CreateFont("inc_roboto_superlarge",{font="Roboto",extended=true,antialias=true,size=48,weight=500})
 
@@ -31,20 +21,13 @@ end
 local PANEL = {}
 
 function PANEL:Init()
-	self.VecPosition = LocalPlayer():GetPos() + Vector(0, 0, LocalPlayer():OBBMaxs().z) --Vector_(0, 0, 0)
-	self.AngRotate = LocalPlayer():EyeAngles() --Angle_(0, 0, 0)
-	self.CameraRoll = 0
+	self.VecPosition = FreecamPOS or ( LocalPlayer():GetPos() + Vector(0, 0, LocalPlayer():OBBMaxs().z) )
+	self.AngRotate = FreecamANG or LocalPlayer():EyeAngles()
+	self.CameraRoll = FreecamROLL or 0
 
 	self:SetMouseInputEnabled(true)
 
-	--if LocalPlayer().OldPhysCol then
-	--	LocalPlayer():SetWeaponColor(LocalPlayer().OldPhysCol)
-	--end
-
 	LocalPlayer():GetViewModel():SetNoDraw(true)
-	--LocalPlayer().OldPhysCol = LocalPlayer():GetWeaponColor()
-	--LocalPlayer():SetWeaponColor(Vector(0, 0, 0)) -- Hide Physgun Glow ;)
-
 	for _, v in ipairs(ents.FindByClass("physgun_beam")) do
         if v:GetParent() == LocalPlayer() then
             v:SetNoDraw(true)
@@ -53,11 +36,11 @@ function PANEL:Init()
 end
 
 function PANEL:OnRemove()
+	FreecamPOS = self.VecPosition
+	FreecamANG = self.AngRotate
+	FreecamROLL = self.CameraRoll
+
 	LocalPlayer():GetViewModel():SetNoDraw(false)
-	--if LocalPlayer().OldPhysCol then
-	--	LocalPlayer():SetWeaponColor(LocalPlayer().OldPhysCol)
-	--	LocalPlayer().OldPhysCol = nil
-	--end
 	for _, v in ipairs(ents.FindByClass("physgun_beam")) do
         if v:GetParent() == LocalPlayer() then
             v:SetNoDraw(false)
@@ -66,6 +49,7 @@ function PANEL:OnRemove()
 end
 
 local white_transparent = Color(255, 255, 255, 150)
+local saved_ = Color(86, 250, 0, 175)
 local frame_w = 0
 local DrawCenterText = function(str, y)
 	local _, tall = draw_SimpleText(str, "inc_roboto_medium", frame_w/2, y, white_transparent, TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
@@ -89,10 +73,10 @@ function PANEL:Paint(w, h)
 		local _, tall = draw_SimpleText("Angle("..draw_a.p..", "..draw_a.y..", "..draw_a.r..")", "inc_roboto_medium", w / 2, h, white_transparent, TEXT_ALIGN_CENTER_, TEXT_ALIGN_BOTTOM_)
 		draw_SimpleText("Vector("..draw_v.x..", "..draw_v.y..", "..draw_v.z..")", "inc_roboto_medium", w / 2, h - tall, white_transparent, TEXT_ALIGN_CENTER_, TEXT_ALIGN_BOTTOM_)
 	
+		frame_w = w
+
 		if self.ShowControls then
 			local pos = 0
-			frame_w = w
-
 			pos = DrawCenterText("Hold [LMB] + Rotate Mouse — Camera Rotate", pos)
 			pos = DrawCenterText("Hold [RMB] — Roll Camera (L.Shift — SpeedUp)", pos)
 			pos = DrawCenterText("Press [WASD] — Move Camera", pos)
@@ -101,11 +85,15 @@ function PANEL:Paint(w, h)
 			pos = DrawCenterText("Scroll [Mouse Whell] — Zoom-in / Zoom-out", pos)
 			pos = DrawCenterText("Press [P] — Save camera position", pos)
 			pos = DrawCenterText("Press [R] — Return to "..(self.saved_position and "saved" or "original").." position", pos)
-			pos = DrawCenterText("Press [P] — Save camera position", pos)
 
 			--if self.ReturnToOriginalPos then
 				pos = DrawCenterText("Press [L.Shift]/[L.Alt] — Change return speed", pos)
 			--end
+
+			pos = DrawCenterText("Press [Space] — Move up", pos)
+			pos = DrawCenterText("Press [L.Ctrl] — Move down", pos)
+			pos = DrawCenterText("Press [Z] — Restore position", pos)
+
 			pos = DrawCenterText("Press [F2] — Hide UI", pos)
 			pos = DrawCenterText("Press [F1] — Hide Controls", pos)
 		else
@@ -113,7 +101,8 @@ function PANEL:Paint(w, h)
 		end
 	
 		if self.Saved then
-			DrawCenterText("Position has been saved", h/2)
+			local _, tall = draw_SimpleText("Position has been saved", "inc_roboto_medium", w*0.5, h*0.5, saved_, TEXT_ALIGN_CENTER_, TEXT_ALIGN_TOP_)
+			DrawCenterText("[R] — Smooth return to that position", h*0.5+tall)
 		end
 	end
 
@@ -187,10 +176,17 @@ function PANEL:Think()
 
 		if not self.Saved then
 			self.Saved = true
-			timer.Simple(1, function()
+			timer.Simple(2.5, function()
 				self.Saved = false
 			end)
 		end
+	end
+
+	if input_IsKeyDown(KEY_Z) then
+		self.saved_position = LocalPlayer():GetPos() + Vector(0, 0, LocalPlayer():OBBMaxs().z)
+		self.saved_ang_position = LocalPlayer():EyeAngles()
+		--self.CameraRoll = FreecamROLL or 0
+		self.ReturnToOriginalPos = true
 	end
 
 	if self.ReturnToOriginalPos then
@@ -270,6 +266,11 @@ vgui.Register("incredible-gmod.ru_FreeCamera", PANEL, "Panel")
 
 local PANEL = {}
 
+local cols = {
+	red = Color(175, 50, 50),
+	red_hover = Color(200, 75, 75)
+}
+
 function PANEL:Init()
 	self["bg_blur"] = vgui.Create("Panel")
 	self["bg_blur"]:SetSize(ScrW(), ScrH())
@@ -289,13 +290,11 @@ function PANEL:Init()
     self.CloseButton:SetText("")
 
     self.CloseButton.DoClick = function(self)
-        --Incredible_DsLogs.ClickSound()
-        --Incredible_DsLogs.WebSound("https://incredible-gmod.ru/assets/sounds/effects/win98_chimes.mp3")
         self:GetParent():Close()
     end
 
     self.CloseButton.Paint = function(self, w, h)
-        local col = self:IsHovered() and Incredible_DsLogs.GetUIColor("redhover") or Incredible_DsLogs.GetUIColor("red")
+        local col = self:IsHovered() and cols.red_hover or cols.red
         draw_RoundedBox(0, 0, 0, w, h, col)
 
         if self:IsHovered() then
