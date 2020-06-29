@@ -1,10 +1,5 @@
---[[———————————————————————————————————————————————————--
-              Автор скрипта: [INC]Be1zebub
-                
-             Сайт: incredible-gmod.ru/owner
-           EMail: beelzebub@incredible-gmod.ru
-           Discord: discord.incredible-gmod.ru
---———————————————————————————————————————————————————]]--
+-- incredible-gmod.ru
+-- simple connections-log example
 
 function IncredibleConnectLogs_DayCount()
 	local current_date = os.date("!%d_%m_%Y", os.time() + 3 * 60 * 60) -- MSK TimeZoned TimeStamp
