@@ -1,5 +1,6 @@
+-- incredible-gmod.ru
 -- Shared CSGO Skins Example
--- Примеры: https://i.imgur.com/V4ZBVxG.png https://i.imgur.com/JXGIlb2.png
+-- Examples: https://i.imgur.com/V4ZBVxG.png https://i.imgur.com/JXGIlb2.png
 
 if SERVER then
 	concommand.Add("csgoskin_example", function(ply, _, args)
@@ -8,7 +9,7 @@ if SERVER then
 
 		ply:SetNWString("skin_"..model, tostring(material))
 	end)
-  -- Usage Example: csgoskin_example "models/weapons/c_crowbar.mdl"  models/props_combine/combine_monitorbay_disp
+  -- Usage Example: csgoskin_example "models/weapons/c_crowbar.mdl" models/props_combine/combine_monitorbay_disp
 else
 	hook.Add("Think", "SkinsLikeCSGO", function()
 		local ply = LocalPlayer()
