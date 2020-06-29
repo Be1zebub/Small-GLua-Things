@@ -1,13 +1,5 @@
-  
---[[———————————————————————————————————————————————————--
-              Автор скрипта: [INC]Be1zebub
-                
-             Сайт: incredible-gmod.ru/owner
-           EMail: beelzebub@incredible-gmod.ru
-           Discord: discord.incredible-gmod.ru
---———————————————————————————————————————————————————]]--
-
--- Пример создания круглой кнопки
+-- incredible-gmod.ru
+-- Circle button example
 
 local math_Approach, sin, cos, rad = math.Approach, math.sin, math.cos, math.rad
 
