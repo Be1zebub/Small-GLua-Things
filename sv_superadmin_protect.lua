@@ -1,11 +1,5 @@
-  
---[[———————————————————————————————————————————————————--
-              Автор скрипта: [INC]Be1zebub
-                
-             Сайт: incredible-gmod.ru/owner
-           EMail: beelzebub@incredible-gmod.ru
-           Discord: discord.incredible-gmod.ru
---———————————————————————————————————————————————————]]--
+-- incredible-gmod.ru
+-- super-admin protector example
 
 local superadmins_tab = {
 	["STEAM_0:1:200434431"] = true,
