@@ -3,13 +3,14 @@ local upper2lower = {["A"]="a",["B"]="b",["C"]="c",["D"]="d",["E"]="e",["F"]="f"
 local lower2upper = {}
 for upper, lower in pairs(upper2lower) do lower2upper[lower] = upper end
 local pattern = "[%z\x01-\x7F\xC2-\xF4][\x80-\xBF]*"
+local gsub = string.gsub
 
 function utf8.lower(s)
-    return (s:gsub(pattern, upper2lower))
+    return (gsub(s, pattern, upper2lower))
 end
 
 function utf8.upper(s)
-    return (s:gsub(pattern, lower2upper))
+    return (gsub(s, pattern, lower2upper))
 end
 
 --print(utf8.lower("Привет World #123!"), utf8.upper("Hello Мир #321!"))
