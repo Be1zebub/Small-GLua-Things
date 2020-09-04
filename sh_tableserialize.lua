@@ -5,9 +5,9 @@ function table.ToPlain(tbl, indent, out)
     indent = indent or 1
     for k, v in pairs(tbl) do
         local tabs = string.rep("   ", indent)
-        formatting = tabs .. k .." = ".. (type(v) == "table" and "{" or "")
+        formatting = tabs .. k .." = "
         if type(v) == "table" then
-            out = out .. formatting .."\n"
+            out = out .. formatting .."{\n"
             out = out .. table.ToPlain(v, indent + 1, "")
             out = out .. tabs .."},\n"
         else
