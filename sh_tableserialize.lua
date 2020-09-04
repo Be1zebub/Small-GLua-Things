@@ -1,3 +1,5 @@
+-- Example available on: https://glot.io/snippets/fqw1us9t1q
+
 local strrepeat, pairs, type, format, tostring, print = string.rep, pairs, type, string.format, tostring, print
 
 function table.ToPlain(tbl, indent, out)
