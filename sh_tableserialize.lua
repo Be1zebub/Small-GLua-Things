@@ -20,7 +20,7 @@ function table.ToPlain(tbl, indent, out)
 end
 
 function table.Print(tbl, indent)
-    if not indent then indent = 0 end
+    indent = indent or 0
     for k, v in pairs(tbl) do
         formatting = string.rep("   ", indent) .. k .. ": "
         if type(v) == "table" then
