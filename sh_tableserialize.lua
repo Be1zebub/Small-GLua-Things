@@ -32,6 +32,6 @@ function table.Print(tbl, indent)
     end
 end
 
-function PrintTable(t)
+function PrintTable(t) -- GLua like but on pure lua
     print(table.ToPlain(t))
 end
