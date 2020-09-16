@@ -1,6 +1,6 @@
 local HtmlCode = [[
   <script>
-  function imageToDataUri(img, w, h) {
+  function imageResize(img, w, h) {
     var canvas = document.createElement('canvas'),
     ctx = canvas.getContext('2d');
 
@@ -14,7 +14,7 @@ local HtmlCode = [[
 
   var img = new Image;
   img.onload = function() {
-    gmod.callback(imageToDataUri(this, %s, %s));
+    gmod.callback(imageResize(this, %s, %s));
   };
   img.src = %q;		
 </script>
