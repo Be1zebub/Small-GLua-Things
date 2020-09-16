@@ -13,7 +13,7 @@ local HtmlCode = [[
   }
 
   var img = new Image;
-  img.onload = function () {
+  img.onload = function() {
     gmod.callback(imageToDataUri(this, %s, %s));
   };
   img.src = %q;		
