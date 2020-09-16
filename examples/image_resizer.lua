@@ -1,5 +1,5 @@
 local HtmlCode = [[
-  <script>
+<script>
   function imageResize(img, w, h) {
     var canvas = document.createElement('canvas'),
     ctx = canvas.getContext('2d');
