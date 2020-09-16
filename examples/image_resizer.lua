@@ -1,15 +1,15 @@
 local HtmlCode = [[
-<script>
+  <script>
   function imageToDataUri(img, w, h) {
-		var canvas = document.createElement('canvas'),
-	  ctx = canvas.getContext('2d');
+    var canvas = document.createElement('canvas'),
+    ctx = canvas.getContext('2d');
 
-	  canvas.width = w;
-		canvas.height = h;
+    canvas.width = w;
+    canvas.height = h;
 
-		ctx.drawImage(img, 0, 0, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
 
-		return canvas.toDataURL();
+    return canvas.toDataURL();
   }
 
   var img = new Image;
