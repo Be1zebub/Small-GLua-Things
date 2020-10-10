@@ -18,4 +18,10 @@ function IntervalLoop(time, tab, callback, notsequential)
             callback(tab[i], i)
         end)
     end
+    
+    return {
+        function Stop()
+            timer.Remove("IntervalLoop"..lnum)
+        end
+    }
 end
