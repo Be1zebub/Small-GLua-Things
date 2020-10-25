@@ -20,7 +20,7 @@ function IntervalLoop(time, tab, callback, notsequential)
     end
     
     return {
-        function Stop()
+        Stop = function()
             timer.Remove("IntervalLoop"..lnum)
         end
     }
