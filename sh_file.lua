@@ -3,6 +3,7 @@
 
 function file.WriteJson(path, content, compress)
 	content = util.TableToJSON(content)
+	
 	file.Write(path, compress and util.Compress(content) or content)
 end
 
@@ -16,6 +17,7 @@ end
 
 function file.WritePon1(path, content, compress)
 	content = pon1.encode(content)
+	
 	file.Write(path, compress and util.Compress(content) or content)
 end
 
