@@ -4,7 +4,7 @@
 local Loader = {}
 Loader.Debug = false
 
-Loader.include_realm = {
+local include_realm = {
     sv = SERVER and include or function() end,
     cl = SERVER and AddCSLuaFile or include
 }
@@ -21,7 +21,7 @@ end
 function Loader:Include(fpath)
 	local realm = string.sub(self:GetFilename(fpath), 1, 2)
 
-	local func = self.include_realm[realm]
+	local func = include_realm[realm]
 	if func == nil then return false end
 
 	if self.Debug then
@@ -52,7 +52,7 @@ function Loader:IncludeDir(path, recurse, loaded)
 				print("recurse", path .."/".. f)
 			end
 
-			include_dir(path .."/".. f, recurse, loaded)
+			self:IncludeDir(path .."/".. f, recurse, loaded)
 		end
 	end
 
