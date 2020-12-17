@@ -1,4 +1,5 @@
 -- incredible-gmod.ru
+-- https://github.com/Be1zebub/Small-GLua-Things/blob/master/sh_loader.lua
 
 local Loader = {}
 Loader.Debug = false
