@@ -1,4 +1,5 @@
 -- incredible-gmod.ru
+-- https://github.com/Be1zebub/Small-GLua-Things/blob/master/sh_material_downloader.lua
 
 local file, Material, Fetch, find = file, Material, http.Fetch, string.find
 
