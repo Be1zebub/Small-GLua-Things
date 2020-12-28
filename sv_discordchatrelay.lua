@@ -3,16 +3,16 @@
 
 -- !!!!! https://github.com/timschumi/gmod-chttp Required !!!!!
 
+local Config = {
+	Webhook = "XXX",
+	SteamApiKey = "YYY"
+}
+
 if pcall(require, "chttp") and CHTTP ~= nil then
 	HTTP = CHTTP
 else
 	return MsgC(Color(255, 0, 0), "Discord Chat Relay ERROR!", Color(255, 255, 255), "Please install CHTTP!")
 end
-
-local Config = {
-	Webhook = "XXX",
-	SteamApiKey = "YYY"
-}
 
 local Avatars = {}
 local AvatarsApi = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/"
