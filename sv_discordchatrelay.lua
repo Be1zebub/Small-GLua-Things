@@ -11,7 +11,7 @@ local Config = {
 if pcall(require, "chttp") and CHTTP ~= nil then
 	HTTP = CHTTP
 else
-	return MsgC(Color(255, 0, 0), "Discord Chat Relay ERROR!", Color(255, 255, 255), "Please install CHTTP!")
+	return MsgC(Color(255, 0, 0), "Discord Chat Relay ERROR!", Color(255, 255, 255), "Please install https://github.com/timschumi/gmod-chttp!")
 end
 
 local Avatars = {}
@@ -73,7 +73,6 @@ hook.Add("PlayerSay", "DiscordChatRelay", function(ply, text, isteam)
 		HTTP({
 			method = "post",
 			type = "application/json; charset=utf-8",
-			useragent = "Discord Chat Relay",
 			headers = {
 				["User-Agent"] = "Discord Chat Relay",
 			},
