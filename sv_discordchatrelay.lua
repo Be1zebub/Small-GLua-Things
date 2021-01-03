@@ -4,8 +4,8 @@
 -- !!!!! https://github.com/timschumi/gmod-chttp Required !!!!!
 
 local Config = {
-	Webhook = "XXX",
-	SteamApiKey = "YYY"
+	Webhook = "XXX", -- https://pastebin.com/Bdh5EgmM
+	SteamApiKey = "YYY" -- https://steamcommunity.com/dev/apikey
 }
 
 if pcall(require, "chttp") and CHTTP ~= nil then
