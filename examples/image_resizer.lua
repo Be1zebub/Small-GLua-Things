@@ -22,7 +22,7 @@ local HtmlCode = [[
 
 local sub_len = #"data:image/png;base64," + 1
 
-function util.ResizeImage(url, w, h, callback)
+function util.ResizeImage(url, w, h, callback) -- also u can download materials from http hosts with that solution :D
 	local HTML = vgui.Create("DHTML")
 	HTML:AddFunction("gmod", "callback", function(img)
 		callback(util.Base64Decode(img:sub(sub_len)))
