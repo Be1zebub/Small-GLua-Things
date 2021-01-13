@@ -1,7 +1,7 @@
 -- Lua Benchmark
 -- incredible-gmod.ru
 
-local function bench(uid, func, count, onfinish)
+function Benchmark(uid, func, count, onfinish)
     timer.Simple(0, function() -- 1 tick delay
         local start = SysTime()
     
@@ -24,10 +24,10 @@ end
 
 local repeats = 100000 -- 100k
 
-bench("table.Random", function()
+Benchmark("table.Random", function()
     local v = table.Random(tab)
 end, repeats, function()
-    bench("math.random", function()
+    Benchmark("math.random", function()
         local v = tab[ math.random(#tab) ]
     end, repeats)
 end)
