@@ -1,3 +1,6 @@
+-- extending capabilities of the hook lib
+-- incredible-gmod.ru
+
 hook._GetTable = hook._GetTable or hook.GetTable
 
 function hook.GetTable(eventName)
