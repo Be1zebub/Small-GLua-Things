@@ -3,7 +3,7 @@
 
 local PLAYER = FindMetaTable("Player")
 
-local SQLStr, sql, hook, SteamID64 = SQLStr, sql, hook, PLAYER.SteamID64
+local SQLStr, sql, hook, SteamID64, pairs = SQLStr, sql, hook, PLAYER.SteamID64, pairs
 
 local CookieCache = {}
 
@@ -50,7 +50,7 @@ function PLAYER:DeleteCookie(key)
 end
 
 hook.Add("PlayerAuthed", "LoadCookies", function(ply)
-	local sid = ply:SteamID64()
+	local sid = SteamID64(ply)
 	CookieCache[sid] = {}
 
 	local data = sql.Query("SELECT * FROM playercookie WHERE SteamID = ".. SQLStr(sid) .." LIMIT 1;")
