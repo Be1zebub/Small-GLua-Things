@@ -7,8 +7,12 @@ local SQLStr, sql, hook, SteamID64, pairs = SQLStr, sql, hook, PLAYER.SteamID64,
 
 local CookieCache = {}
 
-function GetCookies()
-	return CookieCache	
+function GetCookies(ply)
+	if ply then
+		return CookieCache[ply:SteamID64()]
+	else
+		return CookieCache	
+	end
 end
 
 function SetCookie(sid, key, value)
