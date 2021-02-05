@@ -27,7 +27,7 @@ for ClassName, Class in pairs(debug.getregistry()) do
     end
 end
 
-function hook.Once(eventName, identifier, callback)
+function hook.Once(eventName, callback, identifier)
     identifier = identifier or SysTime()
 
     hook.Add(eventName, identifier, function()
