@@ -26,3 +26,12 @@ for ClassName, Class in pairs(debug.getregistry()) do
         end
     end
 end
+
+function hook.Once(eventName, identifier, callback)
+    identifier = identifier or SysTime()
+
+    hook.Add(eventName, identifier, function()
+        hook.Remove(eventName, identifier)
+        callback()
+    end)
+end
