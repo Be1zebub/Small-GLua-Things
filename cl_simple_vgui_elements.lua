@@ -23,7 +23,7 @@ AddProperty(PANEL, "Color")
 
 PANEL.Material = Material("error")
 AddProperty(PANEL, "Material", function(var)
-	if isstring(var)
+	if isstring(var) then
 		return Material(var, "smooth noclamp")
 	end
 
