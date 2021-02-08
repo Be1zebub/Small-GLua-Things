@@ -22,7 +22,13 @@ PANEL.Color = Color(255, 255, 255)
 AddProperty(PANEL, "Color")
 
 PANEL.Material = Material("error")
-AddProperty(PANEL, "Material")
+AddProperty(PANEL, "Material", function(var)
+	if isstring(var)
+		return Material(var, "smooth noclamp")
+	end
+
+	return var
+end)
 
 function PANEL:Paint(w, h)
 	surface.SetDrawColor(self.Color)
