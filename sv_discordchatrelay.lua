@@ -35,7 +35,8 @@ local function ParseJson(json, ...)
 end
 
 
-local function GetAvatar(ply, callback)
+local function GetAvatar(ply, callback, attempts)
+	attempts = attempts or 3
 	local sid = ply:SteamID64()
 
 	if Avatars[sid] then
@@ -51,6 +52,13 @@ local function GetAvatar(ply, callback)
 		},
 		failed = function(error)
 			MsgC(Red, "Steam Avatar API HTTP Error:", White, error, "\n")
+			attempts = attempts - 1
+			if attempts > 0 then
+				GetAvatar(ply, callback, attempts)
+			else
+				Avatars[sid] = "https://i.imgur.com/up9fyXY.png"
+				callback(Avatars[sid])
+			end
 		end,
 		success = function(code, response)
 			local avatar = ParseJson(response, "response", "players", 1, "avatarfull")
