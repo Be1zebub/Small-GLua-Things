@@ -13,10 +13,6 @@ function Benchmark(uid, func, count, onfinish)
         
         if onfinish then onfinish() end
     end)
-    
-    return {
-            Next(
-    }
 end
 
 --[[ EXAMPLE BENCH:
