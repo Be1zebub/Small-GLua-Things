@@ -1,5 +1,5 @@
 local hexadecimal, rgb, hex, index
-local pairs, tonumber = pairs, tonumber
+local ipairs, tonumber = ipairs, tonumber
 local string_sub, string_len, math_fmod, math_floor = string.sub, string.len, math.fmod, math.floor
 
 local Color_Cache = {}
@@ -13,7 +13,7 @@ return function(...)
 
 	hexadecimal = "0x"
 
-	for key, value in pairs(rgb) do
+	for key, value in ipairs(rgb) do
 		hex = ""
 
 		while value > 0 do
@@ -24,7 +24,6 @@ return function(...)
 
 		if string_len(hex) == 0 then
 			hex = "00"
-
 		elseif string_len(hex) == 1 then
 			hex = "0".. hex
 		end
