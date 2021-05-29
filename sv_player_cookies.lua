@@ -67,8 +67,9 @@ hook.Add("PlayerAuthed", "LoadCookies", function(ply)
 		return hook.Run("CookiesLoaded", ply)
 	end
 
+	local cache = CookieCache[sid]
 	for k, v in pairs(data) do
-		CookieCache[sid][v.Key] = v.Value
+		cache[v.Key] = v.Value
 	end
 
 	hook.Run("CookiesLoaded", ply)
