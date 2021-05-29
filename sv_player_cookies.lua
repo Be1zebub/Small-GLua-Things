@@ -29,9 +29,9 @@ function GetCookie(sid, key, default)
 		return temp
 	end
 
-	local val = sql_QueryValue("SELECT `Value` FROM `playercookie` WHERE `SteamID` = ".. SQLStr(sid) .." AND `Key` = ".. SQLStr(key) .." LIMIT 1;")
+	temp = sql_QueryValue("SELECT `Value` FROM `playercookie` WHERE `SteamID` = ".. SQLStr(sid) .." AND `Key` = ".. SQLStr(key) .." LIMIT 1;")
 
-	return val or default
+	return temp or default
 end
 
 function DeleteCookie(sid, key)
