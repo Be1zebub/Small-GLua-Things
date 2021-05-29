@@ -1,5 +1,6 @@
 -- incredible-gmod.ru
 -- Same as PData, but without stupid as fuck 'Unique' ID collisions & with caching
+-- also its optimizated & have non-meta functions that allow you to change data of offline players.
 
 local PLAYER = FindMetaTable("Player")
 
