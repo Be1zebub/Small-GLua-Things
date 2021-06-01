@@ -68,7 +68,7 @@ hook.Add("PlayerAuthed", "LoadCookies", function(ply)
 	local sid = SteamID64(ply)
 	CookieCache[sid] = {}
 
-	local data = sql_Query("SELECT * FROM playercookie WHERE SteamID = ".. SQLStr(sid) .." LIMIT 1;")
+	local data = sql_Query("SELECT * FROM `playercookie` WHERE `SteamID` = ".. SQLStr(sid) ..";")
 
 	if not data then
 		return hook.Run("CookiesLoaded", ply)
