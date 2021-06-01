@@ -2,6 +2,8 @@
 -- Same as PData, but without stupid as fuck 'Unique' ID collisions & with caching
 -- also its optimizated & have non-meta functions that allow you to change data of offline players.
 
+if GetCookies then return end
+
 local PLAYER = FindMetaTable("Player")
 
 local SQLStr, sql, hook, SteamID64, pairs, sql_QueryValue, sql_Query = SQLStr, sql, hook, PLAYER.SteamID64, pairs, sql.QueryValue, sql.Query
