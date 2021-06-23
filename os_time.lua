@@ -32,15 +32,16 @@ cur.day   = function() return os.date("*t").day   end
 cur.month = function() return os.date("*t").month end
 cur.year  = function() return os.date("*t").year  end
 
-cur.__call = function(_, dateData)
-	return old(dateData)	
-end
-
-time.cur = setmetatable({}, cur)
+time.cur = setmetatable(cur, {
+	__call = function(_, dateData)
+		return old(dateData)	
+	end
+})
 
 time.old = old
-time.__call = function(_, dateData)
-	return old(dateData)	
-end
 
-os.time = setmetatable({}, time)
+os.time = setmetatable(time, {
+	__call = function(_, dateData)
+		return old(dateData)	
+	end
+})
