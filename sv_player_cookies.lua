@@ -6,7 +6,7 @@ if GetCookies then return end
 
 local PLAYER = FindMetaTable("Player")
 
-local SQLStr, sql, hook, SteamID64, pairs, sql_QueryValue, sql_Query = SQLStr, sql, hook, PLAYER.SteamID64, pairs, sql.QueryValue, sql.Query
+local SQLStr, sql, hook, SteamID64, pairs, sql_QueryValue, sql_Query, string_find = SQLStr, sql, hook, PLAYER.SteamID64, pairs, sql.QueryValue, sql.Query, string.find
 
 local CookieCache = {}
 
@@ -50,6 +50,16 @@ function ClearCookie(key)
 	return sql_Query("DELETE FROM `playercookie` WHERE `Key` = ".. SQLStr(key) ..";") ~= false
 end
 
+function FindCookie(sid, cback, needle, startPos, noPatterns)
+	if CookieCache[sid] == nil then return end
+
+	for key, val in pairs(CookieCache[sid]) do
+		if string_find(key, needle, startPos, noPatterns) then
+			cback(key, val)
+		end
+	end
+end
+
 local SetCookie, GetCookie, DeleteCookie = SetCookie, GetCookie, DeleteCookie
 
 function PLAYER:SetCookie(key, value)
@@ -62,6 +72,10 @@ end
 
 function PLAYER:DeleteCookie(key)
 	return DeleteCookie(SteamID64(self), key)
+end
+
+function PLAYER:FindCookie(cback, needle, startPos, noPatterns)
+	FindCookie(SteamID64(self), cback, needle, startPos, noPatterns)
 end
 
 hook.Add("PlayerAuthed", "LoadCookies", function(ply)
