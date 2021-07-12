@@ -1,6 +1,7 @@
 -- incredible-gmod.ru
 -- Same as PData, but without stupid as fuck 'Unique' ID collisions & with caching
 -- also its optimizated & have non-meta functions that allow you to change data of offline players.
+-- https://github.com/Be1zebub/Small-GLua-Things/blob/master/sv_player_cookies.lua
 
 if GetCookies then return end
 
