@@ -10,14 +10,14 @@ function http.DownloadMaterial(url, path, callback, retry_count)
 
     local data_path = "data/".. path
     if file.Exists(path, "DATA") then
-        WebImageCache[url] = Material(data_path, "smooth noclamp")
+        WebImageCache[url] = Material(data_path, "smooth mips")
         callback(WebImageCache[url])
     else
         Fetch(url, function(img)
             if img == nil or find(img, "<!DOCTYPE HTML>", 1, true) then return callback(errorMat) end
             
             file.Write(path, img)
-            WebImageCache[url] = Material(data_path, "smooth noclamp")
+            WebImageCache[url] = Material(data_path, "smooth mips")
             callback(WebImageCache[url])
         end, function()
             if retry_count and retry_count > 0 then
