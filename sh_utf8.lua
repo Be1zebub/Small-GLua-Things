@@ -7,6 +7,7 @@ local upper2lower = {["А"]="а",["Б"]="б",["В"]="в",["Г"]="г",["Д"]="д"
 local lower2upper = {}
 for upper, lower in pairs(upper2lower) do lower2upper[lower] = upper end
 
+-- thx to Spar, mt.__index is a beatiful idea
 setmetatable(upper2lower, {__index = string.lower})
 setmetatable(lower2upper, {__index = string.upper})
 
@@ -21,3 +22,4 @@ function utf8.upper(s)
 end
 
 --print(utf8.lower("Привет World #123!"), utf8.upper("Hello Мир #321!"))
+-- output: "привет world #123!", "HELLO МИР #321!"
