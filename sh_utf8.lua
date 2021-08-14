@@ -11,7 +11,7 @@ for upper, lower in pairs(upper2lower) do lower2upper[lower] = upper end
 setmetatable(upper2lower, {__index = string.lower})
 setmetatable(lower2upper, {__index = string.upper})
 
-local pattern, gsub = utf8.charpattern, string.gsub
+local pattern, gsub = utf8.charpattern or "[%z\x01-\x7F\xC2-\xF4][\x80-\xBF]*", string.gsub
 
 function utf8.lower(s)
     return (gsub(s, pattern, upper2lower))
