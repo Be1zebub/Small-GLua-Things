@@ -101,8 +101,8 @@ if SERVER then
 		return DeleteCookie(SteamID64(self), key)
 	end
 
-	function PLAYER:NWCookie(key, val, global)
-		NWCookie(self, key, val, global)
+	function PLAYER:NWCookie(key, default, global)
+		NWCookie(self, key, self:GetCookie(key, default), global)
 	end
 
 	function PLAYER:FindCookie(cback, needle, startPos, noPatterns)
