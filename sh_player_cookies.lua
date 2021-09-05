@@ -16,6 +16,7 @@ if SERVER then
 
 	local SQLStr, sql, hook, pairs, sql_QueryValue, sql_Query, string_find, EntIndex = SQLStr, sql, hook, pairs, sql.QueryValue, sql.Query, string.find, PLAYER.EntIndex
 	local net_Start, net_WriteString, net_WriteType, net_WriteBool, net_WriteUInt, net_Send, net_Broadcast = net.Start, net.WriteString, net.WriteType, net.WriteBool, net.WriteUInt, net.Send, net.Broadcast
+	local empty_func = function(a) return a end
 
 	local function NWCookie(ply, key, val, global)
 		net_Start("incredible-gmod.ru/cookie_lib")
@@ -101,8 +102,9 @@ if SERVER then
 		return DeleteCookie(SteamID64(self), key)
 	end
 
-	function PLAYER:NWCookie(key, default, global)
-		NWCookie(self, key, self:GetCookie(key, default), global)
+	function PLAYER:NWCookie(key, default, global, totype)
+		totype = totype or empty_func
+		NWCookie(self, key, totype(self:GetCookie(key, default)), global)
 	end
 
 	function PLAYER:FindCookie(cback, needle, startPos, noPatterns)
