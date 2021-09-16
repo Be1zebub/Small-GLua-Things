@@ -4,7 +4,7 @@ local menu
 local pages = {}
 local itemsPerPage = 5
 
-for page = 1, 3 do -- generate empty pages for debug
+for page = 1, 3 do -- generate empty pages for debug (you should get real pages from the server or from somewhere else)
 	pages[page] = {}
 
 	for item = 1, itemsPerPage do
