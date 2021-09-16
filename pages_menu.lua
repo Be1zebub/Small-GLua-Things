@@ -4,13 +4,13 @@ local menu
 local pages = {}
 local itemsPerPage = 5
 
-for page = 1, 3 do -- generate empty pages for debug (you should get real pages from the server or from somewhere else)
-	pages[page] = {}
+for page_id = 1, 3 do -- generate empty pages for debug (you should get real pages from the server or from somewhere else)
+	pages[page_id] = {}
 
-	for item = 1, itemsPerPage do
-		pages[page][item] = {
+	for item_id = 1, itemsPerPage do
+		pages[page_id][item_id] = {
 			somePageData = "just a test",
-			uid = page .."_".. item,
+			uid = page_id .."_".. item_id,
 			debug_uid = true
 		}
 	end
