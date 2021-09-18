@@ -28,4 +28,8 @@ function NewAnimation(length, ease, cback, onend, delay)
             hook.Remove("Think", h_name)
         end
     end)
+    
+    return function()
+    	hook.Remove("Think", h_name)
+    end
 end
