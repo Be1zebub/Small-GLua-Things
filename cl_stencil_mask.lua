@@ -1,7 +1,7 @@
 -- incredible-gmod.ru
 -- thx to stencil tutorial: https://github.com/Lexicality/stencil-tutorial
 
-function draw.DrawMask(domask, dodraw)
+local function Mask(domask, dodraw, stencilCompareFunction)
 	render.ClearStencil()
 	render.SetStencilEnable(true)
 
@@ -21,7 +21,7 @@ function draw.DrawMask(domask, dodraw)
 	render.SetStencilFailOperation(STENCILOPERATION_ZERO)
 	render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
 	render.SetStencilZFailOperation(STENCILOPERATION_ZERO)
-	render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
+	render.SetStencilCompareFunction(stencilCompareFunction)
 	render.SetStencilReferenceValue(1)
 
 	dodraw()
@@ -30,31 +30,10 @@ function draw.DrawMask(domask, dodraw)
 	render.ClearStencil()
 end
 
+function draw.DrawMask(domask, dodraw)
+	Mask(domask, dodraw, STENCILCOMPARISONFUNCTION_EQUAL)
+end
+
 function draw.DrawMaskInverted(domask, dodraw)
-	render.ClearStencil()
-	render.SetStencilEnable(true)
-
-	render.SetStencilWriteMask(1)
-	render.SetStencilTestMask(1)
-
-	render.SetStencilFailOperation(STENCILOPERATION_REPLACE)
-	render.SetStencilPassOperation(STENCILOPERATION_ZERO)
-	render.SetStencilZFailOperation(STENCILOPERATION_ZERO)
-	render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_NEVER)
-	render.SetStencilReferenceValue(1)
-
-	draw.NoTexture()
-	surface.SetDrawColor(255, 255, 255, 255)
-	domask()
-
-	render.SetStencilFailOperation(STENCILOPERATION_ZERO)
-	render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
-	render.SetStencilZFailOperation(STENCILOPERATION_ZERO)
-	render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_NOTEQUAL)
-	render.SetStencilReferenceValue(1)
-
-	dodraw()
-
-	render.SetStencilEnable(false)
-	render.ClearStencil()
+	Mask(domask, dodraw, STENCILCOMPARISONFUNCTION_NOTEQUAL)
 end
