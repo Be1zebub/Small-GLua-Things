@@ -4,12 +4,22 @@
 -- Also, since September 9 2021, lib has a networking functionality. you dont need netvars for simple things anymore.
 -- https://github.com/Be1zebub/Small-GLua-Things/blob/master/sv_player_cookies.lua
 
+-- usage example: https://github.com/Be1zebub/Small-GLua-Things/blob/master/sh_player_cookies_debug.lua
+
 if GetCookies then return end
 
 local PLAYER, ENTITY = FindMetaTable("Player"), FindMetaTable("Entity")
 local SteamID64 = PLAYER.SteamID64
 
 local CookieCache = {}
+
+function GetCookies(ply)
+	if ply then
+		return CookieCache[SteamID64(ply)] or {}
+	else
+		return CookieCache	
+	end
+end
 
 if SERVER then
 	util.AddNetworkString("incredible-gmod.ru/cookie_lib")
@@ -28,14 +38,6 @@ if SERVER then
 			net_Broadcast()
 		else
 			net_Send(ply)
-		end
-	end
-
-	function GetCookies(ply)
-		if ply then
-			return CookieCache[SteamID64(ply)]
-		else
-			return CookieCache	
 		end
 	end
 
@@ -135,7 +137,7 @@ if SERVER then
 else
 	local net_ReadString, net_ReadType, net_ReadBool, net_ReadUInt, LocalPlayer, IsValid, Entity = net.ReadString, net.ReadType, net.ReadBool, net.ReadUInt, LocalPlayer, IsValid, Entity
 
-	local CookieCacheAnotherPlayers = {}
+	local localSID, localPlayer
 
 	local k, v, ply, sid
 	net.Receive("incredible-gmod.ru/cookie_lib", function()
@@ -146,26 +148,24 @@ else
 			if IsValid(ply) == false then return end
 			sid = SteamID64(ply)
 
-			CookieCacheAnotherPlayers[sid] = CookieCacheAnotherPlayers[sid] or {}
-			CookieCacheAnotherPlayers[sid][k] = v
+			CookieCache[sid] = CookieCache[sid] or {}
+			CookieCache[sid][k] = v
 		else
-			CookieCache[k] = v
+			if localSID == nil then
+				localPlayer = LocalPlayer()
+				localSID = localPlayer:SteamID64()
+			end
+
+			CookieCache[localSID] = CookieCache[localSID] or {}
+			CookieCache[localSID][k] = v
 		end
 	end)
 
-	function GetCookies(ply)
-		if ply then
-			return CookieCacheAnotherPlayers[SteamID64(ply)]
-		else
-			return CookieCache	
-		end
-	end
-
-	function GetCookie(key, default, ply)
-		return GetCookies(ply)[key] or default
+	function GetCookie(ply, key, default)
+		return GetCookies(ply or localPlayer)[key] or default
 	end
 
 	function PLAYER:GetCookie(key, default)
-		return GetCookie(self ~= LocalPlayer() and self or nil, key, default)
+		return GetCookie(self, key, default)
 	end
 end
