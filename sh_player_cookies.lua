@@ -6,7 +6,7 @@
 
 if GetCookies then return end
 
-local PLAYER = FindMetaTable("Player")
+local PLAYER, ENTITY = FindMetaTable("Player"), FindMetaTable("Entity")
 local SteamID64 = PLAYER.SteamID64
 
 local CookieCache = {}
@@ -14,7 +14,7 @@ local CookieCache = {}
 if SERVER then
 	util.AddNetworkString("incredible-gmod.ru/cookie_lib")
 
-	local SQLStr, sql, hook, pairs, sql_QueryValue, sql_Query, string_find, EntIndex = SQLStr, sql, hook, pairs, sql.QueryValue, sql.Query, string.find, PLAYER.EntIndex
+	local SQLStr, sql, hook, pairs, sql_QueryValue, sql_Query, string_find, EntIndex = SQLStr, sql, hook, pairs, sql.QueryValue, sql.Query, string.find, ENTITY.EntIndex
 	local net_Start, net_WriteString, net_WriteType, net_WriteBool, net_WriteUInt, net_Send, net_Broadcast = net.Start, net.WriteString, net.WriteType, net.WriteBool, net.WriteUInt, net.Send, net.Broadcast
 	local empty_func = function(a) return a end
 
