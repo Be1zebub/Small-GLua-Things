@@ -153,7 +153,7 @@ else
 		else
 			if localSID == nil then
 				localPlayer = LocalPlayer()
-				localSID = localPlayer:SteamID64()
+				localSID = SteamID64(localPlayer)
 			end
 
 			CookieCache[localSID] = CookieCache[localSID] or {}
