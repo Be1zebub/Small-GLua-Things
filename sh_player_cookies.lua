@@ -113,7 +113,7 @@ if SERVER then
 		FindCookie(SteamID64(self), cback, needle, startPos, noPatterns)
 	end
 
-	hook.Add("PlayerAuthed", "LoadCookies", function(ply)
+	hook.Add("PlayerInitialSpawn", "LoadCookies", function(ply)
 		local sid = SteamID64(ply)
 		CookieCache[sid] = {}
 
