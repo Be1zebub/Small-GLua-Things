@@ -1,6 +1,6 @@
 local fcache = {
   _VERSION      = 1.0,
-  _URL 			= "https://github.com/Be1zebub/Small-GLua-Things/blob/master/fcache.lua",
+  _URL 		= "https://github.com/Be1zebub/Small-GLua-Things/blob/master/fcache.lua",
   _LICENSE      = [[
 	MIT LICENSE
 	Copyright (c) 2021 incredible-gmod.ru
