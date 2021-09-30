@@ -1,3 +1,5 @@
+-- just 4 fun
+
 local types = {
     ["string"] = "",
     ["number"] = 0,
@@ -14,4 +16,4 @@ setmetatable(_G, {
 })
 
 Test = false
-print(Test)
+print(Test) -- true
