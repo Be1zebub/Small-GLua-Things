@@ -1,23 +1,24 @@
 -- incredible-gmod.ru
 -- coroutine http lib
 
-function http.CoroFetch(url, headers)
-	local running = coroutine.running()
-	local resume = function(...) coroutine.resume(running, ...) end
-	
-	 http.Fetch(url, resume, nil, headers)
+function MakeCoroFunc(func)
+	return function(...)
+		local running = coroutine.running()
+		local resume = function(...) coroutine.resume(running, ...) end
+		
+		func(resume, ...)
 
-	return coroutine.yield()
+		return coroutine.yield()
+	end
 end
 
-function http.CoroPost(url, params, headers)
-	local running = coroutine.running()
-	local resume = function(...) coroutine.resume(running, ...) end
-	
-	 http.Post(url, params, resume, nil, headers)
+http.CoroFetch = MakeCoroFunc(function(resume, url, headers)
+	http.Fetch(url, resume, nil, headers)
+end)
 
-	return coroutine.yield()
-end
+http.CoroPost = MakeCoroFunc(function(resume, url, params, headers)
+	http.Post(url, params, resume, nil, headers)
+end)
 
 -- Usage example:
 coroutine.wrap(function()
