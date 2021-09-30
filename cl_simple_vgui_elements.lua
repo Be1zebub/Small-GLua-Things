@@ -1,34 +1,44 @@
 -- incredible-gmod.ru
 
+function ColorConstruct(r, g, b, a)
+	if IsColor(r) then
+		return r
+	end
+
+	return Color(r, g, b, a)
+end
+
 function AddProperty(self, name, construct)
-	self["Set".. name] = function(me, ...)
-		if construct then
+	if construct then
+		self["Set".. name] = function(me, ...)
 			me[name] = construct(...)
-		else
-			me[name] = ...
 		end
-		return me
+	else
+		self["Set".. name] = function(me, val)
+			me[name] = val
+		end
 	end
 
 	self["Get".. name] = function(me)
 		return me[name]
+	end
+
+	if #{...} > 0 and not self[name] then
+		self[name] = construct and construct(...) or ...
 	end
 end
 
 
 local PANEL = {}
 
-PANEL.Color = Color(255, 255, 255)
-AddProperty(PANEL, "Color")
-
-PANEL.Material = Material("error")
+AddProperty(PANEL, "Color", ColorConstruct, 255, 255, 255)
 AddProperty(PANEL, "Material", function(var)
 	if isstring(var) then
-		return Material(var, "smooth noclamp")
+		return Material(var, "smooth mips")
 	end
 
 	return var
-end)
+end, "error")
 
 function PANEL:Paint(w, h)
 	surface.SetDrawColor(self.Color)
@@ -40,8 +50,7 @@ vgui.Register("Material", PANEL, "EditablePanel")
 
 local PANEL = {}
 
-PANEL.Color = Color(255, 255, 255)
-AddProperty(PANEL, "Color")
+AddProperty(PANEL, "Color", ColorConstruct, 255, 255, 255)
 
 function PANEL:Paint(w, h)
 	surface.SetDrawColor(self.Color)
@@ -52,14 +61,9 @@ vgui.Register("Rect", PANEL, "EditablePanel")
 
 local PANEL = {}
 
-PANEL.Text = "Panel:SetText"
-AddProperty(PANEL, "Text")
-
-PANEL.Font = "DermaDefault"
-AddProperty(PANEL, "Font")
-
-PANEL.Color = Color(255, 255, 255)
-AddProperty(PANEL, "Color")
+AddProperty(PANEL, "Text", tostring, "")
+AddProperty(PANEL, "Font", tostring, DermaDefault)
+AddProperty(PANEL, "Color", ColorConstruct, 255, 255, 255)
 
 function PANEL:Paint(w, h)
 	draw.SimpleText(self:GetText(), self:GetFont(), self.TextX, self.TextY, self:GetColor(), self.TextAlignX, self.TextAlignY)
