@@ -62,33 +62,43 @@ PANEL.Color = Color(255, 255, 255)
 AddProperty(PANEL, "Color")
 
 function PANEL:Paint(w, h)
-	draw.SimpleText(self.Text, self.Font, 0, 0, self.Color)
+	draw.SimpleText(self:GetText(), self:GetFont(), self.TextX, self.TextY, self:GetColor(), self.TextAlignX, self.TextAlignY)
 end
 
 function PANEL:SetAlign(xalign, yalign)
-	surface.SetFont(self.Font)
-	local w, h = surface.GetTextSize(self.Text)
+	local pw, ph = self:GetParent():GetSize()
+
+	surface.SetFont(self:GetFont())
+	local w, h = surface.GetTextSize(self:GetText())
 
 	local x, y = self:GetPos()
 
 	if xalign == TEXT_ALIGN_CENTER then
-		x = x - w / 2
+		x = pw * 0.5 + w * 0.5
 	elseif xalign == TEXT_ALIGN_RIGHT then
-		x = x - w
+		x = pw - w
 	end
 
 	if yalign == TEXT_ALIGN_CENTER then
-		y = y - h / 2
+		y = ph * 0.5 - h * 0.5
 	elseif yalign == TEXT_ALIGN_BOTTOM then
-		y = y - h
+		y = ph - h
 	end
 
-	self:SetPos(math.ceil(x), math.ceil(y))
+	local x, y = math.ceil(x), math.ceil(y)
+	self:SetPos(x, y)
+	self.AlignX, self.AlignY = xalign, yalign
+
+	return x, y
 end
 
-function PANEL:SizeToContents()
-	surface.SetFont(self.Font)
-	self:SetSize(surface.GetTextSize(self.Text))
+function PANEL:SizeToContents(xAdd, hAdd)
+	surface.SetFont(self:GetFont())
+	local w, h = surface.GetTextSize(self:GetText())
+	w, h = w + (xAdd or 0), h + (hAdd or 0)
+
+	self:SetSize(w, h)
+	return w, h
 end
 
 vgui.Register("Text", PANEL, "EditablePanel")
