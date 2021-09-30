@@ -24,7 +24,7 @@ local fcache = {
 }
 
 local function cacheGet(node, args)
-	if SysTime() <= node.time then
+	if CurTime() <= node.time then
 		for i = 1, #args do
 			node = node.child[args[i]]
 			if node == nil then return end
@@ -53,7 +53,7 @@ local unpack = unpack or table.unpack -- lua 5.3 compatibility
 local function work(func, time, cache)
 	time = time or 30
 	cache = cache or {
-		time = SysTime() + time
+		time = CurTime() + time
 	}
 
 	return function(...)
