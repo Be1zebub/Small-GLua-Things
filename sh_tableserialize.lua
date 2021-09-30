@@ -1,4 +1,7 @@
 -- Example available on: https://glot.io/snippets/fqw1us9t1q
+-- Converts lua table to raw text.
+-- Made for printing tables to the console on other runtime environments than the glua.
+-- It can also be used as json alt.
 
 local strrepeat, pairs, type, format, tostring, print = string.rep, pairs, type, string.format, tostring, print
 
@@ -36,6 +39,7 @@ function table.Print(tbl, indent)
     end
 end
 
+if PrintTable then return end
 function PrintTable(t) -- GLua like but on pure lua
     print(table.ToPlain(t))
 end
