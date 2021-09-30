@@ -1,4 +1,5 @@
 -- incredible-gmod.ru
+-- string.find + levenshtein distance
 
 local insert, byte, min = table.insert, string.byte, math.min
 local lower, gsub, find, ipairs = string.lower, string.gsub, string.find, ipairs
