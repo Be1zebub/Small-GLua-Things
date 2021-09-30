@@ -21,3 +21,11 @@ function util.RegisterEntity(class, callback)
 
     ENT = nil
 end
+
+function util.LoadEntity(path)
+    local class = path:match("([^/]+)$"):match("(.+)%..+")
+    util.RegisterEntity(class, function()
+        AddCSLuaFile(path)
+        include(path)
+    end)
+end
