@@ -23,12 +23,7 @@ local fcache = {
   ]]
 }
 
-local cache = {}
-
-local function cacheGet(name, args)
-	local node = cache[name]
-	if node == nil then return end
-
+local function cacheGet(node, args)
 	if SysTime() <= node.time then
 		for i = 1, #args do
 			node = node.child[args[i]]
@@ -37,15 +32,11 @@ local function cacheGet(name, args)
 
 		return node.results
 	else
-		cache[name] = nil
+		table.Empty(node)
 	end
 end
 
-local function cacheMake(name, args, results, time)
-	if cache[name] == nil then cache[name] = {} end
-	local node = cache[name]
-	node.time = SysTime() + time
-
+local function cacheMake(node, args, results, time)
 	local arg
 	for i = 1, #args do
 		arg = args[i]
@@ -59,17 +50,19 @@ end
 
 local unpack = unpack or table.unpack -- lua 5.3 compatibility
 
-local function work(func, time)
+local function work(func, time, cache)
 	time = time or 30
+	cache = cache or {
+		time = SysTime() + time
+	}
 
-	local name = tostring(func) .."/".. time .."/".. debug.traceback()
 	return function(...)
 		local args = {...}
 
-		local results = cacheGet(name, args)
+		local results = cacheGet(cache, args)
 		if results == nil then
 			results = {func(...)}
-			cacheMake(name, args, results, time)
+			cacheMake(cache, args, results, time)
 		end
 
 		return unpack(results)
@@ -79,9 +72,6 @@ end
 local mt = {}
 mt.__call = function(_, func, time)
 	return work(func, time)
-end
-mt.getTable = function()
-	return cache
 end
 
 setmetatable(fcache, mt)
