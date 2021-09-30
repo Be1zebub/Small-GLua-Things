@@ -1,4 +1,5 @@
--- https://github.com/SuperiorServers/dash/blob/a0d4347371503b1577d72bed5f6df46d48909f56/lua/dash/thirdparty/pon/pon.lua
+-- license https://github.com/SuperiorServers/dash/blob/a0d4347371503b1577d72bed5f6df46d48909f56/LICENSE
+-- src https://github.com/SuperiorServers/dash/blob/a0d4347371503b1577d72bed5f6df46d48909f56/lua/dash/thirdparty/pon/pon.lua
 
 --[[
 
