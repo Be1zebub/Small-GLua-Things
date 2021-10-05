@@ -1,4 +1,4 @@
-function util.RegisterEntity(class, callback)
+function util.RegisterEntity(class, callback, path)
     ENT = {}
 
     ENT.Base = "base_entity"
@@ -9,12 +9,12 @@ function util.RegisterEntity(class, callback)
 
     callback(ENT)
 
-    AddCSLuaFile("cl.lua")
+    pcall(AddCSLuaFile, path and path .."cl.lua" or "cl.lua")
 
     if SERVER then
-        include("sv.lua")
+        pcall(include, path and path .."sv.lua" or "sv.lua")
     else
-        include("cl.lua")
+        pcall(include, path and path .."cl.lua" or "cl.lua")
     end
 
     scripted_ents.Register(ENT, class)
@@ -27,5 +27,5 @@ function util.LoadEntity(path)
     util.RegisterEntity(class, function()
         AddCSLuaFile(path)
         include(path)
-    end)
+    end, path:match(".+/"))
 end
