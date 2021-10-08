@@ -1,5 +1,5 @@
 local Loader = {
-	_VERSION = 1.0,
+	_VERSION = 1.1,
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/loader.lua",
 	_LICENSE = [[
 		MIT LICENSE
@@ -43,7 +43,7 @@ function Loader:include(path, realm)
 
 	if file.Find(path, "LUA") then
 		if self._DEBUG then
-			print(realm .." > ".. path)
+			print("\t".. realm .." > ".. path)
 		end
 
 		return worker(path)
@@ -68,6 +68,10 @@ function Loader:IncludeDir(dir, recursive, realm, storage, base_path)
     local path = dir .."/"
     local files, folders = file.Find(path .."*", "LUA")
 
+    if self._DEBUG then
+		print(dir .." (".. (realm or "?") ..")")
+	end
+
     for _, f in ipairs(files) do
     	if storage then
     		storage[self:RemoveExtension(recursive and (path:sub(#base_path + 2) .. f) or f)] = self:Include(path .. f, realm)
@@ -76,7 +80,7 @@ function Loader:IncludeDir(dir, recursive, realm, storage, base_path)
         end
     end
 
-    if recursive == nil then return end
+    if not recursive then return end
 
     for _, f in ipairs(folders) do
         self:IncludeDir(dir .."/".. f, recursive, realm, storage, base_path)
@@ -88,13 +92,13 @@ function Loader:AddCsDir(dir, recursive)
     local files, folders = file.Find(path .."*", "LUA")
 
     for _, f in ipairs(files) do
-        AddCSLuaFile(path .. f)
+        pcall(AddCSLuaFile, path .. f)
     end
 
-    if recursive == nil then return end
+    if not recursive then return end
 
     for _, f in ipairs(folders) do
-        self:IncludeDir(path .. f, true)
+        self:AddCsDir(path .. f, true)
     end
 end
 
