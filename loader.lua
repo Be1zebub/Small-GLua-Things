@@ -25,13 +25,13 @@ local Loader = {
 }
 
 local include_realm = {
-    sv = SERVER and include or function() end,
-    cl = SERVER and AddCSLuaFile or include
+	sv = SERVER and include or function() end,
+	cl = SERVER and AddCSLuaFile or include
 }
 
 include_realm.sh = function(f)
-    AddCSLuaFile(f)
-    return include(f)
+	AddCSLuaFile(f)
+	return include(f)
 end
 
 function Loader:include(path, realm, _lvl)
@@ -51,7 +51,7 @@ function Loader:include(path, realm, _lvl)
 end
 
 function Loader:GetFilename(path)
-    return path:match("[^/]+$")
+	return path:match("[^/]+$")
 end
 
 function Loader:RemoveExtension(path)
@@ -71,51 +71,51 @@ function Loader:IncludeDir(dir, recursive, realm, storage, _base_path_len, _lvl)
 	_base_path_len = _base_path_len or #dir + 2
 	_lvl = _lvl or 1
 
-    local path = dir .."/"
-    local files, folders = file.Find(path .."*", "LUA")
+	local path = dir .."/"
+	local files, folders = file.Find(path .."*", "LUA")
 
-    if self._DEBUG and is_client[realm] ~= false then
+	if self._DEBUG and is_client[realm] ~= false then
 		print(string.rep("\t", _lvl - 1) .."Loader:IncludeDir(".. (realm or "?") .. (recursive and ", recursive" or "") ..") > ".. dir)
 	end
 
-    for _, f in ipairs(files) do
-    	if storage then
-    		storage[self:RemoveExtension(recursive and (path:sub(_base_path_len) .. f) or f)] = self:Include(path .. f, realm, _lvl)
-    	else
-        	self:Include(path .. f, realm, _lvl)
-        end
-    end
+	for _, f in ipairs(files) do
+		if storage then
+			storage[self:RemoveExtension(recursive and (path:sub(_base_path_len) .. f) or f)] = self:Include(path .. f, realm, _lvl)
+		else
+			self:Include(path .. f, realm, _lvl)
+		end
+	end
 
-    if not recursive then return end
+	if not recursive then return end
 
-    for _, f in ipairs(folders) do
-        self:IncludeDir(dir .."/".. f, recursive, realm, storage, _base_path_len, _lvl + 1)
-    end
+	for _, f in ipairs(folders) do
+		self:IncludeDir(dir .."/".. f, recursive, realm, storage, _base_path_len, _lvl + 1)
+	end
 end
 
 function Loader:AddCsDir(dir, recursive, _lvl)
 	_lvl = _lvl or 1
 
-    local path = dir .."/"
-    local files, folders = file.Find(path .."*", "LUA")
+	local path = dir .."/"
+	local files, folders = file.Find(path .."*", "LUA")
 
-    if self._DEBUG then
+	if self._DEBUG then
 		print(string.rep("\t", _lvl - 1) .."Loader:AddCsDir(".. (recursive and "recursive" or "") ..") > ".. dir)
 	end
 
-    for _, f in ipairs(files) do
-    	if self._DEBUG then
+	for _, f in ipairs(files) do
+		if self._DEBUG then
 			print(string.rep("\t", _lvl) .." ".. path .. f)
 		end
 
-        pcall(AddCSLuaFile, path .. f)
-    end
+		pcall(AddCSLuaFile, path .. f)
+	end
 
-    if not recursive then return end
+	if not recursive then return end
 
-    for _, f in ipairs(folders) do
-        self:AddCsDir(path .. f, true, _lvl + 1)
-    end
+	for _, f in ipairs(folders) do
+		self:AddCsDir(path .. f, true, _lvl + 1)
+	end
 end
 
 Loader.__index = Loader
