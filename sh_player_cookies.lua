@@ -1,10 +1,12 @@
 -- incredible-gmod.ru
+-- https://github.com/Be1zebub/Small-GLua-Things/blob/master/sh_player_cookies.lua
+
 -- Same as PData, but without stupid as fuck 'Unique' ID collisions & with caching
 -- also its optimizated & have non-meta functions that allow you to change data of offline players.
 -- Also, since September 9 2021, lib has a networking functionality. you dont need netvars for simple things anymore.
--- https://github.com/Be1zebub/Small-GLua-Things/blob/master/sv_player_cookies.lua
 
 -- usage example: https://github.com/Be1zebub/Small-GLua-Things/blob/master/sh_player_cookies_debug.lua
+-- non global version: https://github.com/Be1zebub/Small-GLua-Things/blob/master/cookies.lua (does not create global and meta functions, returns lib functions in table)
 
 if GetCookies then return end
 
