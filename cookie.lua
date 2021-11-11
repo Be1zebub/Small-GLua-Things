@@ -151,10 +151,10 @@ if SERVER then
 			FindCookie = player_FindCookie
 		},
 		MakeMeta = function()
-			PLAYER.SetCookie = player_SetCookie,
-			PLAYER.GetCookie = player_GetCookie,
-			PLAYER.DeleteCookie = player_DeleteCookie,
-			PLAYER.NWCookie = player_NWCookie,
+			PLAYER.SetCookie = player_SetCookie
+			PLAYER.GetCookie = player_GetCookie
+			PLAYER.DeleteCookie = player_DeleteCookie
+			PLAYER.NWCookie = player_NWCookie
 			PLAYER.FindCookie = player_FindCookie
 		end
 	}
