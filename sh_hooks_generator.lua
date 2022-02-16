@@ -1,7 +1,7 @@
 -- idk who might need it, but:
 -- incredible-gmod.ru
 
-if hook.__call ~= nil then return end
+if not (debug.getmetatable(hook) and debug.getmetatable(hook).__call) then return end
 
 setmetatable(hook, {__call = function(self, v)
     return {
