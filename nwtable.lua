@@ -172,6 +172,8 @@ setmetatable(NWTable, {__call = function(_, uid)
 	return setmetatable(instance, mt)
 end})
 
+return NWTable
+
 --[[ Examples:
 local money = NWTable("Money")
 :Write(net.WriteUInt, 32, SERVER)
