@@ -65,7 +65,7 @@ setmetatable(NWTable, {__call = function(_, uid)
 				settings.WriteKey.write(k, settings.WriteKey.opts)
 				settings.Write.write(v, settings.Write.opts)
 			if SERVER then
-				(settings.LocalPlayer and net.Send or net.Broadcast)(k)
+				((settings.LocalPlayer and net.Send) or (settings.Filter and settings.BoradcastFilter()) or net.Broadcast)(k)
 			else
 				net.SendToServer()
 			end
@@ -74,6 +74,11 @@ setmetatable(NWTable, {__call = function(_, uid)
 
 	function mt:GetSettings()
 		return settings
+	end
+
+	function mt:BoradcastFilter(fn)
+		settings.BoradcastFilter = fn
+		return self
 	end
 
 	function mt:LocalPlayer()
@@ -217,7 +222,7 @@ if CLIENT then
 		if LocalPlayer():IsMayor() == false or index < 1 or index > 7 or law_phrase:len() > 512 then return false end
 
 		if cooldown > CurTime() then return false end
-		cooldown = CurTime() + 5 
+		cooldown = CurTime() + 5
 
 		laws[index] = law_phrase
 		return true
