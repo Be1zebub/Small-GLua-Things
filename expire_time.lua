@@ -34,7 +34,7 @@ local function FormatExpireTime(time, precise)
 
 		if time < week then
 			t = math.floor(time / day)
-			return t ..  pluralize(е, {" день", " дня", " дней"})
+			return t ..  pluralize(t, {" день", " дня", " дней"})
 		end
 
 		if time < year then
