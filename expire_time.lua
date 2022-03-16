@@ -15,34 +15,41 @@ local function FormatExpireTime(time, precise)
 	if precise then
 		return expire_times[time] or tostring(time)
 	else
-		if time <= 0 or time == nil then return "несколько секунд" end
+		if time <= 0 or time == nil then return end
 
 		if time < min then
 			t = math.floor(time)
-			return t .. pluralize(t, {"секунда", "секунды", "секунд"})
+			return t .. pluralize(t, {" секунда", " секунды", " секунд"})
 		end
 
 		if time < hour then
 			t = math.floor(time / min)
-			return t .. pluralize(t, {"минута", "минуты", "минут"})
+			return t .. pluralize(t, {" минута", " минуты", " минут"})
 		end
 
 		if time < day then
 			t = math.floor(time / hour)
-			return t .. pluralize(t, {"час", "часа", "часов"})
+			return t .. pluralize(t, {" час", " часа", " часов"})
 		end
 
 		if time < week then
 			t = math.floor(time / day)
-			return t ..  pluralize(е, {"день", "дня", "дней"})
+			return t ..  pluralize(е, {" день", " дня", " дней"})
 		end
 
 		if time < year then
 			t = math.floor(time / week)
-			return t .. pluralize(t, {"неделя", "недели", "недель"})
+			return t .. pluralize(t, {" неделя", " недели", " недель"})
 		end
 
 		t = math.floor(time / year)
-		return t .. pluralize(t, {"год", "года", "лет"})
+		return t .. pluralize(t, {" год", " года", " лет"})
 	end
 end
+
+--[[
+5 минут
+1 минута
+3 года
+7 недель
+]]--
