@@ -24,6 +24,9 @@ local XML = {
 }
 XML.__index = XML
 
+-- todo:
+-- 1. add XML:Parse (https://github.com/manoelcampos/xml2lua fork) - unfortunately it currently does not support void elements https://github.com/manoelcampos/xml2lua/issues/78
+
 function XML:New(tag, attributes, isvoid, obj) -- void elements cant have children (since theres no end tag) example: <img src="xml.png">
 	attributes = attributes or {}
 
