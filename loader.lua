@@ -3,7 +3,7 @@ local Loader = {
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/loader.lua",
 	_LICENSE = [[
 		MIT LICENSE
-		Copyright (c) 2022 incredible-gmod.ru
+		Copyright (c) 2021 incredible-gmod.ru
 		Permission is hereby granted, free of charge, to any person obtaining a
 		copy of this software and associated documentation files (the
 		"Software"), to deal in the Software without restriction, including
@@ -60,7 +60,7 @@ function Loader:GetFilenameWithExt(path)
 	return path:match("([%w_]*).lua")
 end
 
-function Loader:RemoveExtn(path)
+function Loader:RemoveExt(path)
 	return path:match("(.+)%..+")
 end
 
@@ -143,19 +143,20 @@ end
 
 if SERVER then
 	function Loader:ResourceAdd(dir, recurse, pattern)
-		local files = file.Find(dir .. (pattern and ("/".. pattern) or "/*"), "GAME")
+		local files, folders = file.Find(dir .. (pattern and ("/".. pattern) or "/*"), "GAME")
 
 		for i, fname in ipairs(files) do
-	        resource.AddSingleFile(dir .."/".. fname)
-	    end
+			resource.AddSingleFile(dir .."/".. fname)
+		end
 
-	    if recurse then
-	        for i, fname in ipairs(folders) do
-	            self:ResourceAdd(dir .."/".. fname, recurse, pattern)
-	        end
-	    end
+		if recurse then
+			for i, subdir in ipairs(folders) do
+				self:ResourceAdd(dir .."/".. subdir, recurse, pattern)
+			end
+		end
 	end
 end
 
 Loader.__index = Loader
 return Loader
+
