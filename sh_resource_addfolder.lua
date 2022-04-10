@@ -1,17 +1,17 @@
 -- incredible-gmod.ru
 
-function resource.AddFolder(name, recurse)
-    local files, folders = file.Find(name .."/*", "GAME")
+function resource.AddFolder(dir, recurse, pattern)
+	local files, folders = file.Find(dir .. (pattern and ("/".. pattern) or "/*"), "GAME")
 
-    for i, fname in ipairs(files) do
-        resource.AddSingleFile(name .."/".. fname)
-    end
+	for i, fname in ipairs(files) do
+		resource.AddSingleFile(dir .."/".. fname)
+	end
 
-    if recurse then
-        for i, fname in ipairs(folders) do
-            resource.AddFolder(name .."/".. fname, recurse)
-        end
-    end
+	if recurse then
+		for i, subdir in ipairs(folders) do
+			resource.AddFolder(dir .."/".. subdir, recurse, pattern)
+		end
+	end
 end
 
 --[[ Пример:
