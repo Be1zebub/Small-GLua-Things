@@ -71,7 +71,7 @@ function http.PrepareUpload(content, filename) -- returns headers, prepared cont
 	}, data
 end
 
---[[
+--[[ tested on api.vk.com (photos.getWallUploadServer method)
 	local image = file.Read("/home/me.jpg")
 	local headers, content = http.PrepareUpload(image, "me.jpg")
 	local succ, res, result = pcall(http.request, "POST", "https://api.incredible-gmod.ru/upload", headers, content)
