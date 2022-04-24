@@ -5,7 +5,7 @@ local format, char, tonumber = string.format, string.char, tonumber
 
 local http = http or {} -- path or create new lib
 
-function http.Encode(str) -- encode query
+function http.Encode(str) -- encode URI https://en.wikipedia.org/wiki/Percent-encoding
 	return (str:gsub("[^%w _~%.%-]", function(char)
 		return format("%%%02X", char:byte())
 	end):gsub(" ", "+"))
@@ -16,7 +16,7 @@ end
 	  > https://google.it/search?q=incredible+gmod+%D0%B2%D0%B0%D0%BD+%D0%BB%D0%BE%D0%B2+%3C3
 ]]--
 
-function http.Decode(str) -- decode query
+function http.Decode(str) -- decode URI https://en.wikipedia.org/wiki/Percent-encoding
 	return (str:gsub("+", " "):gsub("%%(%x%x)", function(c)
 		return char(tonumber(c, 16))
 	end))
