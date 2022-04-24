@@ -58,16 +58,17 @@ end
 	  > ?serverid=1&invoiceid=591278392451
 ]]--
 
+local format = "--%s\r\n%s\r\n%s\r\n--%s--\r\n"
+
 function http.PrepareUpload(content, filename) -- returns headers, prepared content
 	local boundary = "fboundary".. math.random(1, 100)
 	local header_bound = "Content-Disposition: form-data; name=\"file\"; filename=\"".. filename .."\"\r\nContent-Type: application/octet-stream\r\n"
-
-	content = "--".. boundary .."\r\n".. header_bound .."\r\n".. content .."\r\n--" .. boundary .."--\r\n"
+	local data = format:format(boundary, header_bound, content, boundary)
 
 	return {
-		{"Content-Length", #content},
+		{"Content-Length", #data},
 		{"Content-Type", "multipart/form-data; boundary=".. boundary}
-	}, content
+	}, data
 end
 
 --[[
