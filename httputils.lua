@@ -58,7 +58,7 @@ end
 	  > ?serverid=1&invoiceid=591278392451
 ]]--
 
-function http.PrepareUpload(url, content, filename) -- returns headers, prepared content
+function http.PrepareUpload(content, filename) -- returns headers, prepared content
 	local boundary = "fboundary".. math.random(1, 100)
 	local header_bound = "Content-Disposition: form-data; name=\"file\"; filename=\"".. filename .."\"\r\nContent-Type: application/octet-stream\r\n"
 
@@ -72,7 +72,8 @@ end
 
 --[[
 	local image = file.Read("/home/me.jpg")
-	local succ, res, result = pcall(http.request, "POST", http.PrepareUpload("https://api.incredible-gmod.ru/upload", image, "me.jpg"))
+	local headers, content = http.PrepareUpload(image, "me.jpg")
+	local succ, res, result = pcall(http.request, "POST", "https://api.incredible-gmod.ru/upload", headers, content)
 	print(result)
 	  > https://incredible-gmod.ru/files/cxWJnf6
 ]]--
