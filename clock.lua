@@ -22,30 +22,31 @@ local Clock = {
 		SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	]]
 }
+Clock.__index = Clock
 
 --[[ Usage:
 local clock = Clock() -- Garrysmod compat by default
-function clock:OnWeek(function(curWeek, dateData)
+function clock:OnWeek(curWeek, dateData)
 	IGMWeeklyRewards:Reset()
-end)
+end
 
 local clock = Clock("Luvit")
-function clock:OnMinute(function(curMinute, dateData)
+function clock:OnMinute(curMinute, dateData)
 	git:PullUpdates(function(commits)
 		if #commits > 0 then
 			app:Restart()
 		end
 	end)
-end)
+end
 
 local clock = Clock("Love2D")
 local NextAd = (clock:GetMinute() + 10) % 60
-function clock:OnMinute(function(curMinute, dateData)
+function clock:OnMinute(curMinute, dateData)
 	if curMinute == NextAd then
 		NextAd = (curMinute + 10) % 60
 		game:ShowAd()
 	end
-end)
+end
 function love.update(dt)
 	clock.update(dt)
 end
@@ -164,11 +165,11 @@ function Clock:Start(utc)
 		for name, value in pairs(now) do
 			if value ~= previous[name] then
 				if events_map[name] and self[events_map[name]] then
-					self[events_map[name]](value, now)
+					self[events_map[name]](self, value, now)
 				end
 
 				if events_map2[name] and self[events_map2[name]] then
-					self[events_map2[name]](value, now)
+					self[events_map2[name]](self, value, now)
 				end
 			end
 		end
@@ -215,6 +216,7 @@ for name, getter in pairs(getters) do
 	end
 end
 
+-- _G.Clock = setmetatable(Clock, {
 return setmetatable(Clock, {
 	__call = function(self, compatibility, utc)
 		local instance = setmetatable({}, self)
