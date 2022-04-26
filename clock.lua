@@ -162,6 +162,7 @@ function Clock:Start(utc)
 
 	self._compatibility.setInterval(self, function()
 		now = os.date(format)
+
 		for name, value in pairs(now) do
 			if value ~= previous[name] then
 				if events_map[name] and self[events_map[name]] then
@@ -173,6 +174,8 @@ function Clock:Start(utc)
 				end
 			end
 		end
+			
+		previous = now
 	end)
 end
 
