@@ -30,6 +30,7 @@ end
 --[[ for SENTs:
 function ENT:Draw(f)
 	self.LastDraw = FrameNumber()
+	self:DrawModel(f)
 end
 
 function ENT:IsVisible()
