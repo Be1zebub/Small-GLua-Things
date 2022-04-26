@@ -10,8 +10,8 @@ function ENTITY:GetPositionDegress(pos)
     return math.abs(math.deg(math.acos(self:EyeAngles():Forward():Dot(diff))))
 end
 
-function ENTITY:IsScreenVisible(ent, degrees)
-	return self:GetPositionDegress(ent:EyePos()) < (degrees or 90)
+function ENTITY:InFov(ent, fov)
+	return self:GetPositionDegress(ent:EyePos()) < (fov or 88)
 end
 
 function ENTITY:InTrace(ent)
@@ -22,7 +22,7 @@ function ENTITY:InTrace(ent)
 end
 
 local _maxDist = 512 ^ 2
-function ENTITY:CanSee(ent, maxDist)
+function ENTITY:IsScreenVisible(ent, maxDist)
 	return self:EyePos():DistToSqr(ent:EyePos()) < (maxDist or _maxDist) and self:IsLineOfSightClear(ent:EyePos()) and self:IsScreenVisible(ent)
 end
 
