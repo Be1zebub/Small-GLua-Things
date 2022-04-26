@@ -3,7 +3,7 @@
 
 local ENTITY = FindMetaTable("Entity")
 
-function ENTITY:GetPositionDegress(pos)
+function ENTITY:GetViewAngle(pos)
     local diff = pos - self:EyePos()
     diff:Normalize()
 
@@ -11,7 +11,7 @@ function ENTITY:GetPositionDegress(pos)
 end
 
 function ENTITY:InFov(ent, fov)
-	return self:GetPositionDegress(ent:EyePos()) < (fov or 88)
+	return self:GetViewAngle(ent:EyePos()) < (fov or 88)
 end
 
 function ENTITY:InTrace(ent)
@@ -22,8 +22,8 @@ function ENTITY:InTrace(ent)
 end
 
 local _maxDist = 512 ^ 2
-function ENTITY:IsScreenVisible(ent, maxDist)
-	return self:EyePos():DistToSqr(ent:EyePos()) < (maxDist or _maxDist) and self:IsLineOfSightClear(ent:EyePos()) and self:IsScreenVisible(ent)
+function ENTITY:IsScreenVisible(ent, maxDist, fov)
+	return self:EyePos():DistToSqr(ent:EyePos()) < (maxDist or _maxDist) and self:IsLineOfSightClear(ent:EyePos()) and self:InFov(ent, fov)
 end
 
 
