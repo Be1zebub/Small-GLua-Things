@@ -25,3 +25,14 @@ local _maxDist = 512 ^ 2
 function ENTITY:CanSee(ent, maxDist)
 	return self:EyePos():DistToSqr(ent:EyePos()) < (maxDist or _maxDist) and self:IsLineOfSightClear(ent:EyePos()) and self:IsScreenVisible(ent)
 end
+
+
+--[[ for SENTs:
+function ENT:Draw(f)
+	self.LastDraw = FrameNumber()
+end
+
+function ENT:IsVisible()
+	return self.LastDraw == FrameNumber()
+end
+]]--
