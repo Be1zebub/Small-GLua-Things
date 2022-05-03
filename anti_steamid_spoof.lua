@@ -1,7 +1,7 @@
 -- from incredible-gmod.ru with <3
 -- https://github.com/Be1zebub/Small-GLua-Things/blob/master/anti_steamid_spoof.lua
 
--- an exploit has been discovered that allows to spoof a steamid
+-- found exploit that allows to spoof a steamid
 -- there is a way to steal a users token and use it to access any gmod servers under the steam ID of another user.
 -- for example - with this exploit, an hacker can steal in-game valuables from other peoples accounts
 
