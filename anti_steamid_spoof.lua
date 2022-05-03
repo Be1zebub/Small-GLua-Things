@@ -9,7 +9,7 @@
 -- if you don't know how to install, just download this file in garrysmod/lua/autorun/server
 
 -- thx to WayZer#0084 for the fix
--- more details about this exploit can be found in https:/discord.incredible-gmod.ru (#helpful channel)
+-- more details about this exploit can be found in https:/discord.incredible-gmod.ru (#helpful channel - you need to get developer role in #welcome for get access to this channel)
 
 hook.Add("PlayerInitialSpawn", "AntiSteamIDSpoof", function(ply)
     if game.SinglePlayer() then return end
