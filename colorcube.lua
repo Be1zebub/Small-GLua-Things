@@ -75,11 +75,11 @@ local knob_mat = Material("dev/clearalpha")
 
 file.CreateDir("incredible-gmod.ru")
 if file.Exists("incredible-gmod.ru/color-picker-knob.png", "DATA") then
-	knob_mat = Material("data/incredible-gmod.ru/color-picker-knob.png")
+	knob_mat = Material("data/incredible-gmod.ru/color-picker-knob.png", "smooth")
 else
 	http.Fetch("https://i.imgur.com/tI9UkDb.png", function(img)
 		file.Write("incredible-gmod.ru/color-picker-knob.png", img)
-		knob_mat = Material("data/incredible-gmod.ru/color-picker-knob.png")
+		knob_mat = Material("data/incredible-gmod.ru/color-picker-knob.png", "smooth")
 	end)
 end
 
