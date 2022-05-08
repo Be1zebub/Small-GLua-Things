@@ -5,18 +5,26 @@
 -- how it looks:
 -- https://i.imgur.com/KJwEFrf.png
 
---[[
-local frame = vgui.Create("DFrame")
-frame:SetSize(512, 256 + 25)
-frame:MakePopup()
-frame:SetTitle("\tfrom incredible-gmod.ru with <3")
-frame.PaintOver = function(me, w, h)
-	surface.SetDrawColor(me.cube:GetColor())
-	surface.DrawRect(6, 6, 16, 16)
-end
+--[[ example:
+	local custom = vgui.Create("DFrame")
+	custom:SetSize(512, 256 + 25)
+	custom:MakePopup()
+	custom:SetTitle("     from incredible-gmod.ru with <3")
+	custom.PaintOver = function(me, w, h)
+		surface.SetDrawColor(me.cube:GetColor())
+		surface.DrawRect(6, 7, 12, 12)
+	end
 
-frame.cube = frame:Add("incredible-gmod.ru/ColorCube")
-frame.cube:Dock(FILL)
+	custom.cube = custom:Add("incredible-gmod.ru/ColorCube")
+	custom.cube:Dock(FILL)
+
+	local default = vgui.Create("DFrame")
+	default:SetSize(512, 256 + 25)
+	default:MakePopup()
+	default:SetTitle("Default color cube (for a comparison)")
+	default.y = custom:GetTall() + 8
+
+	default:Add("DColorCube"):Dock(FILL)
 ]]--
 
 local function ColorCube(hue, w, h, pixel_size, name)
@@ -63,6 +71,7 @@ function CUBE:Init()
 	self.hue = 0
 	self.pixel_size = 1
 	self.color = Color(255, 255, 255)
+	self:SetCursor("hand")
 
 	self.background = self:Add("EditablePanel")
 	self.background:Dock(FILL)
@@ -130,6 +139,7 @@ function CUBE:OnMousePressed(mcode)
 	if mcode ~= MOUSE_LEFT then return end
 
 	self.knob.Dragging = true
+	self.knob:Think()
 end
 
 vgui.Register("incredible-gmod.ru/ColorCube", CUBE, "EditablePanel")
@@ -138,7 +148,7 @@ local KNOB = {}
 
 function KNOB:Init()
 	self:SetSize(18, 18)
-	self:SetCursor("hand")
+	self:SetCursor("sizeall")
 	self.Dragging = false
 end
 
