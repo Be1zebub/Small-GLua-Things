@@ -2,6 +2,9 @@
 -- https://github.com/Be1zebub/Small-GLua-Things/blob/master/colorcube.lua
 -- from incredible-gmod.ru with <3
 
+-- how it looks:
+-- https://i.imgur.com/KJwEFrf.png
+
 --[[
 local frame = vgui.Create("DFrame")
 frame:SetSize(512, 256 + 25)
