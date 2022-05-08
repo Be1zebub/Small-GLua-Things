@@ -4,6 +4,7 @@
 
 -- how it looks:
 -- https://i.imgur.com/KJwEFrf.png
+-- https://cdn.discordapp.com/attachments/826589821908287498/972677497890152499/hl2_AhVIrUQlNg.webm
 
 --[[ example:
 	local custom = vgui.Create("DFrame")
@@ -71,14 +72,17 @@ function CUBE:Init()
 	self.hue = 0
 	self.pixel_size = 1
 	self.color = Color(255, 255, 255)
-	self:SetCursor("hand")
 
 	self.background = self:Add("EditablePanel")
 	self.background:Dock(FILL)
+	self.background:SetCursor("hand")
 	self.background.Paint = function(me, w, h)
 		surface.SetDrawColor(255, 255, 255)
 		surface.SetMaterial(self.material)
 		surface.DrawTexturedRect(0, 0, w, h)
+	end
+	self.background.OnMousePressed = function(_, mcode)
+		self:OnMousePressed(mcode)
 	end
 
 	self.knob = self:Add("incredible-gmod.ru/ColorCube/Knob")
