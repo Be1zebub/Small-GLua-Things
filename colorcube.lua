@@ -1,6 +1,6 @@
--- a replacement for DColorCube that renders the correct colors and has a nicer knob
--- https://github.com/Be1zebub/Small-GLua-Things/blob/master/colorcube.lua
 -- from incredible-gmod.ru with <3
+-- replacement for DColorCube that looks nicer & renders the correct colors
+-- https://github.com/Be1zebub/Small-GLua-Things/blob/master/colorcube.lua
 
 -- how it looks:
 -- https://i.imgur.com/zfBZ1dR.png
