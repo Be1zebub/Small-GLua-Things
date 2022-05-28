@@ -1,4 +1,4 @@
--- incredible-gmod.ru
+-- from incredible-gmod.ru with <3
 -- https://github.com/Be1zebub/Small-GLua-Things/blob/master/vischeck.lua
 
 local ENTITY = FindMetaTable("Entity")
