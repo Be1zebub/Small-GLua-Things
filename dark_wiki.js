@@ -86,6 +86,19 @@
 		.member_line a.subject {
 			color: #0082ff !important;
 		}
+
+		#ident > h1 > a::after {
+			content: "deprecated";
+		    background-color: #b14a00;
+		    color: #efefef;
+		    font-size: 7px;
+		    text-transform: uppercase;
+		    padding: 2px;
+		    margin-left: 5px;
+		    display: inline-block;
+		    position: relative;
+		    top: -4px;
+		}
     `;
 
     function addGlobalStyle(css) {
