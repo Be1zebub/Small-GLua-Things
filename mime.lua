@@ -20,7 +20,7 @@ local mime = {
    ["kmz"]		= "application/vnd.google-earth.kmz",
    ["css"]		= "text/css",
    ["xml"]		= "text/xml",
-   ["jardiff"]	= "application/x-java-archive-diff",
+   ["jardiff"]		= "application/x-java-archive-diff",
    ["jpeg"]		= "image/jpeg",
    ["jpg"]		= "image/jpeg",
    ["js"]		= "application/x-javascript",
@@ -57,7 +57,7 @@ local mime = {
    ["ogg"]		= "audio/ogg",
    ["zip"]		= "application/zip",
    ["m4a"]		= "audio/x-m4a",
-   ["xhtml"]	= "application/xhtml+xml",
+   ["xhtml"]		= "application/xhtml+xml",
    ["ra"]		= "audio/x-realaudio",
    ["xpi"]		= "application/x-xpinstall",
    ["3gpp"]		= "video/3gpp",
@@ -85,7 +85,7 @@ local mime = {
    ["7z"]		= "application/x-7z-compressed",
    ["avi"]		= "video/x-msvideo",
    ["asf"]		= "video/x-ms-asf",
-   ["shtml"]	= "text/html",
+   ["shtml"]		= "text/html",
    ["html"]		= "text/html",
    ["cco"]		= "application/x-cocoa",
    ["txt"]		= "text/plain",
@@ -95,5 +95,5 @@ local mime = {
 }
 
 local function getMime(path)
-	return path:match("([^\\%.]+)$")
+	return mime[path:match("([^\\%.]+)$")]
 end
