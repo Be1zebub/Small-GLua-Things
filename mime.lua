@@ -1,5 +1,5 @@
 -- from incredible-gmod.ru with <3
--- https://github.com/Be1zebub/Small-GLua-Things/blob/master/colorcube.lua
+-- https://github.com/Be1zebub/Small-GLua-Things/blob/master/mime.lua
 
 -- https://incredible-gmod.ru/assets/logo.png > image/png
 -- path/to/file.html > text/html
