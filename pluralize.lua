@@ -4,10 +4,10 @@
 
 local cases = {[0] = 3, [1] = 1, [2] = 2, [3] = 2, [4] = 2, [5] = 3}
 function pluralize(n, titles)
-	n = math.abs(n)
+	n = math.floor(math.abs(n))
 	return titles[
 		(n % 100 > 4 and n % 100 < 20) and 3 or
-		cases[(n % 10 < 5) and n % 10 or 6]
+		cases[(n % 10 < 5) and n % 10 or 5]
 	]
 end
 
