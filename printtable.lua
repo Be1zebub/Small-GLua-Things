@@ -48,7 +48,7 @@ function table.ToPlain(tbl, lvl)
 			k = "[\"".. k .."\"] = "
 		end
 
-		if istable[v] then
+		if istable[type(v)] then
 			out[#out + 1] = k .. table.ToPlain(v, lvl + 1)
 		else
 			out[#out + 1] = k .. (
