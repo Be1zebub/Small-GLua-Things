@@ -8,7 +8,9 @@ table.Print({
 	{
 		[false] = "bad",
 		[true] = "good",
-		function() end
+		{},
+		function() end,
+		{"lorem ispum"}
 	}
 })
 
@@ -16,11 +18,20 @@ table.Print({
         "Hello world!",
         true,
         {
-                [1] = function: 0xf09febd8,
+                [1] = {},
+                [2] = function: 0xf0eaa590,
+                [3] = {"lorem ispum"},
                 [false] = "bad",
                 [true] = "good"
         }
 }
+]]--
+
+--[[
+SetClipboardText(table.ToPlain({
+    pos = ent:GetPos(),
+    ang = ent:GetAngles()
+}))
 ]]--
 
 local format, concat, rep, ipairs, pairs, tostring = string.format, table.concat, string.rep, ipairs, pairs, tostring
@@ -33,16 +44,21 @@ function table.ToPlain(tbl, lvl)
 
 	local indent = rep("\t", lvl)
 
-	local isSeq = 0
+	local len = 0
 	for _ in pairs(tbl) do
-		isSeq = isSeq + 1
+		len = len + 1
 	end
-	isSeq = isSeq == #tbl
+
+	if len == 0 then
+		return "{}"
+	end
+
+	local isSeq = len == #tbl
 
 	for k, v in (isSeq and ipairs or pairs)(tbl) do
 		if isSeq then
 			k = ""
-		elseif isstring ~= getmetatable(v) then
+		elseif isstring ~= getmetatable(k) then
 			k = "[".. tostring(k) .."] = "
 		elseif k:find(" ", 1, true) then
 			k = "[\"".. k .."\"] = "
@@ -57,7 +73,11 @@ function table.ToPlain(tbl, lvl)
 		end
 	end
 
-	return "{\n".. indent .. concat(out, ",\n" .. indent) .."\n".. rep("   \t", lvl - 1) .."}"
+	if len == 1 then
+		return "{".. out[1] .."}"
+	end
+
+	return "{\n".. indent .. concat(out, ",\n" .. indent) .."\n".. rep("\t", lvl - 1) .."}"
 end
 
 function table.Print(tbl)
