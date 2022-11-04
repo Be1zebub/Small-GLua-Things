@@ -13,7 +13,7 @@ hook.Add("OnEntityCreated", "OnNetworkVarUpdate", function(ent)
 		hook.Run("OnNetworkVarUpdate", ent, name, old, val)
 	end
 
-	for name, val in pairs(ent.dt) do
+	for name, val in pairs(ent:GetNetworkVars() or {}) do
 		hook.Run("OnNetworkVarUpdate", ent, name, nil, val)
 	end
 
