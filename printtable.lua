@@ -87,3 +87,20 @@ function table.Print(tbl)
 end
 
 PrintTable = table.Print
+
+--[[ Bonus:
+function table.Printf(tbl, indent)
+	indent = indent or 0
+
+	for k, v in pairs(tbl) do
+		formatting = rep("   ", indent) .. k ..": "
+
+		if istable[type(v)] then
+			MsgC({255, 255, 0}, formatting)
+			table.Printf(v, indent + 1)
+		else
+			MsgC({255, 255, 0}, formatting .. tostring(v))
+		end
+	end
+end
+]]--
