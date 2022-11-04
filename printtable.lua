@@ -62,6 +62,8 @@ function table.ToPlain(tbl, lvl)
 			k = "[".. tostring(k) .."] = "
 		elseif k:find(" ", 1, true) then
 			k = "[\"".. k .."\"] = "
+		else
+			k = k .." = "
 		end
 
 		if istable[type(v)] then
