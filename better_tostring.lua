@@ -12,3 +12,9 @@ local ANGLE = FindMetaTable("Angle")
 function ANGLE:__tostring()
 	return "Angle(".. math.Round(self.p, 3) ..", ".. math.Round(self.y, 3) ..", ".. math.Round(self.r, 3) ..")"
 end
+
+local MATERIAL = FindMetaTable("IMaterial")
+
+function MATERIAL:__tostring()
+	return "Material(\"".. self:GetName() .."\")"
+end
