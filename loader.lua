@@ -1,7 +1,8 @@
 -- from incredible-gmod.ru with love <3
+-- https://github.com/Be1zebub/Small-GLua-Things/blob/master/loader.lua
 
 local Loader = {
-	_VERSION = 1.2,
+	_VERSION = 1.3,
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/loader.lua",
 	_LICENSE = [[
 		MIT LICENSE
@@ -155,15 +156,15 @@ if SERVER then
 	function Loader:ResourceAdd(dir, recurse, pattern)
 		local files = file.Find(dir .. (pattern and ("/".. pattern) or "/*"), "GAME")
 
-		for i, fname in ipairs(files) do
-	        resource.AddSingleFile(dir .."/".. fname)
-	    end
+		for _, fname in ipairs(files) do
+			resource.AddSingleFile(dir .."/".. fname)
+		end
 
-	    if recurse then
-	        for i, fname in ipairs(folders) do
-	            self:ResourceAdd(dir .."/".. fname, recurse, pattern)
-	        end
-	    end
+		if recurse then
+			for _, fname in ipairs(folders) do
+				self:ResourceAdd(dir .."/".. fname, recurse, pattern)
+			end
+		end
 	end
 end
 
@@ -183,16 +184,16 @@ function Loader:RegisterEntity(path, class, cback)
 			class = path:match("([^/]+)$")
 		end
 
-		pcall(self.Include, self, path .."/sh.lua", "sh")
-		pcall(self.Include, self, path .."/shared.lua", "sh")
+		self:Include(path .."/sh.lua", "sh")
+		self:Include(path .."/shared.lua", "sh")
 
-		pcall(self.Include, self, path .."/cl.lua", "cl")
-		pcall(self.Include, self, path .."/client.lua", "cl")
-		pcall(self.Include, self, path .."/cl_init.lua", "cl")
+		self:Include(path .."/cl.lua", "cl")
+		self:Include(path .."/client.lua", "cl")
+		self:Include(path .."/cl_init.lua", "cl")
 
-		pcall(self.Include, self, path .."/sv.lua", "sv")
-		pcall(self.Include, self, path .."/server.lua", "sv")
-		pcall(self.Include, self, path .."/init.lua", "sv")
+		self:Include(path .."/sv.lua", "sv")
+		self:Include(path .."/server.lua", "sv")
+		self:Include(path .."/init.lua", "sv")
 	else
 		if class == nil then
 			class = path:match("([%w_]*).lua")
