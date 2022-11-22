@@ -168,7 +168,7 @@ if SERVER then
 	end
 end
 
-function Loader:RegisterEntity(path, class, cback)
+function Loader:RegisterEntity(path, base, class, cback)
 	local _ENT = ENT
 
 	ENT = {
@@ -178,6 +178,11 @@ function Loader:RegisterEntity(path, class, cback)
 		Contact		= "https://discord.incredible-gmod.ru",
 		Category    = "Incredible GMod"
 	}
+
+	if base then
+		ENT.Type = nil
+		ENT.Base = base
+	end
 
 	if file.IsDir(path) then
 		if class == nil then
