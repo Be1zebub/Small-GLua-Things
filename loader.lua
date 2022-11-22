@@ -1,4 +1,4 @@
--- from incredible-gmod.ru with love <3
+-- from incredible-gmod.ru with <3
 -- https://github.com/Be1zebub/Small-GLua-Things/blob/master/loader.lua
 
 local Loader = {
@@ -6,7 +6,7 @@ local Loader = {
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/loader.lua",
 	_LICENSE = [[
 		MIT LICENSE
-		Copyright (c) 2021 incredible-gmod.ru
+		Copyright (c) 2022 incredible-gmod.ru
 		Permission is hereby granted, free of charge, to any person obtaining a
 		copy of this software and associated documentation files (the
 		"Software"), to deal in the Software without restriction, including
