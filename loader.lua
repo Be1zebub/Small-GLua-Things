@@ -171,7 +171,7 @@ end
 function Loader:RegisterEntity(path, base, class, cback)
 	local _ENT = ENT
 
-	ENT = {
+	ENT = istable(base) and base or {
 		Base       	= "base_entity",
 		Type 		= "anim",
 		Author		= "Beelzebub",
@@ -179,7 +179,7 @@ function Loader:RegisterEntity(path, base, class, cback)
 		Category    = "Incredible GMod"
 	}
 
-	if base then
+	if isstring(base) then
 		ENT.Type = nil
 		ENT.Base = base
 	end
