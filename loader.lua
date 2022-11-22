@@ -1,3 +1,5 @@
+-- from incredible-gmod.ru with love <3
+
 local Loader = {
 	_VERSION = 1.2,
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/loader.lua",
@@ -53,7 +55,7 @@ function Loader:include(path, realm, _lvl)
 end
 
 function Loader:GetFilename(path, ext)
-	return path:match(ext and ("([%w_]*).".. ext) or "([%w_]*).lua")
+	return path:match(ext and ("([%w_]*).".. ext) or "^.+/(.+)$") or path:match("([%w_]*).lua")
 end
 
 function Loader:GetFilenameWithExt(path)
@@ -62,6 +64,10 @@ end
 
 function Loader:RemoveExt(path)
 	return path:match("(.+)%..+")
+end
+
+function Loader:GetCurrentDir()
+	return debug.getinfo(1).source:match("@?(.*/)")
 end
 
 function Loader:Include(path, realm, _lvl)
@@ -116,6 +122,10 @@ function Loader:IncludeDir(dir, recursive, realm, storage, _base_path_len, _lvl)
 	end
 end
 
+function Loader:IncludeDirRelative(recursive, realm, storage)
+	self:IncludeDir(self:GetCurrentDir(), recursive, realm, storage)
+end
+
 function Loader:AddCsDir(dir, recursive, _lvl)
 	_lvl = _lvl or 1
 
@@ -143,20 +153,61 @@ end
 
 if SERVER then
 	function Loader:ResourceAdd(dir, recurse, pattern)
-		local files, folders = file.Find(dir .. (pattern and ("/".. pattern) or "/*"), "GAME")
+		local files = file.Find(dir .. (pattern and ("/".. pattern) or "/*"), "GAME")
 
 		for i, fname in ipairs(files) do
-			resource.AddSingleFile(dir .."/".. fname)
-		end
+	        resource.AddSingleFile(dir .."/".. fname)
+	    end
 
-		if recurse then
-			for i, subdir in ipairs(folders) do
-				self:ResourceAdd(dir .."/".. subdir, recurse, pattern)
-			end
-		end
+	    if recurse then
+	        for i, fname in ipairs(folders) do
+	            self:ResourceAdd(dir .."/".. fname, recurse, pattern)
+	        end
+	    end
 	end
 end
 
-Loader.__index = Loader
-return Loader
+function Loader:RegisterEntity(path, class, cback)
+	local _ENT = ENT
 
+	ENT = {
+		Base       	= "base_entity",
+		Type 		= "anim",
+		Author		= "Beelzebub",
+		Contact		= "https://discord.incredible-gmod.ru",
+		Category    = "Incredible GMod"
+	}
+
+	if file.IsDir(path) then
+		if class == nil then
+			class = path:match("([^/]+)$")
+		end
+
+		pcall(self.Include, self, path .."/sh.lua", "sh")
+		pcall(self.Include, self, path .."/shared.lua", "sh")
+
+		pcall(self.Include, self, path .."/cl.lua", "cl")
+		pcall(self.Include, self, path .."/client.lua", "cl")
+		pcall(self.Include, self, path .."/cl_init.lua", "cl")
+
+		pcall(self.Include, self, path .."/sv.lua", "sv")
+		pcall(self.Include, self, path .."/server.lua", "sv")
+		pcall(self.Include, self, path .."/init.lua", "sv")
+	else
+		if class == nil then
+			class = path:match("([%w_]*).lua")
+		end
+
+		self:Include(path)
+	end
+
+	if cback then cback(ENT) end
+
+	if class then
+		scripted_ents.Register(ENT, class)
+	end
+
+	ENT = _ENT
+end
+
+return Loader
