@@ -1,5 +1,7 @@
+-- from incredible-gmod.ru with <3
+
 local NWTable = {
-	_VERSION = 1.0,
+	_VERSION = 2.0,
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/nwtable.lua",
 	_LICENSE = [[
 		MIT LICENSE
@@ -27,147 +29,186 @@ function NWTable:SetGlobal()
 	_G.NWTable = getmetatable(self).__call
 end
 
-local write, key, value, new
 setmetatable(NWTable, {__call = function(_, uid)
 	uid = uid or util.CRC(debug.traceback())
 	local net_uid = "incredible-gmod.ru/nwtable/".. uid
 
+	local instance, mt = {}, {}
 	local storage = {}
 	local settings = {
 		WriteKey = net.WriteType,
 		ReadKey = net.ReadType,
 		uid = uid
 	}
-	local instance = {}
-	local mt = {}
 
-	function mt:__len()
-		return #storage
+	function mt:settings()
+		return settings
 	end
 
-	function mt:__pairs()
-		return pairs(storage)
-	end
+	do
+		function mt:get(k)
+			return storage[k]
+		end
 
-	function mt:__ipairs()
-		return ipairs(storage)
-	end
+		function mt:set(k, v)
+			storage[k] = v
 
-	function mt:__index(k)
-		return rawget(mt, k) or storage[k]
-	end
+			if settings.Write then
+				net.Start(net_uid)
+					net.WriteUInt(v == nil and 0 or 1, 2)
+					settings.WriteKey.write(k, settings.WriteKey.opts)
+					if v then settings.Write.write(v, settings.Write.opts) end
+				if SERVER then
+					((settings.LocalPlayer and net.Send) or (settings.Filter and settings.BoradcastFilter(k)) or net.Broadcast)(k)
+				else
+					net.SendToServer()
+				end
+			end
+		end
 
-	function mt:__newindex(k, v)
-		storage[k] = v
+		function mt:delete(k)
+			self:set(k, nil)
+		end
 
-		if settings.Write then
+		function mt:clean()
 			net.Start(net_uid)
-				settings.WriteKey.write(k, settings.WriteKey.opts)
-				settings.Write.write(v, settings.Write.opts)
+				net.WriteUInt(2, 2)
 			if SERVER then
-				((settings.LocalPlayer and net.Send) or (settings.Filter and settings.BoradcastFilter()) or net.Broadcast)(k)
+				((settings.LocalPlayer and net.Send) or (settings.Filter and settings.BoradcastFilter(k)) or net.Broadcast)(k)
 			else
 				net.SendToServer()
 			end
 		end
 	end
 
-	function mt:GetSettings()
-		return settings
+	do
+
+		function mt:__len()
+			return #storage
+		end
+
+		function mt:__pairs()
+			return pairs(storage)
+		end
+
+		function mt:__ipairs()
+			return ipairs(storage)
+		end
+
+		function mt:__index(k)
+			return rawget(mt, k) or self:get(k)
+		end
+
+		function mt:__newindex(k, v)
+			self:set(k, v)
+		end
 	end
 
-	function mt:BoradcastFilter(fn)
-		settings.BoradcastFilter = fn
-		return self
-	end
+	do
+		function mt:BoradcastFilter(fn)
+			settings.BoradcastFilter = fn
+			return self
+		end
 
-	function mt:LocalPlayer()
-		settings.LocalPlayer = true
-		return self
-	end
+		function mt:LocalPlayer()
+			settings.LocalPlayer = true
+			return self
+		end
 
-	function mt:Cooldown(cd)
-		settings.Cooldown = cd
-		return self
-	end
+		function mt:Cooldown(cd)
+			settings.Cooldown = cd
+			return self
+		end
 
-	function mt:Validate(func, REALM)
-		if REALM == false then return self end
-		settings.Validate = func
+		function mt:Validate(func, REALM)
+			if REALM == false then return self end
+			settings.Validate = func
 
-		return self
-	end
+			return self
+		end
 
-	function mt:Hook(cback, REALM)
-		if REALM == false then return self end
-		settings.Hook = cback
+		function mt:Hook(cback, REALM)
+			if REALM == false then return self end
+			settings.Hook = cback
 
-		return self
-	end
+			return self
+		end
 
-	function mt:WriteKey(write, opts, REALM)
-		if REALM == false then return self end
-		settings.WriteKey = {
-			write = write,
-			opts = opts
-		}
+		function mt:WriteKey(write, opts, REALM)
+			if REALM == false then return self end
+			settings.WriteKey = {
+				write = write,
+				opts = opts
+			}
 
-		return self
-	end
+			return self
+		end
 
-	function mt:ReadKey(read, opts, REALM)
-		if REALM == false then return self end
-		settings.ReadKey = {
-			read = read,
-			opts = opts
-		}
+		function mt:ReadKey(read, opts, REALM)
+			if REALM == false then return self end
+			settings.ReadKey = {
+				read = read,
+				opts = opts
+			}
 
-		return self
-	end
+			return self
+		end
 
-	function mt:Write(write, opts, REALM)
-		if REALM == false then return self end
-		settings.Write = {
-			write = write,
-			opts = opts
-		}
+		function mt:Write(write, opts, REALM)
+			if REALM == false then return self end
+			settings.Write = {
+				write = write,
+				opts = opts
+			}
 
-		return self
-	end
+			return self
+		end
 
-	function mt:Read(read, opts, REALM)
-		if REALM == false then return self end
-		settings.Read = {
-			read = read,
-			opts = opts
-		}
+		function mt:Read(read, opts, REALM)
+			if REALM == false then return self end
+			settings.Read = {
+				read = read,
+				opts = opts
+			}
 
-		local cooldown = {}
-		net.Receive(net_uid, function(len, ply)
-			if SERVER and settings.Cooldown then
-				if (cooldown[ply] or 0) > CurTime() then return end
-				cooldown[ply] = CurTime() + settings.Cooldown
-			end
+			local cooldown = {}
+			local key, value, new, type
 
-			key = settings.ReadKey.read(settings.ReadKey.opts)
-			value = settings.Read.read(settings.Read.opts)
+			net.Receive(net_uid, function(_, ply)
+				if SERVER and settings.Cooldown then
+					if (cooldown[ply] or 0) > CurTime() then return end
+					cooldown[ply] = CurTime() + settings.Cooldown
+				end
 
-			if (SERVER and settings.Validate and settings.Validate(ply, key, value)) or (CLIENT and settings.Validate and settings.Validate(key, value)) then return end
+				type = net.ReadUInt(2)
+				if type == 2 then
+					storage = {}
+				end
 
-			if settings.Hook and SERVER then
-				new = settings.Hook(ply, key, value)
-			elseif settings.Hook and CLIENT then
-				new = settings.Hook(key, value)
-			end
+				key = settings.ReadKey.read(settings.ReadKey.opts)
 
-			if new ~= nil then
-				value = new
-			end
+				if type == 0 then
+					value = nil
+				elseif type == 1 then
+					value = settings.Read.read(settings.Read.opts)
+					if (SERVER and settings.Validate and settings.Validate(ply, key, value)) or (CLIENT and settings.Validate and settings.Validate(key, value)) then return end
+				end
 
-			storage[key] = value
-		end)
+				if settings.Hook and SERVER then
+					new = settings.Hook(ply, key, value)
+				elseif settings.Hook and CLIENT then
+					new = settings.Hook(key, value)
+				end
 
-		return self
+				if new ~= nil then
+					value = new
+				end
+
+				storage[key] = value
+			end)
+
+			return self
+		end
 	end
 
 	if SERVER then
@@ -185,19 +226,15 @@ local money = NWTable("Money")
 :Read(net.ReadUInt, 32, CLIENT)
 :WriteKey(net.WriteEntity)
 :ReadKey(net.ReadEntity)
-
 function PLAYER:GetMoney()
 	return money[self] or 0
 end
-
 if SERVER then
 	function PLAYER:SetMoney(amnt)
 		money[self] = amnt
 	end
 end
-
 ------------------
-
 local laws = NWTable("Laws")
 :Write(net.WriteString, nil, CLIENT)
 :Read(net.ReadString, nil, SERVER)
@@ -207,23 +244,18 @@ local laws = NWTable("Laws")
 	return ply:IsMayor() and index > 0 and index < 8 and value:len() <= 512
 end)
 :Cooldown(5)
-
 function GetLaw(index)
 	return laws[index]
 end
-
 function GetLaws()
 	return laws
 end
-
 if CLIENT then
 	local cooldown = 0
 	function UpdateLaw(index, law_phrase)
 		if LocalPlayer():IsMayor() == false or index < 1 or index > 7 or law_phrase:len() > 512 then return false end
-
 		if cooldown > CurTime() then return false end
 		cooldown = CurTime() + 5
-
 		laws[index] = law_phrase
 		return true
 	end
