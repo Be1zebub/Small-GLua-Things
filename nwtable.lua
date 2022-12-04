@@ -26,7 +26,7 @@ local NWTable = {
 }
 
 function NWTable:SetGlobal()
-	_G.NWTable = getmetatable(self).__call
+	_G.NWTable = self
 end
 
 setmetatable(NWTable, {__call = function(_, uid)
@@ -45,7 +45,7 @@ setmetatable(NWTable, {__call = function(_, uid)
 		return settings
 	end
 
-	do
+	do -- storage manipulation
 		function mt:get(k)
 			return storage[k]
 		end
@@ -81,8 +81,7 @@ setmetatable(NWTable, {__call = function(_, uid)
 		end
 	end
 
-	do
-
+	do -- meta events
 		function mt:__len()
 			return #storage
 		end
@@ -104,7 +103,7 @@ setmetatable(NWTable, {__call = function(_, uid)
 		end
 	end
 
-	do
+	do -- configuration
 		function mt:BoradcastFilter(fn)
 			settings.BoradcastFilter = fn
 			return self
@@ -183,6 +182,7 @@ setmetatable(NWTable, {__call = function(_, uid)
 				type = net.ReadUInt(2)
 				if type == 2 then
 					storage = {}
+					return
 				end
 
 				key = settings.ReadKey.read(settings.ReadKey.opts)
