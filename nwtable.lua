@@ -167,9 +167,10 @@ setmetatable(NWTable, {__call = function(_, uid)
 		end
 
 		function mt:Validate(REALM, func)
-			if REALM == false then return self end
 			if isfunction(REALM) then
-				read, opts = REALM, read
+				cback = REALM
+			elseif REALM == false then
+				return self
 			end
 
 			settings.Validate = func
@@ -178,9 +179,10 @@ setmetatable(NWTable, {__call = function(_, uid)
 		end
 
 		function mt:Hook(REALM, cback)
-			if REALM == false then return self end
 			if isfunction(REALM) then
-				read, opts = REALM, read
+				cback = REALM
+			elseif REALM == false then
+				return self
 			end
 
 			settings.Hook = cback
@@ -189,9 +191,10 @@ setmetatable(NWTable, {__call = function(_, uid)
 		end
 
 		function mt:WriteKey(REALM, write, opts)
-			if REALM == false then return self end
 			if isfunction(REALM) then
-				read, opts = REALM, read
+				write, opts = REALM, write
+			elseif REALM == false then
+				return self
 			end
 
 			settings.WriteKey = {
@@ -203,10 +206,13 @@ setmetatable(NWTable, {__call = function(_, uid)
 		end
 
 		function mt:ReadKey(REALM, read, opts)
-			if REALM == false then return self end
 			if isfunction(REALM) then
 				read, opts = REALM, read
+			elseif REALM == false then
+				return self
 			end
+
+			if REALM == false then return self end
 
 			settings.ReadKey = {
 				read = read,
@@ -217,10 +223,11 @@ setmetatable(NWTable, {__call = function(_, uid)
 		end
 
 		function mt:Write(REALM, write, opts)
-			if REALM == false then return self end
 			if isfunction(REALM) then
-				read, opts = REALM, read
+				write, opts = REALM, write
 			end
+
+			if REALM == false then return self end
 
 			settings.Write = {
 				write = write,
@@ -231,10 +238,11 @@ setmetatable(NWTable, {__call = function(_, uid)
 		end
 
 		function mt:Read(REALM, read, opts, autosync)
-			if REALM == false then return self end
 			if isfunction(REALM) then
-				read, opts = REALM, read
+				read, opts, autosync = REALM, read, opts
 			end
+
+			if REALM == false then return self end
 
 			settings.Read = {
 				read = read,
