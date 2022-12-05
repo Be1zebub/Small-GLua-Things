@@ -340,14 +340,14 @@ end
 ------------------
 
 local laws = NWTable("Laws")
-:Write(CLIENT, net.WriteString)
-:Read(SERVER, net.ReadString, true)
+:Write(net.WriteString) -- write value (shared)
+:Read(net.ReadString, true) -- read value (shared), autosync to all players when server receive value from client
+:Cooldown(5) -- with 5 seconds cooldown for clients
 :WriteKey(net.WriteUInt, 3)
 :ReadKey(net.ReadUInt, 3)
 :Validate(function(ply, index, value)
 	return ply:IsMayor() and index > 0 and index < 8 and value:len() <= 512
 end)
-:Cooldown(5)
 
 function GetLaw(index)
 	return laws[index]
@@ -358,13 +358,6 @@ function GetLaws()
 end
 
 if CLIENT then
-	local cooldown = 0
-	function UpdateLaw(index, law_phrase)
-		if LocalPlayer():IsMayor() == false or index < 1 or index > 7 or law_phrase:len() > 512 then return false end
-		if cooldown > CurTime() then return false end
-		cooldown = CurTime() + 5
-		laws[index] = law_phrase
-		return true
-	end
+	laws[1] = "Dont be an asshole" -- update in local storage, send to server storage with 5 seconds cooldown, server will autosync it to all players
 end
 ]]--
