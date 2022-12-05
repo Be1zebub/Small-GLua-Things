@@ -112,7 +112,7 @@ setmetatable(NWTable, {__call = function(_, uid)
 		end
 
 		if SERVER then
-			function mt:Sync(ply)
+			function mt:sync(ply)
 				net.Start(net_uid)
 					net.WriteUInt(3, 2)
 					net.WriteTable(storage)
@@ -311,7 +311,7 @@ if SERVER then
 				hook.Remove("SetupMove", self)
 
 				for _, nwtable in pairs(NWTable.list) do
-					nwtable:Sync(self)
+					nwtable:sync(self)
 				end
 			end
 		end)
