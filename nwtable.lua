@@ -1,7 +1,7 @@
 -- from incredible-gmod.ru with <3
 
 local NWTable = {
-	_VERSION = 2.0,
+	_VERSION = 2.1,
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/nwtable.lua",
 	_LICENSE = [[
 		MIT LICENSE
@@ -29,8 +29,15 @@ function NWTable:SetGlobal()
 	_G.NWTable = self
 end
 
+NWTable.list = {}
+
 setmetatable(NWTable, {__call = function(_, uid)
 	uid = uid or util.CRC(debug.traceback())
+
+	if NWTable.list[uid] then
+		return NWTable.list[uid]
+	end
+
 	local net_uid = "incredible-gmod.ru/nwtable/".. uid
 
 	local instance, mt = {}, {}
@@ -38,11 +45,17 @@ setmetatable(NWTable, {__call = function(_, uid)
 	local settings = {
 		WriteKey = net.WriteType,
 		ReadKey = net.ReadType,
+		LocalPlayer = false,
+		AutoSync = true,
 		uid = uid
 	}
 
 	function mt:settings()
 		return settings
+	end
+
+	function mt:storage()
+		return storage
 	end
 
 	do -- storage manipulation
@@ -59,24 +72,58 @@ setmetatable(NWTable, {__call = function(_, uid)
 					settings.WriteKey.write(k, settings.WriteKey.opts)
 					if v then settings.Write.write(v, settings.Write.opts) end
 				if SERVER then
-					((settings.LocalPlayer and net.Send) or (settings.Filter and settings.BoradcastFilter(k)) or net.Broadcast)(k)
+					if settings.LocalPlayer then
+						net.Send(k)
+					else
+						local filter = settings.BoradcastFilter and settings.BoradcastFilter(k)
+						if filter then
+							net.Send(filter)
+						else
+							net.Broadcast()
+						end
+					end
 				else
 					net.SendToServer()
 				end
 			end
+
+			return self
 		end
 
 		function mt:delete(k)
 			self:set(k, nil)
+			return self
 		end
 
-		function mt:clean()
+		function mt:clean(ply)
 			net.Start(net_uid)
 				net.WriteUInt(2, 2)
 			if SERVER then
-				((settings.LocalPlayer and net.Send) or (settings.Filter and settings.BoradcastFilter(k)) or net.Broadcast)(k)
+				if ply then
+					net.Send(ply)
+				else
+					net.Broadcast()
+				end
 			else
 				net.SendToServer()
+			end
+
+			return self
+		end
+
+		if SERVER then
+			function mt:Sync(ply)
+				net.Start(net_uid)
+					net.WriteUInt(3, 2)
+					net.WriteTable(storage)
+
+				if ply then
+					net.Send(ply)
+				else
+					net.Broadcast()
+				end
+
+				return self
 			end
 		end
 	end
@@ -119,22 +166,34 @@ setmetatable(NWTable, {__call = function(_, uid)
 			return self
 		end
 
-		function mt:Validate(func, REALM)
+		function mt:Validate(REALM, func)
 			if REALM == false then return self end
+			if isfunction(REALM) then
+				read, opts = REALM, read
+			end
+
 			settings.Validate = func
 
 			return self
 		end
 
-		function mt:Hook(cback, REALM)
+		function mt:Hook(REALM, cback)
 			if REALM == false then return self end
+			if isfunction(REALM) then
+				read, opts = REALM, read
+			end
+
 			settings.Hook = cback
 
 			return self
 		end
 
-		function mt:WriteKey(write, opts, REALM)
+		function mt:WriteKey(REALM, write, opts)
 			if REALM == false then return self end
+			if isfunction(REALM) then
+				read, opts = REALM, read
+			end
+
 			settings.WriteKey = {
 				write = write,
 				opts = opts
@@ -143,8 +202,12 @@ setmetatable(NWTable, {__call = function(_, uid)
 			return self
 		end
 
-		function mt:ReadKey(read, opts, REALM)
+		function mt:ReadKey(REALM, read, opts)
 			if REALM == false then return self end
+			if isfunction(REALM) then
+				read, opts = REALM, read
+			end
+
 			settings.ReadKey = {
 				read = read,
 				opts = opts
@@ -153,8 +216,12 @@ setmetatable(NWTable, {__call = function(_, uid)
 			return self
 		end
 
-		function mt:Write(write, opts, REALM)
+		function mt:Write(REALM, write, opts)
 			if REALM == false then return self end
+			if isfunction(REALM) then
+				read, opts = REALM, read
+			end
+
 			settings.Write = {
 				write = write,
 				opts = opts
@@ -163,15 +230,19 @@ setmetatable(NWTable, {__call = function(_, uid)
 			return self
 		end
 
-		function mt:Read(read, opts, REALM)
+		function mt:Read(REALM, read, opts, autosync)
 			if REALM == false then return self end
+			if isfunction(REALM) then
+				read, opts = REALM, read
+			end
+
 			settings.Read = {
 				read = read,
 				opts = opts
 			}
 
 			local cooldown = {}
-			local key, value, new, type
+			local key, value, type
 
 			net.Receive(net_uid, function(_, ply)
 				if SERVER and settings.Cooldown then
@@ -180,19 +251,24 @@ setmetatable(NWTable, {__call = function(_, uid)
 				end
 
 				type = net.ReadUInt(2)
-				if type == 2 then
+				if type == 2 then -- clean
 					storage = {}
+					return
+				elseif type == 3 then -- sync
+					storage = net.ReadTable()
 					return
 				end
 
 				key = settings.ReadKey.read(settings.ReadKey.opts)
 
-				if type == 0 then
+				if type == 0 then -- delete
 					value = nil
-				elseif type == 1 then
+				elseif type == 1 then -- set
 					value = settings.Read.read(settings.Read.opts)
 					if (SERVER and settings.Validate and settings.Validate(ply, key, value)) or (CLIENT and settings.Validate and settings.Validate(key, value)) then return end
 				end
+
+				local new
 
 				if settings.Hook and SERVER then
 					new = settings.Hook(ply, key, value)
@@ -204,9 +280,18 @@ setmetatable(NWTable, {__call = function(_, uid)
 					value = new
 				end
 
-				storage[key] = value
+				if autosync and SERVER then
+					self:set(key, value)
+				else
+					storage[key] = value
+				end
 			end)
 
+			return self
+		end
+
+		function mt:NoSync()
+			settings.AutoSync = false
 			return self
 		end
 	end
@@ -215,41 +300,63 @@ setmetatable(NWTable, {__call = function(_, uid)
 		util.AddNetworkString(net_uid)
 	end
 
+	NWTable.list[uid] = instance
 	return setmetatable(instance, mt)
 end})
+
+if SERVER then
+	hook.Add("PlayerInitialSpawn", "incredible-gmod.ru/nwtable", function(ply)
+		hook.Add("SetupMove", ply, function(self, pl, _, cmd)
+			if self == pl and not cmd:IsForced() then
+				hook.Remove("SetupMove", self)
+
+				for _, nwtable in pairs(NWTable.list) do
+					nwtable:Sync(self)
+				end
+			end
+		end)
+	end)
+end
 
 return NWTable
 
 --[[ Examples:
 local money = NWTable("Money")
-:Write(net.WriteUInt, 32, SERVER)
-:Read(net.ReadUInt, 32, CLIENT)
-:WriteKey(net.WriteEntity)
-:ReadKey(net.ReadEntity)
+:Write(SERVER, net.WriteUInt, 32)
+:Read(CLIENT, net.ReadUInt, 32)
+:WriteKey(SERVER, net.WriteEntity)
+:ReadKey(CLIENT, net.ReadEntity)
+:LocalPlayer()
 function PLAYER:GetMoney()
 	return money[self] or 0
 end
+
 if SERVER then
 	function PLAYER:SetMoney(amnt)
 		money[self] = amnt
 	end
 end
+
 ------------------
+
 local laws = NWTable("Laws")
-:Write(net.WriteString, nil, CLIENT)
-:Read(net.ReadString, nil, SERVER)
+:Write(CLIENT, net.WriteString)
+:Read(SERVER, net.ReadString, true)
 :WriteKey(net.WriteUInt, 3)
 :ReadKey(net.ReadUInt, 3)
 :Validate(function(ply, index, value)
 	return ply:IsMayor() and index > 0 and index < 8 and value:len() <= 512
 end)
 :Cooldown(5)
+
 function GetLaw(index)
 	return laws[index]
 end
+
 function GetLaws()
 	return laws
 end
+
 if CLIENT then
 	local cooldown = 0
 	function UpdateLaw(index, law_phrase)
