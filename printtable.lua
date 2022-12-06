@@ -1,5 +1,6 @@
 -- from incredible-gmod.ru with <3
 -- https://github.com/Be1zebub/Small-GLua-Things/blob/master/printtable.lua
+-- perfectly combines with https://github.com/Be1zebub/Small-GLua-Things/blob/master/better_tostring.lua
 
 --[[
 table.Print({
@@ -38,10 +39,11 @@ local format, concat, rep, ipairs, pairs, tostring = string.format, table.concat
 local istable = {["table"] = true}
 local isstring = getmetatable("")
 
-function table.ToPlain(tbl, lvl)
+function table.ToPlain(tbl, lvl, already)
+	already = already or {}
 	lvl = lvl or 1
-	local out = {}
 
+	local out = {}
 	local indent = rep("\t", lvl)
 
 	local len = 0
@@ -54,8 +56,32 @@ function table.ToPlain(tbl, lvl)
 	end
 
 	local isSeq = len == #tbl
+	local last
+
+	local not_isSeq = not isSeq
+
+	if not_isSeq then
+		local new = {}
+		local id = 0
+
+		for k, v in pairs(tbl) do
+			id = id + 1
+			new[id] = {k = k, v = v}
+		end
+
+		table.sort(new, function(a, b)
+			if isnumber(a.k) and isnumber(b.k) then return a.k < b.k end
+			return tostring(a.k) < tostring(b.k)
+		end)
+
+		tbl = new
+	end
 
 	for k, v in (isSeq and ipairs or pairs)(tbl) do
+		if not_isSeq then
+			k, v = v.k, v.v
+		end
+
 		if isSeq then
 			k = ""
 		elseif isstring ~= getmetatable(k) then
@@ -66,16 +92,19 @@ function table.ToPlain(tbl, lvl)
 			k = k .." = "
 		end
 
-		if istable[type(v)] then
-			out[#out + 1] = k .. table.ToPlain(v, lvl + 1)
+		if istable[type(v)] and already[v] == nil then
+			last = v
+			already[v] = true
+			out[#out + 1] = k .. table.ToPlain(v, lvl + 1, already)
 		else
+			last = v
 			out[#out + 1] = k .. (
 				isstring == getmetatable(v) and format("%q", v) or tostring(v)
 			)
 		end
 	end
 
-	if len == 1 then
+	if len == 1 and istable[type(last)] == nil then
 		return "{".. out[1] .."}"
 	end
 
