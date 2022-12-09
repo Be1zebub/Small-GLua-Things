@@ -84,9 +84,14 @@ setmetatable(httpMaterial, {
 	__call = httpMaterial.Draw
 })
 
+local function new(url, flags)
+	local instance = setmetatable({}, httpMaterial)
+	instance:Init(url, flags)
+	return instance
+end
+
 --[[ test:
-local gorgeous = setmetatable({}, httpMaterial)
-gorgeous:Init("https://github.com/Be1zebub/elite-emotes-collection/blob/main/gorgeous/pleasure.png?raw=true", "smooth mips")
+local gorgeous = new("https://github.com/Be1zebub/elite-emotes-collection/blob/main/gorgeous/pleasure.png?raw=true", "smooth mips")
 
 hook.Add("HUDPaint", "incredible-gmod.ru/http-material", function()
 	surface.SetDrawColor(255, 255, 255)
@@ -94,8 +99,4 @@ hook.Add("HUDPaint", "incredible-gmod.ru/http-material", function()
 end)
 ]]--
 
-return function(url, flags)
-	local instance = setmetatable({}, httpMaterial)
-	instance:Init(url, flags)
-	return instance
-end
+return new
