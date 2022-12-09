@@ -17,8 +17,8 @@ file.CreateDir("http-material")
 local httpMaterial = {}
 httpMaterial.__index = httpMaterial
 
-function httpMaterial:Init(url, flags, alive_time)
-	alive_time = alive_time or 86400
+function httpMaterial:Init(url, flags, ttl)
+	ttl = ttl or 86400
 
 	local fname = url:match("([^/]+)$"):gsub("[&?]([^/%s]+)=([^/%s]+)", "")
 	if fname:match("^.+(%..+)$") == nil then
@@ -28,7 +28,7 @@ function httpMaterial:Init(url, flags, alive_time)
 	local uid = util.CRC(url)  .."_".. fname
 	local path = "http-material/".. uid
 
-	if file.Exists(path, "DATA") and file.Time(path, "DATA") + alive_time > os.time() then
+	if file.Exists(path, "DATA") and file.Time(path, "DATA") + ttl > os.time() then
 		self.material = Material("data/".. path, flags)
 	else
 		self:Download(url, function(succ, result)
