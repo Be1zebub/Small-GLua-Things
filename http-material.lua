@@ -58,7 +58,7 @@ function httpMaterial:Download(url, cback, retry)
 	if retry <= 0 then return cback(false, "retry") end
 
 	http.Fetch(url, function(raw, _, _, code)
-		if not raw or raw == "" or code ~= 200 then
+		if not raw or raw == "" or code ~= 200 or raw:find("<!DOCTYPE HTML>", 1, true) then
 			self:Download(url, cback, retry - 1)
 			return
 		end
