@@ -9,6 +9,9 @@
 -- https://gitspartv.github.io/lua-patterns
 -- https://www.lua.org/pil/20.2.html
 
+local utf8_chars = "[%z\x01-\x7F\xC2-\xF4][\x80-\xBF]"
+-- local without_russian = string.gsub("Привет world!", utf8_chars, "") > " world!"
+
 local word = "(%s?[%S]+)"
 -- for word in string.gmatch("Hi mom!", word) do print(word) end
 
@@ -26,14 +29,18 @@ local prefix = "^(.-_)"
 -- local pre = string.match("sv_core.lua", prefix) > "sv_"
 
 local http_query = "?(.*)"
+local http_query_group = "([^&=?]-)=([^&=?]+)"
 -- local without_query = string.gsub("https://my.site/?key=value", http_query_remove, "") > "https://my.site/"
 -- local query = string.match("https://my.site/?key=value", http_query) > "key=value"
+-- for k, v in string.gmatch("https://my.site/?key=value&test=true", http_query) do print(k, v) end
 
 local ipv4 = "(%d+)%.(%d+)%.(%d+)%.(%d+)"
 local ipv6 = "([a-fA-F0-9]*):([a-fA-F0-9]*):([a-fA-F0-9]*)::([a-fA-F0-9]*)"
+local host = "(.-):(.+)"
 local port = ":(.+)$"
 -- local cloudflare = {string.match("I use 1.1.1.1 dns", ipv4)} > {1, 1, 1, 1}
 -- local google = {string.match("I use 2001:4860:4860::8888 dns", ipv6)} > {2001, 4860, 4860, 8888}
+-- local addr = {string.match("1.1.1.1:80", host)} > {"1.1.1.1", "80"}
 -- local port80 = string.match("1.1.1.1:80", port)
 
 local steamid = "(STEAM_%d:%d:%d+)"
@@ -59,5 +66,14 @@ local cmyk = "([x.%x]+)[ ,]+([x.%x]+)[ ,]+([x.%x]+)[ ,]+([-x.%x]+)"
 -- local h, s, v = string.match("100, 0, 0", rgb_hsv_hsl)
 -- local h, s, l = string.match("100, 0, 0", rgb_hsv_hsl)
 
-local emoji = ":[%w%p]+:"
+local emoji = ":[%w%p]+:" -- discord
 -- for emoji in string.gmatch(":wave: world! I love :moon:!", emoji) do print(emoji) end
+
+local mentions = {user = "<@!?(%d+)>", member = "<@!?(%d+)>", role = "<@&(%d+)>", channel = "<#(%d+)>"} -- discord
+-- local channel_id = string.match("Welcome to <#676069143463723018> channel!", mentions.channel) > "676069143463723018"
+
+local iso8601 = "(%d+)%-(%d+)%-(%d+)%a(%d+)%:(%d+)%:([%d%.]+)([Z%+%-])(%d?%d?)%:?(%d?%d?)"
+-- local year, month, day, hour, minute, seconds, offsetsign, offsethour, offsetmin = string.match("2022-12-08T16:00:00.000Z", iso8601)
+
+local len = "(%d*%.?%d+)([dwhm])"
+-- for k, v in string.gmatch("1d is 24h", len) do print(k, v) end
