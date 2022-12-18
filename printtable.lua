@@ -39,12 +39,11 @@ local format, concat, rep, ipairs, pairs, tostring = string.format, table.concat
 local istable = {["table"] = true}
 local isstring = getmetatable("")
 
-function table.ToPlain(tbl, lvl, already)
+function table.ToPlain(tbl, nopretty, lvl, already)
 	already = already or {}
 	lvl = lvl or 1
 
 	local out = {}
-	local indent = rep("\t", lvl)
 
 	local len = 0
 	for _ in pairs(tbl) do
@@ -95,7 +94,7 @@ function table.ToPlain(tbl, lvl, already)
 		if istable[type(v)] and already[v] == nil then
 			last = v
 			already[v] = true
-			out[#out + 1] = k .. table.ToPlain(v, lvl + 1, already)
+			out[#out + 1] = k .. table.ToPlain(v, nopretty, lvl + 1, already)
 		else
 			last = v
 			out[#out + 1] = k .. (
@@ -108,11 +107,16 @@ function table.ToPlain(tbl, lvl, already)
 		return "{".. out[1] .."}"
 	end
 
-	return "{\n".. indent .. concat(out, ",\n" .. indent) .."\n".. rep("\t", lvl - 1) .."}"
+	if nopretty then
+		return "{".. concat(out, ", ") .."}"
+	else
+		local indent = rep("\t", lvl)
+		return "{\n".. indent .. concat(out, ",\n" .. indent) .."\n".. rep("\t", lvl - 1) .."}"
+	end
 end
 
-function table.Print(tbl)
-	print(table.ToPlain(tbl))
+function table.Print(tbl, nopretty)
+	print(table.ToPlain(tbl, nopretty))
 end
 
 PrintTable = table.Print
