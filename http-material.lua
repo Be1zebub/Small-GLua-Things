@@ -56,6 +56,14 @@ end
 function httpMaterial:Download(url, cback, retry)
 	retry = retry or 3
 	if retry <= 0 then return cback(false, "retry") end
+	
+	if engine.TickCount() == 0 then -- Valve http doesnt works before 1st tick
+		hook.Add("Tick", "httpMaterial".. url, function()
+			hook.Remove("Tick", "httpMaterial".. url)
+			self:Download(url, cback, retry)
+		end)
+		return
+	end
 
 	http.Fetch(url, function(raw, _, _, code)
 		if not raw or raw == "" or code ~= 200 or raw:find("<!DOCTYPE HTML>", 1, true) then
