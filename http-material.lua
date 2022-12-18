@@ -73,7 +73,8 @@ function httpMaterial:Download(url, cback, retry)
 
 		cback(true, raw)
 	end, function(err)
-		cback(false, err)
+		if retry - 1 <= 0 then return cback(false, err) end
+		self:Download(url, cback, retry - 1)
 	end)
 end
 
