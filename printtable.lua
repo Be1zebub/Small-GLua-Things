@@ -26,6 +26,9 @@ table.Print({
                 [true] = "good"
         }
 }
+
+table.Print({test = 1, [1] = 2}, true) -- no pretty (if you dont need newlines & indent)
+{[1] = 2, test = 1}
 ]]--
 
 --[[
