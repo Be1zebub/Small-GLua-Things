@@ -28,6 +28,7 @@ function httpMaterial:Init(url, flags, ttl, cback)
 
 	if file.Exists(path, "DATA") and file.Time(path, "DATA") + ttl > os.time() then
 		self.material = Material("data/".. path, flags)
+		if cback then cback(self.material) end
 	else
 		self:Download(url, function(succ, result)
 			if succ then
