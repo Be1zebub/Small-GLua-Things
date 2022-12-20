@@ -3,9 +3,7 @@
 
 --[[ Example:
 local httpMaterial = include("lib/http-material.lua")
-
 local gorgeous = httpMaterial("https://github.com/Be1zebub/elite-emotes-collection/blob/main/gorgeous/pleasure.png?raw=true", "smooth mips")
-
 hook.Add("HUDPaint", "incredible-gmod.ru/http-material", function()
 	surface.SetDrawColor(255, 255, 255)
 	gorgeous:Draw(32, 32, 64, 64)
@@ -17,7 +15,7 @@ file.CreateDir("http-material")
 local httpMaterial = {}
 httpMaterial.__index = httpMaterial
 
-function httpMaterial:Init(url, flags, ttl)
+function httpMaterial:Init(url, flags, ttl, cback)
 	ttl = ttl or 86400
 
 	local fname = url:match("([^/]+)$"):gsub("[&?]([^/%s]+)=([^/%s]+)", "")
@@ -35,6 +33,7 @@ function httpMaterial:Init(url, flags, ttl)
 			if succ then
 				file.Write(path, result)
 				self.material = Material("data/".. path, flags)
+				if cback then cback(self.material) end
 			else
 				ErrorNoHalt(string.format("Cant download http-material! Url: %s, reason: %s\n", url, reason))
 
@@ -43,9 +42,11 @@ function httpMaterial:Init(url, flags, ttl)
 					if succ then
 						file.Write(path, result)
 						self.material = Material("data/".. path, flags)
+						if cback then cback(self.material) end
 					else
 						ErrorNoHalt(string.format("Cant download http-material! Url: %s, reason: %s\n", url, reason))
 						self.material = Material("error")
+						if cback then cback(self.material) end
 					end
 				end)
 			end
@@ -55,7 +56,7 @@ end
 
 function httpMaterial:Download(url, cback, retry)
 	retry = retry or 3
-	
+
 	if engine.TickCount() == 0 then -- Valve http doesnt works before 1st tick
 		hook.Add("Tick", "httpMaterial".. url, function()
 			hook.Remove("Tick", "httpMaterial".. url)
@@ -101,7 +102,6 @@ end
 
 --[[ test:
 local gorgeous = new("https://github.com/Be1zebub/elite-emotes-collection/blob/main/gorgeous/pleasure.png?raw=true", "smooth mips")
-
 hook.Add("HUDPaint", "incredible-gmod.ru/http-material", function()
 	surface.SetDrawColor(255, 255, 255)
 	gorgeous:Draw(32, 32, 64, 64)
