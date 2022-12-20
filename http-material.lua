@@ -94,9 +94,9 @@ setmetatable(httpMaterial, {
 	__call = httpMaterial.Draw
 })
 
-local function new(url, flags)
+local function new(url, flags, ttl, cback)
 	local instance = setmetatable({}, httpMaterial)
-	instance:Init(url, flags)
+	instance:Init(url, flags, ttl, cback)
 	return instance
 end
 
