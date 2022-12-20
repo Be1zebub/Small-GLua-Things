@@ -40,7 +40,7 @@ setmetatable(NWTable, {__call = function(_, uid)
 
 	local net_uid = "incredible-gmod.ru/nwtable/".. uid
 
-	local instance, mt = newproxy(true), {}
+	local instance, mt = newproxy(true), {MetaName = "NWTable"}
 	local storage = {}
 	local settings = {
 		WriteKey = net.WriteType,
