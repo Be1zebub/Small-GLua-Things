@@ -11,15 +11,15 @@ local function CRC32(any)
 	return tonumber(util.CRC(any))
 end
 
-return function(any, hashFunc, hsvToColor)
+return function(any, hashFunc, hslToColor)
 	hashFunc = hashFunc or CRC32
-	hsvToColor = hsvToColor or HSVToColor
+	hslToColor = hslToColor or HSLToColor
 
 	local hash = hashFunc(any)
 
-	return hsvToColor(
+	return hslToColor(
 		hash % 360,
 		hash % 100,
-		hash % 100
+		(hash * 0.5) % 100
 	)
 end
