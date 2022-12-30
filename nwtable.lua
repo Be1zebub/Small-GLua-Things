@@ -150,6 +150,7 @@ setmetatable(NWTable, {__call = function(_, uid)
 
 	do -- meta events
 		function mt:__len()
+			-- print("__len is ".. (length == table.Count(storage) and "works great" or "broken"))
 			return length
 		end
 
