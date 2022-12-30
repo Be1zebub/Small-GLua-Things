@@ -1,7 +1,7 @@
 -- from incredible-gmod.ru with <3
 
 local NWTable = {
-	_VERSION = 2.1,
+	_VERSION = 2.2,
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/nwtable.lua",
 	_LICENSE = [[
 		MIT LICENSE
@@ -50,6 +50,8 @@ setmetatable(NWTable, {__call = function(_, uid)
 		uid = uid
 	}
 
+	local length = 0
+
 	function mt:settings()
 		return settings
 	end
@@ -64,6 +66,12 @@ setmetatable(NWTable, {__call = function(_, uid)
 		end
 
 		function mt:set(k, v)
+			if storage[k] and v == nil then
+				length = length - 1
+			elseif storage[k] == nil then
+				length = length + 1
+			end
+
 			storage[k] = v
 
 			if settings.Write then
@@ -96,6 +104,8 @@ setmetatable(NWTable, {__call = function(_, uid)
 		end
 
 		function mt:clean(ply)
+			length = 0
+
 			net.Start(net_uid)
 				net.WriteUInt(2, 2)
 			if SERVER then
@@ -126,11 +136,21 @@ setmetatable(NWTable, {__call = function(_, uid)
 				return self
 			end
 		end
+
+		function mt:count()
+			local len = 0
+
+			for _ in pairs(storage) do
+				len = len + 1
+			end
+
+			return len
+		end
 	end
 
 	do -- meta events
 		function mt:__len()
-			return #storage
+			return length
 		end
 
 		function mt:__pairs()
@@ -261,9 +281,11 @@ setmetatable(NWTable, {__call = function(_, uid)
 				type = net.ReadUInt(2)
 				if type == 2 then -- clean
 					storage = {}
+					length = 0
 					return
 				elseif type == 3 then -- sync
 					storage = net.ReadTable()
+					length = self:count()
 					return
 				end
 
@@ -291,6 +313,12 @@ setmetatable(NWTable, {__call = function(_, uid)
 				if autosync and SERVER then
 					self:set(key, value)
 				else
+					if storage[key] and value == nil then
+						length = length - 1
+					elseif storage[key] == nil then
+						length = length + 1
+					end
+
 					storage[key] = value
 				end
 			end)
@@ -307,7 +335,7 @@ setmetatable(NWTable, {__call = function(_, uid)
 	if SERVER then
 		util.AddNetworkString(net_uid)
 	end
-			
+
 	debug.setmetatable(instance, mt)
 
 	NWTable.list[uid] = instance
