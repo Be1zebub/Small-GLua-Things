@@ -32,15 +32,17 @@ function ENV:Parse(content)
 		return function() end
 	end
 
-	local pos = 1
+	local pos, stop = 1
 
 	return function()
+		if stop then return end
 		local i, j = string.find(content, delim, pos, plain)
 
 		if i then
 			pos = j + 1
 			return self:ParseLine(string.sub(content, pos, i - 1))
 		else
+			stop = true
 			return self:ParseLine(string.sub(content, pos))
 		end
 	end
