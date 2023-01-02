@@ -19,6 +19,9 @@ local filename = "([^/]+)$"
 -- local fname = string.match("etc/test/file.txt", filename) > "file.txt"
 -- local dirname = string.match("etc/test", filename) > "test"
 
+local filename_wihout_extension = ".+/(.+)%..+"
+-- local fname = string.match("etc/test/file.txt", filename_wihout_extension) > "file"
+
 local extension = "^.+(%..+)$"
 -- local ext = string.match("file.txt", extension) > ".txt"
 
