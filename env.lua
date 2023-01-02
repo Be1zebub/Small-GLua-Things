@@ -36,7 +36,7 @@ function ENV:Parse(content)
 
 	return function()
 		if stop then return end
-		local i, j = string.find(content, delim, pos, plain)
+		local i, j = string.find(content, "\n", pos, true)
 
 		if i then
 			pos = j + 1
