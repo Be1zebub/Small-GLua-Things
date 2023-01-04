@@ -1,5 +1,5 @@
 local ENV = {
-	_VERSION = 1.0,
+	_VERSION = 1.1,
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/env.lua",
 	_LICENSE = [[
 		MIT LICENSE
@@ -32,23 +32,25 @@ function ENV:Parse(content)
 		return function() end
 	end
 
-	local pos, stop = 1
+	local pos, stop, key, value = 1
 
 	return function()
 		if stop then return end
 		local i, j = string.find(content, "\n", pos, true)
 
 		if i then
+			key, value = self:ParseLine(content:sub(pos, i - 1))
 			pos = j + 1
-			return self:ParseLine(string.sub(content, pos, i - 1))
+			return key, value
 		else
 			stop = true
-			return self:ParseLine(string.sub(content, pos))
+			return self:ParseLine(content:sub(pos))
 		end
 	end
 end
 
 local META = {}
+META.__index = META
 
 local is = {
 	luvit = _G.p and debug.getinfo(p).source == "bundle:/deps/pretty-print.lua",
@@ -83,6 +85,18 @@ function META:__call(...)
 				env[key] = value
 			end
 		end
+	end
+
+	return env
+end
+
+function META:Read(path)
+	local env = {}
+
+	local content = assert(compat.file(path), "This file is empty!")
+
+	for key, value in self:Parse(content) do
+		env[key] = value
 	end
 
 	return env
