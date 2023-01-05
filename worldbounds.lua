@@ -108,3 +108,66 @@ else
 		cam.IgnoreZ(false)
 	end)
 end
+
+--[[
+function Airdrop:Spawn()
+    local sky = GetRandomSkyPos()
+    sky.z = sky.z - self:OBBMaxs().z - 500
+
+    local dirNormal = Vector(math.Rand(-1, 1), math.Rand(-1, 1))
+    local path = {
+        start = TraceDirection(sky, dirNormal),
+        endpos = TraceDirection(sky, -dirNormal)
+    }
+
+    self:SetPos(path.start)
+    self:MoveTo(path.endpos)
+    -- self:SetDropPos(path.start + (path.endpos - path.start) * 0.5)
+end
+
+function Airdrop:MoveTo(endpos, len)
+    local start = self:GetPos()
+    local shoulddrop = true
+
+    return self:NewAnimation(len or 10, 0.5, function(frac)
+        self:SetPos(start + (endpos - start) * frac)
+        if shoulddrop and frac >= 0.5 then
+            shoulddrop = false
+            self:DropPlayer()
+        end
+    end)
+end
+
+function Airdrop:NewAnimation(len, ease, cback)
+    return self.Animations[table.insert(self.Animations, {
+        start = SysTime(),
+        endtime = SysTime() + len,
+        ease = ease or -1,
+        cback = cback
+    })]
+end
+
+function Airdrop:Init()
+    self.Animations = {}
+end
+
+function Airdrop:Think()
+    local time = SysTime()
+
+    for i, anim in ipairs(self.Animations) do
+        local frac = math.Clamp((time - anim.start) / (time - anim.endtime), 0, 1)
+
+        if anim.ease < 0 then
+            frac = frac ^ (1 - frac - 0.5)
+        elseif anim.ease > 0 and anim.ease < 1 then
+            frac = 1 - (1 - frac) ^ (1 / anim.ease)
+        end
+
+        anim.cback(frac)
+
+        if frac == 1 then
+            table.remove(self.Animations, i)
+        end
+    end
+end
+]]
