@@ -50,7 +50,7 @@ hook.Add("HUDPaint", "incredible-gmod.ru/no-errors", function()
         if pos.visible == false then continue end
 
         draw.SimpleText("Model rendering error, it looks like you havent downloaded the server content!", "Default", pos.x, pos.y, color.hint, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-        local _, th = draw.SimpleText("model has been replaced with a cube, to look not as ass", "Default", pos.x, pos.y, color.mdl, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+        local _, th = draw.SimpleText("model has been replaced with a cube, to not look as ass", "Default", pos.x, pos.y, color.mdl, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
         draw.SimpleText(ent.errorMDL, "Default", pos.x, pos.y + th, color.mdl, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 
         rendered = rendered + 1
