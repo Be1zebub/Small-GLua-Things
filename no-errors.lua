@@ -1,6 +1,7 @@
 -- from incredible-gmod.ru with <3
 -- https://github.com/Be1zebub/Small-GLua-Things/blob/master/no-errors.lua
 -- replace errors with cube, draw text over errors (to understand what content is missing in the server content pack)
+-- how it looks: https://cdn.discordapp.com/attachments/676069143463723018/1061646367749046314/image.png
 
 local color = {
     mdl = Color(220, 220, 220),
@@ -19,10 +20,10 @@ hook.Add("HUDPaint", "incredible-gmod.ru/no-errors", function()
         if index > #ents then index = 1 end
 
         ent = ents[index]
-        if (already[ent] and already[ent] == ent:GetModel()) or IsValid(ent) == false then continue end
+        if IsValid(ent) == false or (already[ent] and already[ent] == ent:GetModel()) then continue end
 
         if ent.errorMDL or (ent:GetModel() and util.IsValidModel(ent:GetModel()) == false) then
-            if ent.errorMDL == nil or ent.errorMDL ~= "models/hunter/blocks/cube025x025x025.mdl" then
+            if ent.errorMDL == nil or ent:GetModel() ~= "models/hunter/blocks/cube025x025x025.mdl" then
                 ent.errorMDL = ent:GetModel()
             end
             ent:SetModel("models/hunter/blocks/cube025x025x025.mdl")
