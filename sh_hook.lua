@@ -3,35 +3,88 @@
 
 hook._GetTable = hook._GetTable or hook.GetTable
 
-function hook.GetTable(eventName)
-    if eventName then
-        return hook._GetTable()[eventName] or {}
+function hook.GetTable(event)
+    if event then
+        return hook._GetTable()[event] or {}
     else
         return hook._GetTable()
     end
 end
 
-function hook.Get(eventName, identifier)
-    return hook.GetTable(eventName)[identifier]
+function hook.Get(event, identifier)
+    return hook.GetTable(event)[identifier]
 end
 
-function hook.Exists(eventName, identifier)
-    return tobool(hook.Get(eventName, identifier))
+function hook.Exists(event, identifier)
+    return tobool(hook.Get(event, identifier))
 end
 
-function hook.Once(eventName, callback, identifier)
+function hook.Once(event, callback, identifier)
     identifier = identifier or debug.traceback()
 
-    hook.Add(eventName, identifier, function()
-        hook.Remove(eventName, identifier)
+    hook.Add(event, identifier, function()
+        hook.Remove(event, identifier)
         callback()
     end)
 end
 
-for ClassName, Class in pairs(debug.getregistry()) do
-    if istable(Class) and Class.IsValid and isstring(ClassName) then
-        function Class:AddHook(eventName, callback)
-            hook.Add(eventName, self, callback)
+for ClassName in ipairs({"Entity", "Panel", "Weapon"}) do
+    local Class = FindMetaTable(ClassName)
+    
+    function Class:AddHook(event, callback)
+        hook.Add(event, self, callback)
+        
+        if self.HooksTable == nil then
+            self.HooksTable = {}
+            local old = self.OnRemove
+            self.OnRemove = function()
+                for event in pairs(self.HooksTable) do
+                    hook.Remove(event, self)
+                end
+                if old then old(self) end
+            end
         end
+        
+        self.HooksTable[eventName] = true
     end
+    
+    function Class:RemoveHook(event)
+        hook.Remove(event, self)
+        self.HooksTable[eventName] = nil
+    end
+end
+
+hook.Paused = hook.Paused or {}
+
+function hook.Pause(event, identifier)
+	if hook.Paused[event] == nil then hook.Paused[event] = {} end
+
+	if identifier then
+		if hook.Paused[event][identifier] then return end
+
+		hook.Paused[event][identifier] = (hook.GetTable()[event] or {})[identifier]
+		hook.Remove(event, identifier)
+	else
+		for identifier, listener in pairs(hook.GetTable()[event] or {}) do
+			if hook.Paused[event][identifier] then continue end
+
+			hook.Paused[event][identifier] = (hook.GetTable()[event] or {})[identifier]
+			hook.Remove(event, identifier)
+		end
+	end
+end
+
+function hook.UnPause(event, identifier)
+	if hook.Paused[event] == nil then return end
+
+	if identifier then
+		if hook.Paused[event][identifier] == nil then return end
+		hook.Add(event, identifier, hook.Paused[event][identifier])
+		hook.Paused[event][identifier] = nil
+	else
+		for identifier in pairs(hook.Paused[event]) do
+			hook.Add(event, identifier, hook.Paused[event][identifier])
+			hook.Paused[event][identifier] = nil
+		end
+	end
 end
