@@ -1,4 +1,4 @@
--- incredible-gmod.ru
+-- https://github.com/Be1zebub/Small-GLua-Things/blob/master/cl_stencil_mask.lua
 -- thx to stencil tutorial: https://github.com/Lexicality/stencil-tutorial
 
 local function Mask(domask, dodraw, stencilCompareFunction)
