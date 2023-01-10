@@ -99,6 +99,10 @@
 		    position: relative;
 		    top: -4px;
 		}
+
+        .highlight {
+		    background-color: #dd610082;
+        }
     `;
 
     function addGlobalStyle(css) {
