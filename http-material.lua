@@ -84,11 +84,11 @@ function httpMaterial:GetMaterial()
 	return self.material
 end
 
-function httpMaterial:Draw(x, y, w, h)
+function httpMaterial:Draw(x, y, w, h, angle)
 	if self.material == nil then return end
 
 	surface.SetMaterial(self.material)
-	surface.DrawTexturedRect(x, y, w, h)
+	surface[angle and "DrawTexturedRectRotated" or "DrawTexturedRect"](x, y, w, h, angle)
 end
 
 setmetatable(httpMaterial, {
