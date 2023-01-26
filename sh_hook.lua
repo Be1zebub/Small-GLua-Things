@@ -28,8 +28,8 @@ function hook.Once(event, callback, identifier)
     end)
 end
 
-for ClassName in ipairs({"Entity", "Panel", "Weapon"}) do
-    local Class = FindMetaTable(ClassName)
+for ClassName, Class in pairs(debug.getregistry()) do
+    if FindMetaTable(ClassName) == nil or Class.IsValid == nil then return end
     
     function Class:AddHook(event, callback)
         hook.Add(event, self, callback)
