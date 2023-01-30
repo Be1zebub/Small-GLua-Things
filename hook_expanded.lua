@@ -1,4 +1,5 @@
--- https://github.com/Be1zebub/Small-GLua-Things/blob/master/hook_expanded.lua
+-- extending capabilities of the hook lib
+-- incredible-gmod.ru
 
 hook._GetTable = hook._GetTable or hook.GetTable
 
@@ -57,18 +58,23 @@ hook.Paused = hook.Paused or {}
 
 function hook.Pause(event, identifier)
 	if hook.Paused[event] == nil then hook.Paused[event] = {} end
+	local hooks = hook.GetTable()
 
 	if identifier then
 		if hook.Paused[event][identifier] then return end
 
-		hook.Paused[event][identifier] = (hook.GetTable()[event] or {})[identifier]
-		hook.Remove(event, identifier)
+		if isstring(identifier) or (identifier.IsValid and identifier:IsValid()) then
+			hook.Paused[event][identifier] = (hooks[event] or {})[identifier]
+		end
+		hooks[event][identifier] = nil
 	else
-		for identifier, listener in pairs(hook.GetTable()[event] or {}) do
+		for identifier in pairs(hooks[event] or {}) do
 			if hook.Paused[event][identifier] then continue end
 
-			hook.Paused[event][identifier] = (hook.GetTable()[event] or {})[identifier]
-			hook.Remove(event, identifier)
+			if isstring(identifier) or (identifier.IsValid and identifier:IsValid()) then
+				hook.Paused[event][identifier] = (hooks[event] or {})[identifier]
+			end
+			hooks[event][identifier] = nil
 		end
 	end
 end
@@ -84,11 +90,15 @@ function hook.UnPause(event, identifier)
 
 	if identifier then
 		if hook.Paused[event][identifier] == nil then return end
-		hook.Add(event, identifier, hook.Paused[event][identifier])
+		if isstring(identifier) or (identifier.IsValid and identifier:IsValid()) then
+			hook.Add(event, identifier, hook.Paused[event][identifier])
+		end
 		hook.Paused[event][identifier] = nil
 	else
 		for identifier in pairs(hook.Paused[event]) do
-			hook.Add(event, identifier, hook.Paused[event][identifier])
+			if isstring(identifier) or (identifier.IsValid and identifier:IsValid()) then
+				hook.Add(event, identifier, hook.Paused[event][identifier])
+			end
 			hook.Paused[event][identifier] = nil
 		end
 	end
