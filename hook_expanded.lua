@@ -28,7 +28,7 @@ function hook.Once(event, callback, identifier)
 end
 
 for ClassName, Class in pairs(debug.getregistry()) do
-	if FindMetaTable(ClassName) == nil or Class.IsValid == nil then return end
+	if FindMetaTable(ClassName) == nil or Class.IsValid == nil then continue end
 
 	function Class:AddHook(event, callback)
 		hook.Add(event, self, callback)
