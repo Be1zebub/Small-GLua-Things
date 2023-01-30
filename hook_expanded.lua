@@ -1,5 +1,4 @@
--- extending capabilities of the hook lib
--- incredible-gmod.ru
+-- https://github.com/Be1zebub/Small-GLua-Things/blob/master/hook_expanded.lua
 
 hook._GetTable = hook._GetTable or hook.GetTable
 
