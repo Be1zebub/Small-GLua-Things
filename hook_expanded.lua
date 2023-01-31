@@ -73,8 +73,9 @@ function hook.Pause(event, identifier)
 			if isstring(identifier) or (identifier.IsValid and identifier:IsValid()) then
 				hook.Paused[event][identifier] = (hooks[event] or {})[identifier]
 			end
-			hooks[event][identifier] = nil
 		end
+
+		hooks[event] = nil
 	end
 end
 
