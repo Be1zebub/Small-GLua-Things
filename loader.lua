@@ -2,7 +2,7 @@
 -- https://github.com/Be1zebub/Small-GLua-Things/blob/master/loader.lua
 
 local Loader = {
-	_VERSION = 1.3,
+	_VERSION = 1.4,
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/loader.lua",
 	_LICENSE = [[
 		MIT LICENSE
@@ -97,6 +97,59 @@ local is_client = {
 	["sv"] = SERVER
 }
 
+local find_mode = {
+	file = 1,
+	files = 2,
+	dir = 2,
+	dirs = 2,
+	lua = 3,
+	all = 4
+}
+
+local find_dirs = {
+	[2] = true,
+	[4] = true
+}
+
+local find_pattern = {
+	[1] = "*.*",
+	[2] = "*",
+	[3] = "*.lua",
+	[4] = "*"
+}
+
+function Loader:Find(path, mode, search_path)
+	mode = find_mode[mode] or find_mode.all
+
+	if path[#path] ~= "/" then
+		path = path .."/"
+	end
+
+	local skip_dirs = find_dirs[mode] == nil
+	local files, dirs = file.Find(path .. find_pattern[mode], search_path or "LUA")
+	local i, v = 1
+
+	return function()
+		if i > #files then
+			if skip_dirs then return end
+			v = dirs[i - #files]
+		else
+			v = files[i]
+		end
+
+		if v == nil then return end
+
+		i = i + 1
+		return path .. v, v, i > #files
+	end
+end
+
+--[[
+for path, name, isdir in loader:Find("addon_name/src/", "all") do
+	print(path, name, isdir)
+end
+]]--
+
 function Loader:IncludeDir(dir, recursive, realm, storage, _base_path_len, _lvl)
 	_base_path_len = _base_path_len or #dir + 2
 	_lvl = _lvl or 1
@@ -171,7 +224,7 @@ end
 function Loader:RegisterEntity(path, base, class, cback)
 	local _ENT = ENT
 
-	ENT = istable(base) and base or {
+	ENT = {
 		Base       	= "base_entity",
 		Type 		= "anim",
 		Author		= "Beelzebub",
@@ -179,7 +232,7 @@ function Loader:RegisterEntity(path, base, class, cback)
 		Category    = "Incredible GMod"
 	}
 
-	if isstring(base) then
+	if base then
 		ENT.Type = nil
 		ENT.Base = base
 	end
