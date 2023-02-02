@@ -56,11 +56,11 @@ function Loader:include(path, realm, _lvl)
 end
 
 function Loader:GetFilename(path, ext)
-	return path:match(ext and ("([%w_]*).".. ext) or "^.+/(.+)$") or path:match("([%w_]*).lua")
+	return path:match(".+/(.+)%..+") or self:RemoveExt(path)
 end
 
 function Loader:GetFilenameWithExt(path)
-	return path:match("([%w_]*).lua")
+	return path:match("([^/]+)$")
 end
 
 function Loader:RemoveExt(path)
