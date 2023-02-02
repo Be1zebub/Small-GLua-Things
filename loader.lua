@@ -55,7 +55,7 @@ function Loader:include(path, realm, _lvl)
 	end
 end
 
-function Loader:GetFilename(path, ext)
+function Loader:GetFilename(path)
 	return path:match(".+/(.+)%..+") or self:RemoveExt(path)
 end
 
