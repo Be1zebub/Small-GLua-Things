@@ -150,11 +150,26 @@ for path, name, isdir in loader:Find("addon_name/src/", "all") do
 end
 ]]--
 
-function Loader:IncludeDir(dir, recursive, realm, storage, _base_path_len, _lvl)
-	_base_path_len = _base_path_len or #dir + 2
+local skip_initlua = {
+	["init.lua"] = true
+}
+
+function Loader:IncludeDir(path, recursive, realm, storage, _base_path_len, _lvl)
+	_base_path_len = _base_path_len or #path + 2
 	_lvl = _lvl or 1
 
-	local path = dir .."/"
+	if path[#path] ~= "/" then
+		path = path .."/"
+	end
+
+	if file.Exists(path .."init.lua", "LUA") then
+		if storage then
+			storage.init = self:Include(path .."init.lua", realm or "sh", _lvl)
+		else
+			self:Include(path .."init.lua", realm or "sh", _lvl)
+		end
+	end
+
 	local files, folders = file.Find(path .. (recursive and "*" or "*.*"), "LUA")
 
 	if self._DEBUG and is_client[realm] ~= false then
@@ -162,6 +177,8 @@ function Loader:IncludeDir(dir, recursive, realm, storage, _base_path_len, _lvl)
 	end
 
 	for _, f in ipairs(files) do
+		if skip_initlua[f] then continue end
+
 		if storage then
 			storage[self:GetFilename(recursive and (path:sub(_base_path_len) .. f) or f)] = self:Include(path .. f, realm, _lvl)
 		else
