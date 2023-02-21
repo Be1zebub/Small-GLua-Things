@@ -226,14 +226,17 @@ function Loader:IncludeDirRelative(recursive, realm, storage, include_realm_orde
 	self:IncludeDir(self:GetCurrentDir(), recursive, realm, storage, include_realm_order, force_realm, include_1st)
 end
 
-function Loader:AddCsDir(dir, recursive, _lvl)
+function Loader:AddCsDir(path, recursive, _lvl)
 	_lvl = _lvl or 1
 
-	local path = dir .."/"
+	if path[#path] ~= "/" then
+		path = path .."/"
+	end
+
 	local files, folders = file.Find(path .. (recursive and "*" or "*.*"), "LUA")
 
 	if self._DEBUG then
-		print(string.rep("\t", _lvl - 1) .."Loader:AddCsDir(".. (recursive and "recursive" or "") ..") > ".. dir)
+		print(string.rep("\t", _lvl - 1) .."Loader:AddCsDir(".. (recursive and "recursive" or "") ..") > ".. path)
 	end
 
 	for _, f in ipairs(files) do
@@ -313,6 +316,22 @@ function Loader:RegisterEntity(path, base, class, cback)
 	end
 
 	ENT = _ENT
+end
+
+function Loader:Require(path)
+	if util.IsBinaryModuleInstalled(path) then
+		return require(path)
+	end
+
+	if file.IsDir(path, "LUA") then
+		if path[#path] ~= "/" then
+			path = path .."/"
+		end
+
+		return Loader:include(path .."init.lua")
+	end
+
+	return Loader:Include(path)
 end
 
 return Loader
