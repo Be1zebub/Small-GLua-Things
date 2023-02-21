@@ -40,10 +40,9 @@ include_realm.sh = function(f)
 end
 
 function Loader:include(path, realm, _lvl)
-	local worker = include_realm[realm or "sh"]
+	local worker = include_realm[realm]
 	if worker == nil then
-		realm = "sh"
-		worker = include_realm.sh
+		realm, worker = "sh", include_realm.sh
 	end
 
 	if file.Exists(path, "LUA") then
@@ -72,8 +71,7 @@ function Loader:GetCurrentDir()
 end
 
 function Loader:Include(path, realm, _lvl)
-	realm = realm or string.sub(self:GetFilename(path), 1, 2)
-	return self:include(path, realm, _lvl)
+	return self:include(path, realm or string.sub(self:GetFilename(path), 1, 2), _lvl)
 end
 
 function Loader:ScanDir(dir, cback, recursive, _lvl)
@@ -150,11 +148,7 @@ for path, name, isdir in loader:Find("addon_name/src/", "all") do
 end
 ]]--
 
-local skip_initlua = {
-	["init.lua"] = true
-}
-
-function Loader:IncludeDir(path, recursive, realm, storage, _base_path_len, _lvl)
+function Loader:IncludeDir(path, recursive, realm, storage, include_realm_order, force_realm, include_1st, _base_path_len, _lvl)
 	_base_path_len = _base_path_len or #path + 2
 	_lvl = _lvl or 1
 
@@ -162,39 +156,74 @@ function Loader:IncludeDir(path, recursive, realm, storage, _base_path_len, _lvl
 		path = path .."/"
 	end
 
-	if file.Exists(path .."init.lua", "LUA") then
-		if storage then
-			storage.init = self:Include(path .."init.lua", realm or "sh", _lvl)
-		else
-			self:Include(path .."init.lua", realm or "sh", _lvl)
-		end
+	if force_realm == nil then
+		force_realm = {
+			["init.lua"] = "sh"
+		}
+	end
+
+	if include_1st == nil then
+		include_1st = {
+			"init.lua",
+			"shared.lua"
+		}
+	end
+
+	local include_order = {}
+
+	for i, f in ipairs(include_1st) do
+		include_order[f] = i
+	end
+
+	if include_realm_order == nil then
+		include_realm_order = {
+			["sh"] = 1,
+			["sv"] = 2,
+			["cl"] = 3
+		}
 	end
 
 	local files, folders = file.Find(path .. (recursive and "*" or "*.*"), "LUA")
 
 	if self._DEBUG and is_client[realm] ~= false then
-		print(string.rep("\t", _lvl - 1) .."Loader:IncludeDir(".. (realm or "?") .. (recursive and ", recursive" or "") ..") > ".. dir)
+		print(string.rep("\t", _lvl - 1) .."Loader:IncludeDir(".. (realm or "?") .. (recursive and ", recursive" or "") ..") > ".. path)
 	end
 
-	for _, f in ipairs(files) do
-		if skip_initlua[f] then continue end
+	table.sort(files, function(a, b)
+		if include_order[a] then
+			if include_order[b] then return include_order[a] < include_order[b] end -- force load init.lua & shared.lua 1st
+			return true
+		end
 
+		local realm_a = force_realm[a] or a:sub(1, 2)
+		local realm_b = force_realm[b] or b:sub(1, 2)
+
+		if include_realm_order[realm_a] ~= include_realm_order[realm_b] then
+			return include_realm_order[realm_a] < include_realm_order[realm_b] -- by realm sh > sv > cl
+		end
+
+		return a < b -- alphabetically
+	end)
+
+	for _, f in ipairs(files) do
 		if storage then
-			storage[self:GetFilename(recursive and (path:sub(_base_path_len) .. f) or f)] = self:Include(path .. f, realm, _lvl)
+			storage[
+				self:GetFilename(recursive and (path:sub(_base_path_len) .. f) or f)
+			] = self:Include(path .. f, force_realm[f] or realm, _lvl)
 		else
-			self:Include(path .. f, realm, _lvl)
+			self:Include(path .. f, force_realm[f] or realm, _lvl)
 		end
 	end
 
-	if not recursive then return end
+	if recursive ~= true then return end
 
 	for _, f in ipairs(folders) do
-		self:IncludeDir(path .. f, recursive, realm, storage, _base_path_len, _lvl + 1)
+		self:IncludeDir(path .. f, recursive, realm, storage, include_realm_order, force_realm, include_1st, _base_path_len, _lvl + 1)
 	end
 end
 
-function Loader:IncludeDirRelative(recursive, realm, storage)
-	self:IncludeDir(self:GetCurrentDir(), recursive, realm, storage)
+function Loader:IncludeDirRelative(recursive, realm, storage, include_realm_order, force_realm, include_1st)
+	self:IncludeDir(self:GetCurrentDir(), recursive, realm, storage, include_realm_order, force_realm, include_1st)
 end
 
 function Loader:AddCsDir(dir, recursive, _lvl)
