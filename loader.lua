@@ -74,10 +74,13 @@ function Loader:Include(path, realm, _lvl)
 	return self:include(path, realm or string.sub(self:GetFilename(path), 1, 2), _lvl)
 end
 
-function Loader:ScanDir(dir, cback, recursive, _lvl)
+function Loader:ScanDir(path, cback, recursive, _lvl)
 	_lvl = _lvl or 1
 
-	local path = dir .."/"
+	if path[#path] ~= "/" then
+		path = path .."/"
+	end
+
 	local files, folders = file.Find(path .. (recursive and "*" or "*.*"), "LUA")
 
 	for _, f in ipairs(files) do
@@ -255,16 +258,20 @@ function Loader:AddCsDir(path, recursive, _lvl)
 end
 
 if SERVER then
-	function Loader:ResourceAdd(dir, recurse, pattern)
-		local files = file.Find(dir .. (pattern and ("/".. pattern) or "/*"), "GAME")
-
-		for _, fname in ipairs(files) do
-			resource.AddSingleFile(dir .."/".. fname)
+	function Loader:ResourceAdd(path, recursive, pattern)
+		if path[#path] ~= "/" then
+			path = path .."/"
 		end
 
-		if recurse then
+		local files = file.Find(path .. (pattern or "*"), "GAME")
+
+		for _, fname in ipairs(files) do
+			resource.AddSingleFile(path .. fname)
+		end
+
+		if recursive then
 			for _, fname in ipairs(folders) do
-				self:ResourceAdd(dir .."/".. fname, recurse, pattern)
+				self:ResourceAdd(path .. fname, recursive, pattern)
 			end
 		end
 	end
