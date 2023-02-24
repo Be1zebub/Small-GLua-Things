@@ -1,7 +1,7 @@
-local sql = {
+local isql = {
 	_NOTE 	 = "A async sql wrapper",
 	_VERSION = 1.1,
-	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/sql.lua",
+	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/isql.lua",
 	_LICENSE = [[
 		MIT LICENSE
 		Copyright (c) 2022 incredible-gmod.ru
@@ -24,7 +24,7 @@ local sql = {
 	]]
 }
 
-sql.drivers = {
+isql.drivers = {
 	sqlite = {
 		query = function(_, query)
 			local data = sql.Query(query)
@@ -157,7 +157,7 @@ function META:Query(query, args)
 	self.driver:query(query)
 end
 
-function sql:New(driver, credentials)
+function isql:New(driver, credentials)
 	assert(driver and self.drivers[driver], "Invalid sql driver!")
 
 	local instance = setmetatable({}, META)
@@ -178,7 +178,7 @@ function sql:New(driver, credentials)
 	return instance
 end
 
-return setmetatable(sql, {
+return setmetatable(isql, {
 	__call = function(self, driver, credentials)
 		return self:New(driver, credentials)
 	end
