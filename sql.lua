@@ -1,6 +1,6 @@
 local sql = {
 	_NOTE 	 = "A async sql wrapper",
-	_VERSION = 1.0,
+	_VERSION = 1.1,
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/sql.lua",
 	_LICENSE = [[
 		MIT LICENSE
@@ -135,8 +135,24 @@ sql.drivers = {
 local META = {}
 META.__index = META
 
-function META:Query(query)
+function META:Query(query, args)
 	assert(self.driver, "Cant perform sql query! You should call sql:Init(driver, credentials) 1st!")
+
+	if args then
+		if isstring(args) then
+			args = {args}
+		end
+
+		local i = 0
+		query = query:gsub("%?", function()
+			i = i + 1
+			if isstring(args[i]) then
+				return string.format("%q", args[i])
+			else
+				return args[i]
+			end
+		end)
+	end
 
 	self.driver:query(query)
 end
