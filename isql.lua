@@ -74,6 +74,14 @@ isql.drivers = {
 				if self.OnConnected then
 					self:OnConnected()
 				end
+
+				for _, co in ipairs(self.queue) do
+					if coroutine.status(co) == "suspended" then
+						coroutine.resume(co)
+					end
+				end
+
+				self.queue = {}
 			end
 
 			self.db.onConnectionFailed = function(_, reason)
@@ -117,9 +125,18 @@ isql.drivers = {
 			if db then
 				self:Query("SELECT 1;")
 
+				self.ready = true
 				if self.OnConnected then
 					self:OnConnected()
 				end
+
+				for _, co in ipairs(self.queue) do
+					if coroutine.status(co) == "suspended" then
+						coroutine.resume(co)
+					end
+				end
+
+				self.queue = {}
 			else
 				ErrorNoHalt("Sql connection failed!\n")
 				ErrorNoHalt(reason .."\n")
@@ -127,7 +144,6 @@ isql.drivers = {
 				_retry = _retry - 1
 				if _retry > 0 then self:connect(credentials, _retry) end
 
-				self.ready = true
 				if self.OnConnectionFailed then
 					self:OnConnectionFailed(reason)
 				end
@@ -162,15 +178,10 @@ function META:Query(query, args)
 		end)
 	end
 
-	repeat
-		local co = coroutine.running()
-
-		timer.Simple(0, function()
-			coroutine.resume(co)
-		end)
-
+	if self.ready == false then
+		table.insert(self.queue, coroutine.running())
 		coroutine.yield()
-	until self.ready
+	end
 
 	return self.driver:query(query)
 end
@@ -181,7 +192,8 @@ function isql:New(driver, credentials, OnConnected, OnConnectionFailed)
 	local instance = setmetatable({
 		driver = self.drivers[driver],
 		OnConnected = OnConnected,
-		OnConnectionFailed = OnConnectionFailed
+		OnConnectionFailed = OnConnectionFailed,
+		queue = {}
 	}, META)
 
 	if instance.driver.require then
