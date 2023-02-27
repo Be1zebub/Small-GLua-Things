@@ -182,7 +182,7 @@ function isql:New(driver, credentials, OnConnected, OnConnectionFailed)
 end
 
 return setmetatable(isql, {
-	__call = function(self, driver, credentials)
-		return self:New(driver, credentials)
+	__call = function(self, driver, credentials, OnConnected, OnConnectionFailed)
+		return self:New(driver, credentials, OnConnected, OnConnectionFailed)
 	end
 })
