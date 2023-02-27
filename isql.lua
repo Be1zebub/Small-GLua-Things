@@ -56,7 +56,8 @@ isql.drivers = {
 			smt:start()
 			return coroutine.yield()
 		end,
-		connect = function(self, credentials)
+		connect = function(self, credentials, _retry)
+			_retry = _retry or 3
 			self.db = self.driver.module.connect(credentials.host, credentials.user, credentials.pass, credentials.db, credentials.port)
 
 			self.db.onConnected = function(db)
@@ -78,6 +79,9 @@ isql.drivers = {
 			self.db.onConnectionFailed = function(_, reason)
 				ErrorNoHalt("Sql connection failed!\n")
 				ErrorNoHalt(reason .."\n")
+
+				_retry = _retry - 1
+				if _retry > 0 then self:connect(credentials, _retry) end
 
 				if self.OnConnectionFailed then
 					self:OnConnectionFailed(reason)
@@ -106,7 +110,8 @@ isql.drivers = {
 
 			return coroutine.yield()
 		end,
-		connect = function(self, credentials)
+		connect = function(self, credentials, _retry)
+			_retry = _retry or 3
 			local db, reason = self.driver.module.initialize(credentials.host, credentials.user, credentials.pass, credentials.db, credentials.port)
 
 			if db then
@@ -118,6 +123,9 @@ isql.drivers = {
 			else
 				ErrorNoHalt("Sql connection failed!\n")
 				ErrorNoHalt(reason .."\n")
+
+				_retry = _retry - 1
+				if _retry > 0 then self:connect(credentials, _retry) end
 
 				self.ready = true
 				if self.OnConnectionFailed then
@@ -153,6 +161,15 @@ function META:Query(query, args)
 			end
 		end)
 	end
+
+	repeat
+		local co = coroutine.running()
+		coroutine.yield()
+
+		timer.Simple(0, function()
+			coroutine.resume(co)
+		end)
+	until self.ready
 
 	self.driver:query(query)
 end
