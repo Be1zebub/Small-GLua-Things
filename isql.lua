@@ -72,7 +72,7 @@ isql.drivers = {
 
 				self.ready = true
 				if self.OnConnected then
-					self:OnConnected()
+					coroutine.wrap(self.OnConnected)(self)
 				end
 
 				for _, co in ipairs(self.queue) do
@@ -92,7 +92,7 @@ isql.drivers = {
 				if _retry > 0 then self:connect(credentials, _retry) end
 
 				if self.OnConnectionFailed then
-					self:OnConnectionFailed(reason)
+					coroutine.wrap(self.OnConnectionFailed)(self, reason)
 				end
 			end
 
@@ -127,7 +127,7 @@ isql.drivers = {
 
 				self.ready = true
 				if self.OnConnected then
-					self:OnConnected()
+					coroutine.wrap(self.OnConnected)(self)
 				end
 
 				for _, co in ipairs(self.queue) do
@@ -145,7 +145,7 @@ isql.drivers = {
 				if _retry > 0 then self:connect(credentials, _retry) end
 
 				if self.OnConnectionFailed then
-					self:OnConnectionFailed(reason)
+					coroutine.wrap(self.OnConnectionFailed)(self, reason)
 				end
 			end
 
@@ -207,7 +207,7 @@ function isql:New(driver, credentials, OnConnected, OnConnectionFailed)
 	else
 		instance.ready = true
 		if self.OnConnected then
-			self:OnConnected()
+			coroutine.wrap(self.OnConnected)(self)
 		end
 	end
 
