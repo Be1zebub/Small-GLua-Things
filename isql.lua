@@ -1,5 +1,5 @@
 local isql = {
-	_NOTE 	 = "A async sql wrapper",
+	_NOTE 	 = "A sync sql wrapper",
 	_VERSION = 1.2,
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/isql.lua",
 	_LICENSE = [[
