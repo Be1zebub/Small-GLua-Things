@@ -144,7 +144,7 @@ local META = {}
 META.__index = META
 
 function META:Query(query, args)
-	assert(self.driver, "Cant perform sql query! You should call sql:Init(driver, credentials) 1st!")
+	assert(self.driver, "Cant perform sql query! You should call isql:New(driver, credentials, OnConnected, OnConnectionFailed) 1st!")
 
 	if args then
 		if isstring(args) then
