@@ -157,11 +157,14 @@ function META:Query(query, args)
 	self.driver:query(query)
 end
 
-function isql:New(driver, credentials)
+function isql:New(driver, credentials, OnConnected, OnConnectionFailed)
 	assert(driver and self.drivers[driver], "Invalid sql driver!")
 
-	local instance = setmetatable({}, META)
-	instance.driver = self.drivers[driver]
+	local instance = setmetatable({
+		driver = self.drivers[driver],
+		OnConnected = OnConnected,
+		OnConnectionFailed = OnConnectionFailed
+	}, META)
 
 	if instance.driver.require then
 		assert(util.IsBinaryModuleInstalled(instance.driver.require), instance.driver.require .." sql module isnt installed!")
