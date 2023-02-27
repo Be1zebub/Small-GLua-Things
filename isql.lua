@@ -164,11 +164,12 @@ function META:Query(query, args)
 
 	repeat
 		local co = coroutine.running()
-		coroutine.yield()
 
 		timer.Simple(0, function()
 			coroutine.resume(co)
 		end)
+
+		coroutine.yield()
 	until self.ready
 
 	self.driver:query(query)
