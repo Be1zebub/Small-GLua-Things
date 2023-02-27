@@ -1,6 +1,6 @@
 local isql = {
 	_NOTE 	 = "A async sql wrapper",
-	_VERSION = 1.1,
+	_VERSION = 1.2,
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/isql.lua",
 	_LICENSE = [[
 		MIT LICENSE
@@ -172,7 +172,7 @@ function META:Query(query, args)
 		coroutine.yield()
 	until self.ready
 
-	self.driver:query(query)
+	return self.driver:query(query)
 end
 
 function isql:New(driver, credentials, OnConnected, OnConnectionFailed)
