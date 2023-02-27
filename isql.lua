@@ -176,6 +176,9 @@ function isql:New(driver, credentials, OnConnected, OnConnectionFailed)
 		instance.driver:connect(credentials)
 	else
 		instance.ready = true
+		if self.OnConnected then
+			self:OnConnected()
+		end
 	end
 
 	return instance
