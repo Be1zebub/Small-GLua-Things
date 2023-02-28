@@ -1,5 +1,5 @@
 local isql = {
-	_NOTE 	 = "A sync sql wrapper",
+	_NOTE 	 = "A async sql wrapper",
 	_VERSION = 1.2,
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/isql.lua",
 	_LICENSE = [[
@@ -38,27 +38,31 @@ isql.drivers = {
 	},
 	mysqloo = {
 		require = "mysqloo",
+		global = "mysqloo",
 		query = function(self, query)
 			local co = coroutine.running()
 
 			local smt = self.db:query(query)
 			smt:setOption(mysqloo.OPTION_NAMED_FIELDS)
 
-			function smt:onSuccess(data)
-				coroutine.resume(co, data, self:lastInsert())
-			end
+			smt.onSuccess = co and function(this, data)
+				coroutine.resume(co, data, this:lastInsert())
+			end or nil
 
 			function smt:onError(reason)
-				ErrorNoHalt(string.format("sql Query Error!\nQuery: %s\n%s\n", query, reason))
-				coroutine.resume(co, false, reason)
+				ErrorNoHaltWithStack(string.format("sql Query Error!\nQuery: %s\n%s\n", query, reason))
+				if co then coroutine.resume(co, false, reason) end
 			end
 
 			smt:start()
-			return coroutine.yield()
+
+			if co then
+				return coroutine.yield()
+			end
 		end,
 		connect = function(self, credentials, _retry)
 			_retry = _retry or 3
-			self.db = self.driver.module.connect(credentials.host, credentials.user, credentials.pass, credentials.db, credentials.port)
+			self.db = self.module.connect(credentials.host, credentials.user, credentials.pass, credentials.db, credentials.port)
 
 			self.db.onConnected = function(db)
 				local success, reason = db:setCharacterSet("utf8mb4")
@@ -66,8 +70,8 @@ isql.drivers = {
 				if success then
 					self:Query(string.format("ALTER DATABASE `%s` CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci", credentials.db))
 				else
-					ErrorNoHalt("Failed to set sql encoding!\n")
-					ErrorNoHalt(reason .."\n")
+					ErrorNoHaltWithStack("Failed to set sql encoding!\n")
+					ErrorNoHaltWithStack(reason .."\n")
 				end
 
 				self.ready = true
@@ -85,11 +89,9 @@ isql.drivers = {
 			end
 
 			self.db.onConnectionFailed = function(_, reason)
-				ErrorNoHalt("Sql connection failed!\n")
-				ErrorNoHalt(reason .."\n")
+				ErrorNoHaltWithStack("Sql connection failed!\n".. reason .."\n")
 
-				_retry = _retry - 1
-				if _retry > 0 then self:connect(credentials, _retry) end
+				if _retry > 0 then self.driver.connect(self, credentials, _retry - 1) end
 
 				if self.OnConnectionFailed then
 					coroutine.wrap(self.OnConnectionFailed)(self, reason)
@@ -98,29 +100,32 @@ isql.drivers = {
 
 			self.db:connect()
 
-			timer.Create(("sql.keepalive/%s/%s:%s-%b-%s"):format(util.CRC(debug.traceback()), credentials.host, credentials.port, credentials.user, credentials.db), 60, 0, function()
+			timer.Create(("isql.keepalive/%s/%s:%s-%s-%s"):format(util.CRC(debug.traceback()), credentials.host, credentials.port, credentials.user, credentials.db), 60, 0, function()
 				self.db:ping()
 			end)
 		end
 	},
 	tmysql4 = {
 		require = "tmysql4",
+		global = "tmysql",
 		query = function(self, query)
 			local co = coroutine.running()
 
-			self.db:Query(query, function(data)
+			self.db:Query(query, co and function(data)
 				if data.status then
 					coroutine.resume(co, data.data, data.lastid)
 				else
 					coroutine.resume(co, false, data.error)
 				end
-			end)
+			end or nil)
 
-			return coroutine.yield()
+			if co then
+				return coroutine.yield()
+			end
 		end,
 		connect = function(self, credentials, _retry)
 			_retry = _retry or 3
-			local db, reason = self.driver.module.initialize(credentials.host, credentials.user, credentials.pass, credentials.db, credentials.port)
+			local db, reason = self.module.initialize(credentials.host, credentials.user, credentials.pass, credentials.db, credentials.port)
 
 			if db then
 				self:Query("SELECT 1;")
@@ -138,18 +143,16 @@ isql.drivers = {
 
 				self.queue = {}
 			else
-				ErrorNoHalt("Sql connection failed!\n")
-				ErrorNoHalt(reason .."\n")
+				ErrorNoHaltWithStack("Sql connection failed!\n".. reason .."\n")
 
-				_retry = _retry - 1
-				if _retry > 0 then self:connect(credentials, _retry) end
+				if _retry > 0 then self.driver.connect(self, credentials, _retry - 1) end
 
 				if self.OnConnectionFailed then
 					coroutine.wrap(self.OnConnectionFailed)(self, reason)
 				end
 			end
 
-			timer.Create(("sql.keepalive/%s/%s:%s-%b-%s"):format(util.CRC(debug.traceback()), credentials.host, credentials.port, credentials.user, credentials.db), 60, 0, function()
+			timer.Create(("isql.keepalive/%s/%s:%s-%s-%s"):format(util.CRC(debug.traceback()), credentials.host, credentials.port, credentials.user, credentials.db), 60, 0, function()
 				self:Query("SELECT 1;")
 			end)
 		end
@@ -178,12 +181,12 @@ function META:Query(query, args)
 		end)
 	end
 
-	if self.ready == false then
+	if self.ready == false and coroutine.running() then
 		table.insert(self.queue, coroutine.running())
 		coroutine.yield()
 	end
 
-	return self.driver:query(query)
+	return self.driver.query(self, query)
 end
 
 function isql:New(driver, credentials, OnConnected, OnConnectionFailed)
@@ -198,12 +201,12 @@ function isql:New(driver, credentials, OnConnected, OnConnectionFailed)
 
 	if instance.driver.require then
 		assert(util.IsBinaryModuleInstalled(instance.driver.require), instance.driver.require .." sql module isnt installed!")
-		instance.driver.module = require(instance.driver.require)
+		instance.module = require(instance.driver.require) or _G[instance.driver.global]
 	end
 
 	if instance.driver.connect then
 		instance.ready = false
-		instance.driver:connect(credentials)
+		instance.driver.connect(instance, credentials)
 	else
 		instance.ready = true
 		if self.OnConnected then
@@ -212,6 +215,40 @@ function isql:New(driver, credentials, OnConnected, OnConnectionFailed)
 	end
 
 	return instance
+end
+
+if util.IsBinaryModuleInstalled == nil then -- util.IsBinaryModuleInstalled still doesnt merged :(
+	-- src: https://github.com/Facepunch/garrysmod/blob/master/garrysmod/lua/includes/extensions/util.lua#L369-L397
+
+	--[[---------------------------------------------------------
+		Name: IsBinaryModuleInstalled( name )
+		Desc: Returns whether a binary module with the given name is present on disk
+	-----------------------------------------------------------]]
+	local suffix = ({"osx64","osx","linux64","linux","win64","win32"})[
+		( system.IsWindows() && 4 || 0 )
+		+ ( system.IsLinux() && 2 || 0 )
+		+ ( jit.arch == "x86" && 1 || 0 )
+		+ 1
+	]
+	local fmt = "lua/bin/gm" .. (CLIENT && "cl" || "sv") .. "_%s_%s.dll"
+	function util.IsBinaryModuleInstalled( name )
+		if ( !isstring( name ) ) then
+			error( "bad argument #1 to 'IsBinaryModuleInstalled' (string expected, got " .. type( name ) .. ")" )
+		elseif ( #name == 0 ) then
+			error( "bad argument #1 to 'IsBinaryModuleInstalled' (string cannot be empty)" )
+		end
+
+		if ( file.Exists( string.format( fmt, name, suffix ), "GAME" ) ) then
+			return true
+		end
+
+		-- Edge case - on Linux 32-bit x86-64 branch, linux32 is also supported as a suffix
+		if ( jit.versionnum != 20004 && jit.arch == "x86" && system.IsLinux() ) then
+			return file.Exists( string.format( fmt, name, "linux32" ), "GAME" )
+		end
+
+		return false
+	end
 end
 
 return setmetatable(isql, {
