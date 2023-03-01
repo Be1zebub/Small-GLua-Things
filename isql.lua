@@ -174,7 +174,7 @@ function META:Query(query, args)
 		query = query:gsub("%?", function()
 			i = i + 1
 			if isstring(args[i]) then
-				return string.format("%q", args[i])
+				return sql.SQLStr(args[i])
 			else
 				return args[i]
 			end
