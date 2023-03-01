@@ -34,11 +34,17 @@ isql.drivers = {
 			end
 
 			return data
+		end,
+		escape = function(_, str)
+			return sql.SQLStr(str)
 		end
 	},
 	mysqloo = {
 		require = "mysqloo",
 		global = "mysqloo",
+		escape = function(self, str)
+			return self.db:escape(str)
+		end,
 		query = function(self, query)
 			local co = coroutine.running()
 
@@ -108,6 +114,9 @@ isql.drivers = {
 	tmysql4 = {
 		require = "tmysql4",
 		global = "tmysql",
+		escape = function(self, str)
+			return self.db:Escape(str)
+		end,
 		query = function(self, query)
 			local co = coroutine.running()
 
@@ -126,6 +135,7 @@ isql.drivers = {
 		connect = function(self, credentials, _retry)
 			_retry = _retry or 3
 			local db, reason = self.module.initialize(credentials.host, credentials.user, credentials.pass, credentials.db, credentials.port)
+			self.db = db
 
 			if db then
 				self:Query("SELECT 1;")
@@ -187,6 +197,10 @@ function META:Query(query, args)
 	end
 
 	return self.driver.query(self, query)
+end
+
+function META:Escape(str)
+	return self.driver.escape(self, str)
 end
 
 function isql:New(driver, credentials, OnConnected, OnConnectionFailed)
