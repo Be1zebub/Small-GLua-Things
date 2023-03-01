@@ -1,5 +1,5 @@
 local isql = {
-	_NOTE 	 = "A async sql wrapper - a easy way to add mysql support to any addon in few minutes",
+	_NOTE 	 = "A async sql wrapper - an easy way to add mysql support to any addon in few minutes",
 	_EXAMPLE = [[
 		local db = isql("mysqloo", {
 			host = "1.1.1.1",
