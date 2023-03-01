@@ -1,5 +1,20 @@
 local isql = {
-	_NOTE 	 = "A async sql wrapper",
+	_NOTE 	 = "A async sql wrapper - a easy way to add mysql support to any addon in few minutes",
+	_EXAMPLE = [[
+		local db = isql("mysqloo", {
+			host = "1.1.1.1",
+			port = 3306,
+			user = "johndoe",
+			pass = "qwerty123",
+			db   = "foobar"
+		})
+
+		db:Query("CREATE TABLE IF NOT EXISTS `purchases` (`sid64` TEXT, `id` INTEGER);")
+
+		function PLAYER:FetchPurchases()
+			return db:Query("SELECT `id` FROM `purchases` WHERE `sid64` = ?;", self:SteamID64())
+		end
+	]],
 	_VERSION = 1.2,
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/isql.lua",
 	_LICENSE = [[
