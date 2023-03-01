@@ -26,7 +26,24 @@ local isql = {
 
 isql.drivers = {
 	sqlite = {
-		query = function(_, query)
+		query = function(_, query, args)
+			if args then
+				if isstring(args) then
+					args = {args}
+				end
+
+				local i = 0
+				query = query:gsub("%?", function()
+					i = i + 1
+
+					if isstring(args[i]) then
+						return sql.SQLStr(args[i])
+					else
+						return args[i]
+					end
+				end)
+			end
+
 			local data = sql.Query(query)
 
 			if data ~= false then
@@ -45,11 +62,13 @@ isql.drivers = {
 		escape = function(self, str)
 			return self.db:escape(str)
 		end,
-		query = function(self, query)
+		_arg2setter = setmetatable({string = "setString", number = "setNumber", boolean = "setBoolean"}, {
+			__index = function() return "setNull" end
+		}),
+		query = function(self, query, args)
 			local co = coroutine.running()
 
-			local smt = self.db:query(query)
-			smt:setOption(mysqloo.OPTION_NAMED_FIELDS)
+			local smt = self.db[args and "prepare" or "query"](self.db, query)
 
 			smt.onSuccess = co and function(this, data)
 				coroutine.resume(co, data, this:lastInsert())
@@ -58,6 +77,14 @@ isql.drivers = {
 			function smt:onError(reason)
 				ErrorNoHaltWithStack(string.format("sql Query Error!\nQuery: %s\n%s\n", query, reason))
 				if co then coroutine.resume(co, false, reason) end
+			end
+
+			if args then
+				for i, arg in ipairs(args) do
+					smt[
+						self._arg2setter[type(arg)]
+					](smt, i, arg)
+				end
 			end
 
 			smt:start()
@@ -117,16 +144,30 @@ isql.drivers = {
 		escape = function(self, str)
 			return self.db:Escape(str)
 		end,
-		query = function(self, query)
+		query = function(self, query, args)
 			local co = coroutine.running()
 
-			self.db:Query(query, co and function(data)
-				if data.status then
-					coroutine.resume(co, data.data, data.lastid)
-				else
-					coroutine.resume(co, false, data.error)
+			if args then
+				local smt = self.db:Prepare(query)
+				if co then
+					table.insert(args, function(data)
+						if data.status then
+							coroutine.resume(co, data.data, data.lastid)
+						else
+							coroutine.resume(co, false, data.error)
+						end
+					end)
 				end
-			end or nil)
+				smt:Run(unpack(args))
+			else
+				self.db:Query(query, co and function(data)
+					if data.status then
+						coroutine.resume(co, data.data, data.lastid)
+					else
+						coroutine.resume(co, false, data.error)
+					end
+				end or nil)
+			end
 
 			if co then
 				return coroutine.yield()
@@ -175,28 +216,12 @@ META.__index = META
 function META:Query(query, args)
 	assert(self.driver, "Cant perform sql query! You should call isql:New(driver, credentials, OnConnected, OnConnectionFailed) 1st!")
 
-	if args then
-		if isstring(args) then
-			args = {args}
-		end
-
-		local i = 0
-		query = query:gsub("%?", function()
-			i = i + 1
-			if isstring(args[i]) then
-				return sql.SQLStr(args[i])
-			else
-				return args[i]
-			end
-		end)
-	end
-
 	if self.ready == false and coroutine.running() then
 		table.insert(self.queue, coroutine.running())
 		coroutine.yield()
 	end
 
-	return self.driver.query(self, query)
+	return self.driver.query(self, query, args)
 end
 
 function META:Escape(str)
