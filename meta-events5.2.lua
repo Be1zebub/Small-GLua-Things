@@ -35,7 +35,9 @@ end
 	end
 
 	function class:new()
-		return setmetatable(newproxy(true), self)
+		local instance = newproxy(true)
+		debug.setmetatable(instance, self)
+		return instance
 	end
 
 	local instance = class:new()
