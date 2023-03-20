@@ -9,7 +9,9 @@ for char, shit in pairs({
 	c = {"ç"},
 	n = {"ñ"}
 }) do
-	shit_characters[shit] = char
+	for _, crap in ipairs(shit) do
+		shit_characters[crap] = char
+	end
 end
 
 return function(str)
