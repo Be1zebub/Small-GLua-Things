@@ -80,3 +80,6 @@ local iso8601 = "(%d+)%-(%d+)%-(%d+)%a(%d+)%:(%d+)%:([%d%.]+)([Z%+%-])(%d?%d?)%:
 
 local len = "(%d*%.?%d+)([dwhm])"
 -- for k, v in string.gmatch("1d is 24h", len) do print(k, v) end
+
+local math = "(%d+)%s*([*%/-+^%%])%s*(%d+)"
+-- local epoh_53years = string.gsub("2023 - 1970 years sience epoh start", math, function(a, operator, b) if operator == "-" then return tonumber(a) + tonumber(b) end end)
