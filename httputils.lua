@@ -43,11 +43,11 @@ end
 		invoiceid 	591278392451
 ]]--
 
-function http.Query(tbl) -- format string query from table
+function http.Query(tbl, encode) -- format string query from table
 	local out
 
 	for k, v in pairs(tbl) do
-		out = (out and (out .."&") or "") .. k .."=".. v
+		out = (out and (out .."&") or "") .. k .."=".. (encode == false and v or http.Encode(v))
 	end
 
 	return "?".. out
@@ -78,5 +78,16 @@ end
 	print(result)
 	  > https://incredible-gmod.ru/files/cxWJnf6
 ]]--
+
+http.cookie = {}
+
+function http.cookie.set(key, value, ttl)
+	if ttl then return string.format("%s=%s; max-age=%s;", key, value, ttl) end
+	return string.format("%s=%s;", key, value)
+end
+
+function http.cookie.delete(key)
+	return key .."=; expires=Thu, 01 Jan 1970 00:00:00 GMT;"
+end
 
 return http
