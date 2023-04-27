@@ -97,7 +97,7 @@ isql.drivers = {
 			if args then
 				for i, arg in ipairs(args) do
 					smt[
-						self._arg2setter[type(arg)]
+						self.driver._arg2setter[type(arg)]
 					](smt, i, arg)
 				end
 			end
