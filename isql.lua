@@ -12,7 +12,7 @@ local isql = {
 		db:Query("CREATE TABLE IF NOT EXISTS `purchases` (`sid64` TEXT, `id` INTEGER);")
 
 		function PLAYER:FetchPurchases()
-			return db:Query("SELECT `id` FROM `purchases` WHERE `sid64` = ?;", self:SteamID64())
+			return db:Query("SELECT `id` FROM `purchases` WHERE `sid64` = ?;", {self:SteamID64()})
 		end
 	]],
 	_VERSION = 1.2,
