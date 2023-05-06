@@ -11,7 +11,7 @@ coroutine.wrap(function()
 	if succ then
 		print("coroutine.httpFetch response: ".. response)
 	else
-		print("coroutine.httpFetch fail, reason: ".. response)
+		print("coroutine.httpFetch fail, code: ".. code ..", reason: ".. response)
 	end
 end)()
 ]]--
