@@ -26,27 +26,17 @@ function coroutine.pause(delay)
 	coroutine.yield()
 end
 
-function coroutine.async(fn, vararg)
-	return function()
+function coroutine.async(fn)
+	return function(...)
 		local co = coroutine.running()
 
-		if vararg then
-			fn(function(succ, err, ...)
-				if succ == false then
-					ErrorNoHaltWithStack(err .."\n")
-				end
+		fn(function(succ, err, ...)
+			if succ == false then
+				ErrorNoHaltWithStack(err .."\n")
+			end
 
-				coroutine.resume(co, err, ...)
-			end, unpack({...}))
-		else
-			fn(function(succ, err, arg)
-				if succ == false then
-					ErrorNoHaltWithStack(err .."\n")
-				end
-
-				coroutine.resume(co, err, arg)
-			end, arg)
-		end
+			coroutine.resume(co, err, ...)
+		end, ...)
 
 		return coroutine.yield()
 	end
