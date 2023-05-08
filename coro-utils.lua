@@ -42,21 +42,23 @@ function coroutine.async(fn)
 	end
 end
 
-coroutine.http = coroutine.async(function(cback, HTTPRequest)
-	HTTPRequest.success = function(code, body, headers)
-		cback(true, body, headers, code)
-	end
-	HTTPRequest.failed = function(err)
-		cback(false, err)
-	end
+coroutine.http = setmetatable({}, {
+	__call = coroutine.async(function(cback, HTTPRequest)
+		HTTPRequest.success = function(code, body, headers)
+			cback(true, body, headers, code)
+		end
+		HTTPRequest.failed = function(err)
+			cback(false, err)
+		end
 
-	HTTP(HTTPRequest)
-end, false)
+		HTTP(HTTPRequest)
+	end, false)
+})
 
-function coroutine.httpFetch(url, headers)
+function coroutine.http.fetch(url, headers)
 	return coroutine.http({method = "GET", url = url, headers = headers})
 end
 
-function coroutine.httpPost(url, headers, body)
+function coroutine.http.post(url, headers, body)
 	return coroutine.http({method = "POST", url = url, headers = headers, body = body})
 end
