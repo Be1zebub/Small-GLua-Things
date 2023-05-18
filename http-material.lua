@@ -3,10 +3,22 @@
 
 --[[ Example:
 local httpMaterial = include("lib/http-material.lua")
+
 local gorgeous = httpMaterial("https://github.com/Be1zebub/elite-emotes-collection/blob/main/gorgeous/pleasure.png?raw=true", "smooth mips")
 hook.Add("HUDPaint", "incredible-gmod.ru/http-material", function()
 	surface.SetDrawColor(255, 255, 255)
 	gorgeous:Draw(32, 32, 64, 64)
+end)
+
+coroutine.wrap(function()
+	local yoba = httpMaterial:Async("https://github.com/Be1zebub/elite-emotes-collection/blob/main/memes/yoba_code.png?raw=true")
+
+	-- coroutine will sleep until material ready
+
+	hook.Add("HUDPaint", "incredible-gmod.ru/http-material 2", function()
+		surface.SetDrawColor(255, 255, 255)
+		yoba:Draw(32 + 64, 32, 64, 64)
+	end)
 end)
 ]]--
 
@@ -27,13 +39,17 @@ function httpMaterial:Init(url, flags, ttl, cback)
 	local path = "http-material/".. util.CRC(url) .."_".. fname
 
 	if file.Exists(path, "DATA") and file.Time(path, "DATA") + ttl > os.time() then
-		self.material = Material("data/".. path, flags)
+		self:SetMaterial(
+			Material("data/".. path, flags)
+		)
 		if cback then cback(self.material) end
 	else
 		self:Download(url, function(succ, result)
 			if succ then
 				file.Write(path, result)
-				self.material = Material("data/".. path, flags)
+				self:SetMaterial(
+					Material("data/".. path, flags)
+				)
 				if cback then cback(self.material) end
 			else
 				ErrorNoHalt(string.format("Cant download http-material! Url: %s, reason: %s\nTryin with proxy...\n", url, reason))
@@ -42,17 +58,30 @@ function httpMaterial:Init(url, flags, ttl, cback)
 				self:Download(url, function(succ, result)
 					if succ then
 						file.Write(path, result)
-						self.material = Material("data/".. path, flags)
+						self:SetMaterial(
+							Material("data/".. path, flags)
+						)
 						if cback then cback(self.material) end
 					else
 						ErrorNoHalt(string.format("Cant download http-material! Url: %s, reason: %s\n", url, reason))
-						self.material = Material("error")
+						self:SetMaterial(
+							Material("error")
+						)
 						if cback then cback(self.material) end
 					end
 				end)
 			end
 		end)
 	end
+end
+
+function httpMaterial:SetMaterial(new)
+	if self.OnMaterialChange then self:OnMaterialChange(new, self.material) end
+	self.material = new
+end
+
+function httpMaterial:GetMaterial()
+	return self.material
 end
 
 function httpMaterial:Download(url, cback, retry)
@@ -93,7 +122,9 @@ function httpMaterial:Draw(x, y, w, h, angle)
 	surface[angle and "DrawTexturedRectRotated" or "DrawTexturedRect"](x, y, w, h, angle)
 end
 
-return function(url, flags, ttl, cback)
+local constructor = {}
+
+function constructor:New(url, flags, ttl, cback)
 	local instance = setmetatable({}, {
 		__index = httpMaterial,
 		__call = httpMaterial.Draw
@@ -103,3 +134,22 @@ return function(url, flags, ttl, cback)
 
 	return instance
 end
+
+function constructor:Async(url, flags, ttl)
+	local mat = self:New(url, flags, ttl)
+	if mat.material then return mat end
+
+	local co = coroutine.running()
+
+	function mat:OnMaterialChange(material)
+		coroutine.resume(co, material)
+	end
+
+	return coroutine.yield()
+end
+
+setmetatable(constructor, {
+	__call = constructor.New
+})
+
+return constructor
