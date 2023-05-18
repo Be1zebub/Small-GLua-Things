@@ -37,10 +37,11 @@ function httpMaterial:Init(url, flags, ttl, cback)
 	end
 
 	local path = "http-material/".. util.CRC(url) .."_".. fname
+	self.path = "data/".. path
 
 	if file.Exists(path, "DATA") and file.Time(path, "DATA") + ttl > os.time() then
 		self:SetMaterial(
-			Material("data/".. path, flags)
+			Material(self.path, flags)
 		)
 		if cback then cback(self.material) end
 	else
@@ -48,7 +49,7 @@ function httpMaterial:Init(url, flags, ttl, cback)
 			if succ then
 				file.Write(path, result)
 				self:SetMaterial(
-					Material("data/".. path, flags)
+					Material(self.path, flags)
 				)
 				if cback then cback(self.material) end
 			else
@@ -59,7 +60,7 @@ function httpMaterial:Init(url, flags, ttl, cback)
 					if succ then
 						file.Write(path, result)
 						self:SetMaterial(
-							Material("data/".. path, flags)
+							Material(self.path, flags)
 						)
 						if cback then cback(self.material) end
 					else
