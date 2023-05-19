@@ -142,8 +142,8 @@ function constructor:Async(url, flags, ttl)
 
 	local co = coroutine.running()
 
-	function mat:OnMaterialChange(material)
-		coroutine.resume(co, material)
+	function mat:OnMaterialChange()
+		coroutine.resume(co, mat)
 	end
 
 	return coroutine.yield()
