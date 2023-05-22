@@ -2,6 +2,7 @@
 -- https://github.com/Be1zebub/Small-GLua-Things/blob/master/multicolor-text.lua
 
 -- it can render multi-line + multi-color text
+-- preview: https://cdn.discordapp.com/attachments/826589821908287498/1110215901569093723/2023-05-22_21-33-49.mp4
 
 function surface.DrawMulticolorText(x, y, font, text, maxW)
 	surface.SetTextColor(255, 255, 255)
