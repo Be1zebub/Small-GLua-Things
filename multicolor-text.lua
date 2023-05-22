@@ -11,7 +11,6 @@ function surface.DrawMulticolorText(x, y, font, text, maxW)
 	local baseX = x
 	local w, h = surface.GetTextSize("W")
 	local lineHeight = h
-	local newline = false
 
 	if maxW and x > 0 then
 		maxW = maxW + x
@@ -23,7 +22,6 @@ function surface.DrawMulticolorText(x, y, font, text, maxW)
 
 			if maxW and x + w >= maxW then
 				x, y = baseX, y + lineHeight
-
 				v = v:gsub("^%s+", "")
 			end
 
