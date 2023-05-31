@@ -12,7 +12,7 @@ time.hour = time.minute * 60
 time.day = time.hour * 24
 time.week = time.day * 7
 time.month = time.day * 30
-time.year = time.month * 12
+time.year = time.day * 365
 
 time.epoh = os.time({
     year = 1970,
