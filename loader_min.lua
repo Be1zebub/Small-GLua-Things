@@ -3,13 +3,12 @@
 
 local include_realm = {
 	sv = SERVER and include or function() end,
-	cl = SERVER and AddCSLuaFile or include
+	cl = SERVER and AddCSLuaFile or include,
+	sh = function(f)
+		AddCSLuaFile(f)
+		return include(f)
+	end
 }
-
-include_realm.sh = function(f)
-	AddCSLuaFile(f)
-	return include(f)
-end
 
 local include_realm_order = {
 	["sh"] = 1,
@@ -27,8 +26,7 @@ local function IncludeDir(path, storage)
 	local files, folders = file.Find(path .."*", "LUA")
 
 	table.sort(files, function(a, b)
-		local realm_a = a:sub(1, 2)
-		local realm_b = b:sub(1, 2)
+		local realm_a, realm_b = a:sub(1, 2), b:sub(1, 2)
 
 		if include_realm_order[realm_a] ~= include_realm_order[realm_b] then
 			return include_realm_order[realm_a] < include_realm_order[realm_b] -- by realm sh > sv > cl
@@ -38,8 +36,7 @@ local function IncludeDir(path, storage)
 	end)
 
 	for _, f in ipairs(files) do
-		local realm = f:sub(1, 2)
-		local load = include_realm[realm] or include_realm.sh
+		local load = include_realm[f:sub(1, 2)] or include_realm.sh
 
 		storage[path .. f] = load(path .. f)
 	end
