@@ -27,6 +27,9 @@ local function IncludeDir(path, storage)
 
 	table.sort(files, function(a, b)
 		local realm_a, realm_b = a:sub(1, 2), b:sub(1, 2)
+			
+		if include_realm[realm_a] == nil then realm_a = "sh" end
+		if include_realm[realm_b] == nil then realm_b = "sh" end
 
 		if include_realm_order[realm_a] ~= include_realm_order[realm_b] then
 			return include_realm_order[realm_a] < include_realm_order[realm_b] -- by realm sh > sv > cl
