@@ -23,6 +23,22 @@ end)
 ]]--
 
 file.CreateDir("http-material")
+local error = Material("error")
+
+local function ValidateRaw(raw) -- https://en.wikipedia.org/wiki/Magic_number_%28programming%29#Magic_numbers_in_files
+	return
+		raw:sub(1, 8) == "\137\080\078\071\013\010\026\010" -- is png
+	or
+		(raw:sub(1, 2) == "\xff\xd8" and raw:sub(-2) == "\xff\xd9") -- is jpg
+end
+
+timer.Create("http-material rm invalid files", 0, 1, function()
+	for _, f in ipairs(file.Find("http-material/*", "DATA")) do
+		if ValidateRaw(file.Read("http-material/".. f)) == false then
+			file.Delete("http-material/".. f, "DATA")
+		end
+	end
+end)
 
 local httpMaterial = {}
 
@@ -51,6 +67,11 @@ function httpMaterial:Init(url, flags, ttl, cback)
 				self:SetMaterial(
 					Material(self.path, flags)
 				)
+				if self.material:IsError() then
+					file.Delete(path, "DATA")
+					self:SetMaterial(error)
+					self.path = "error"
+				end
 				if cback then cback(self.material) end
 			else
 				ErrorNoHalt(string.format("Cant download http-material! Url: %s, reason: %s\nTryin with proxy...\n", url, reason))
@@ -97,14 +118,13 @@ function httpMaterial:Download(url, cback, retry)
 	end
 
 	http.Fetch(url, function(raw, _, _, code)
-		if not raw or raw == "" or code ~= 200 or raw:find("<!DOCTYPE HTML>", 1, true) then
+		if code == 200 and ValidateRaw(raw) then
+			cback(true, raw)
+		else
 			if retry - 1 <= 0 then return cback(false, "retry") end
 
 			self:Download(url, cback, retry - 1)
-			return
 		end
-
-		cback(true, raw)
 	end, function(err)
 		if retry - 1 <= 0 then return cback(false, err) end
 
