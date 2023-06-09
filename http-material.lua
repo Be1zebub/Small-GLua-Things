@@ -86,9 +86,8 @@ function httpMaterial:Init(url, flags, ttl, cback)
 						if cback then cback(self.material) end
 					else
 						ErrorNoHalt(string.format("Cant download http-material! Url: %s, reason: %s\n", url, reason))
-						self:SetMaterial(
-							Material("error")
-						)
+						self:SetMaterial(error)
+						self.path = "error"
 						if cback then cback(self.material) end
 					end
 				end)
