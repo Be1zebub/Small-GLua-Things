@@ -10,7 +10,8 @@ function await(fn, ...)
         end
 
         coroutine.resume(co, err, ...)
-    end, unpack({...}))
+    end, ...)
+
     return coroutine.yield()
 end
 
@@ -43,6 +44,7 @@ function await(fn, cback_pos, ...)
     end
 
     fn(unpack(args))
+
     return coroutine.yield()
 end
 
