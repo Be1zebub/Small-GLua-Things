@@ -1,83 +1,74 @@
--- Lua Benchmark
--- incredible-gmod.ru
+-- https://github.com/Be1zebub/Small-GLua-Things/blob/master/sh_benchmark.lua
+-- from incredible-gmod.ru with <3
 
-function Benchmark(uid, func, count, onfinish)
-    timer.Simple(0, function() -- 1 tick delay
-        local start = SysTime()
-    
-        for i = 1, count do
-            func()    
-        end
-        
-        print(uid, SysTime() - start)
-        
-        if onfinish then onfinish() end
-    end)
+local function sum(tbl)
+	local out = 0
+
+	for i = 1, #tbl do
+		out = out + tbl[i]
+	end
+
+	return out
 end
 
---[[ EXAMPLE BENCH:
-
-local tab = {}
-for i = 1, 1000 do -- 1k
-    table.insert(tab, i)    
+local function avg(tbl)
+	return sum(tbl) / #tbl
 end
 
-local repeats = 100000 -- 100k
+local function median(tbl)
+	table.sort(tbl)
+	return #tbl % 2 == 0 && (tbl[#tbl * .5] + tbl[(#tbl * .5) + 1]) * .5 || tbl[math.ceil(#tbl * .5)]
+end
 
-Benchmark("table.Random", function()
-    local v = table.Random(tab)
-end, repeats, function()
-    Benchmark("math.random", function()
-        local v = tab[ math.random(#tab) ]
-    end, repeats)
-end)
+local clock = os.clock
+local function bench(func, times)
+	local start = clock()
 
-]]--
+	for i = 1, times do
+		func(i)
+	end
 
--- wrapper which allows you to get rid of pyramids without using coroutine
-local function Bench()
-	local bench = {
-		process = {},
-		Start = function(self, count)
-			self.count = count
-			self:Run()
-		end,
-		Run = function(self, id, onfinish)
-			id = (id or 0) + 1
-			local process = self.process[id]
-			if process == nil then return end
-			
-			Benchmark(process.uid, process.func, self.count, function()
-				self:Run(id)
-			end)
-		end,
-		Add = function(self, uid, func)
-			table.insert(self.process, {uid = uid, func = func})
-			return self
-		end
-	}
-	bench.__index = bench
-	
-	return bench
+	return clock() - start
+end
+
+local function benchmark(name, func, times, rep)
+	local co = coroutine.running()
+	timer.Simple(0, function()
+		collectgarbage()
+		coroutine.resume(co)
+	end)
+	coroutine.yield()
+
+	local results = {}
+
+	for i = 1, rep do
+		results[i] = bench(func, times)
+	end
+
+	local sum, avg, median = sum(results), avg(results), median(results)
+	print(name ..":\n\tsum = ".. sum .."\n\tavg = ".. avg .."\n\tmedian = ".. median)
+	return sum, avg, median
 end
     
---[[ Wrapper example:
+--[[ usage example:
     
-Bench()
-:Add("Default", function()
-	local bool = isstring("qwerty")
-end)
-:Add("Metatable", function()
-	local bool = isstring2("qwerty")
-end)
-:Add("AssocTable", function()
-	local bool = isstring3("qwerty")
-end)
-:Add("Equal", function()
-	local bool = isstring4("qwerty")
-end)
-:Start(10000000) -- 10 000 000
+print(string.rep(" \n", 10))
 
-    
-    Full code: https://github.com/Be1zebub/Small-GLua-Things/blob/master/benchmarks/isstring.lua
+local json_encoded = util.TableToJSON({[1] = "num", [true] = "bool", col = Color(255, 0, 0)})
+local bins_encoded = bins.encode({[1] = "num", [true] = "bool", col = Color(255, 0, 0)})
+
+coroutine.wrap(function()
+	benchmark("json.encode", function()
+		local encoded = util.TableToJSON({[1] = "num", [true] = "bool", col = Color(255, 0, 0)})
+	end, 1000, 100)
+	benchmark("json.decode", function()
+		local decoded = util.JSONToTable(json_encoded)
+	end, 1000, 100)
+	benchmark("bins.encode", function()
+		local encoded = bins.encode({[1] = "num", [true] = "bool", col = Color(255, 0, 0)})
+	end, 1000, 100)
+	benchmark("bins.decode", function()
+		local decoded = bins.decode(bins_encoded)
+	end, 1000, 100)
+end)()
 ]]--
