@@ -21,13 +21,11 @@ local function IncludeDir(path, storage)
 		path = path .."/"
 	end
 
-	storage = storage or {}
-
 	local files, folders = file.Find(path .."*", "LUA")
 
 	table.sort(files, function(a, b)
 		local realm_a, realm_b = a:sub(1, 2), b:sub(1, 2)
-			
+
 		if include_realm[realm_a] == nil then realm_a = "sh" end
 		if include_realm[realm_b] == nil then realm_b = "sh" end
 
@@ -41,7 +39,7 @@ local function IncludeDir(path, storage)
 	for _, f in ipairs(files) do
 		local load = include_realm[f:sub(1, 2)] or include_realm.sh
 
-		storage[path .. f] = load(path .. f)
+		if storage then storage[path .. f] = load(path .. f) end
 	end
 
 	for _, f in ipairs(folders) do
