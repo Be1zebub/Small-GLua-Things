@@ -27,7 +27,7 @@ local function GetTable() -- This function is now slow
 end
 
 local function Exists(name, id)
-	return (hook_index[name] ~= nil) and (hook_index[name][id] ~= nil)
+	return (hook_index[name] and hook_index[name][id]) ~= nil
 end
 
 local function Call(name, gm, ...)
@@ -35,15 +35,14 @@ local function Call(name, gm, ...)
 
 	removed_something = nil
 
-	if (callbacks ~= nil) then
-
+	if callbacks then
 		local i = 0
 
 		::runhook::
 		i = i + 1
 		local v = callbacks[i]
 
-		if (v ~= nil) then
+		if v then
 			local a, b, c, d, e, f = v(...)
 
 			if removed_something then
@@ -51,7 +50,7 @@ local function Call(name, gm, ...)
 				removed_something = nil
 			end
 
-			if (a ~= nil) then
+			if a ~= nil then
 				return a, b, c, d, e, f
 			end
 
@@ -59,14 +58,10 @@ local function Call(name, gm, ...)
 		end
 	end
 
-	if (not gm) then
-		return
-	end
+	if gm == nil then return end
 
 	local callback = gm[name]
-	if (not callback) then
-		return
-	end
+	if callback == nil then return end
 
 	return callback(gm, ...)
 end
@@ -115,9 +110,9 @@ local function Add(name, id, callback)
 	if callback == nil then	return end
 
 	if hook_callbacks[name] == nil then
-		hook_callbacks[name] = {}
-		hook_index[name] 	 = {}
-		hook_id[name] 	 = {}
+		hook_callbacks[name] 	= {}
+		hook_index[name] 	 	= {}
+		hook_id[name] 	 		= {}
 	end
 
 	if Exists(name, id) then
@@ -138,7 +133,7 @@ local function Add(name, id, callback)
 			Remove(name, id)
 
 			local nextcallback = callbacks[index]
-			if (nextcallback ~= nil) then
+			if nextcallback then
 				return nextcallback(...)
 			end
 		end
