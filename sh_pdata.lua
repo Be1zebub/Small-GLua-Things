@@ -13,6 +13,10 @@ function PMETA:GetPData(name, default)
 end
 
 function PMETA:SetPData(name, value)
+	if value == nil then
+		return self:RemovePData(name)
+	end
+
 	name = Format("%s[%s]", SteamID64(self), name)
 	return sql.Query("REPLACE INTO playerpdata (infoid, value) VALUES (".. SQLStr(name) ..", ".. SQLStr(value) .." )") ~= false
 end
