@@ -30,7 +30,7 @@ end
 function http.ParseQuery(str) -- parse string query, returns assoc query table
 	local query = {}
 
-	for k, v in str:gmatch("([^&=?]-)=([^&=?]+)") do
+	for k, v in str:gmatch("([^%?&=]+)=?([^&]*)") do
 		query[k] = http.Decode(v)
 	end
 
