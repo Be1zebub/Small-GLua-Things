@@ -32,10 +32,10 @@ local prefix = "^(.-_)"
 -- local pre = string.match("sv_core.lua", prefix) > "sv_"
 
 local http_query = "?(.*)"
-local http_query_group = "([^&=?]-)=([^&=?]+)"
--- local without_query = string.gsub("https://my.site/?key=value", http_query_remove, "") > "https://my.site/"
+local http_query_keyvalues = "([^%?&=]+)=?([^&]*)"
+-- local without_query = string.gsub("https://my.site/?key=value", http_query, "") > "https://my.site/"
 -- local query = string.match("https://my.site/?key=value", http_query) > "key=value"
--- for k, v in string.gmatch("https://my.site/?key=value&test=true", http_query) do print(k, v) end
+-- for k, v in string.gmatch("https://my.site/?key=value&test=true", http_query_keyvalues) do print(k, v) end
 
 local ipv4 = "(%d+)%.(%d+)%.(%d+)%.(%d+)"
 local ipv6 = "([a-fA-F0-9]*):([a-fA-F0-9]*):([a-fA-F0-9]*)::([a-fA-F0-9]*)"
