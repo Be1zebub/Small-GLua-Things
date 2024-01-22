@@ -72,7 +72,7 @@ function table.ToPlain(tbl, nopretty, lvl, already)
 		end
 
 		table.sort(new, function(a, b)
-			if isnumber(a.k) and isnumber(b.k) then return a.k < b.k end
+			if type(a.k) == "number" and type(b.k) == "number" then return a.k < b.k end
 			return tostring(a.k) < tostring(b.k)
 		end)
 
