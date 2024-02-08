@@ -9,7 +9,6 @@
 // @description  Incredible dark theme for wiki.facepunch.com/gmod
 // @author       Phoenixf129 & Beelzebub
 // @match        https://wiki.facepunch.com/*
-// @match        https://gmodwiki.com/*
 // @exclude      *~edit
 // @icon         https://incredible-gmod.ru/assets/icons/inc32icon.png
 // @grant        none
