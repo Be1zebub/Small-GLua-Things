@@ -121,3 +121,12 @@ hmac(...)
 -- is better than
 local openssl = require("openssl")
 openssl.hmac.hmac(...)
+
+local patterns = table.concat({ -- i prefer to write patterns this way, this makes them easy to read & modify.
+	"<avatarIcon>",
+		"<%!%[", "CDATA%[",
+			"(.-)",
+		"%]%]>",
+	"</avatarIcon>"
+})
+looksBetterThan = "<avatarIcon><%!%[CDATA%[(.-)%]%]></avatarIcon>" -- huh?
