@@ -16,7 +16,7 @@
         lang:Notify(player.GetHumans(), "ban", {admin:Name(), target:Name()}, 3, NOTIFY_GENERIC)
     end
 
-    lang:remove("time")
+    lang:Remove("time")
 ]]--
 
 --[[ advanced usage:
