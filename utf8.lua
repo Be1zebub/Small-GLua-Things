@@ -11,8 +11,8 @@ local lc_uc = {["a"]="A",["b"]="B",["c"]="C",["d"]="D",["e"]="E",["f"]="F",["g"]
 local uc_lc = {}
 for lc, uc in pairs(lc_uc) do uc_lc[uc] = lc end
 
-setmetatable(uc_lc) {__index = function(_, char) return char:lower() end}
-setmetatable(lc_uc) {__index = function(_, char) return char:upper() end}
+setmetatable(uc_lc, {__index = function(_, char) return char:lower() end})
+setmetatable(lc_uc, {__index = function(_, char) return char:upper() end})
 
 function utf8.lower(s)
     return (s:gsub(utf8.charpattern, uc_lc))
