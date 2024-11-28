@@ -25,8 +25,10 @@ function util.Debounce(func, timeout)
 	local timerName = GenerateTimer("util.Debounce")
 
 	return function(...)
+		local args = {...}
+
 		timer.Create(timerName, timeout, 1, function()
-			func(...)
+			func(unpack(args))
 		end)
 	end
 end
@@ -37,6 +39,7 @@ function util.Throttle(func, timeout)
 	local lastCall
 
 	return function(...)
+		local args = {...}
 		local prevCall = lastCall
 		lastCall = SysTime()
 
@@ -44,10 +47,10 @@ function util.Throttle(func, timeout)
 
 		if delta and delta <= timeout then
 			timer.Create(timerName, timeout - delta, 1, function()
-				func(...)
+				func(unpack(args))
 			end)
 		else
-			func(...)
+			func(unpack(args))
 			timer.Create(timerName, timeout, 1, function() end)
 		end
 	end
