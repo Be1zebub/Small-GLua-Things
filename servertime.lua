@@ -3,14 +3,16 @@
 -- synced shared unix time getter with ms precision (serverside timezone)
 -- this required for  stabillity between restarts (eg saving entity cooldown dt between restarts)
 
-local offset = 0
+ServerTimeOffset = ServerTimeOffset or 0
+local offset = ServerTimeOffset
 
 function ServerTime()
 	return offset + CurTime()
 end
 
 if SERVER then
-	offset = os.time() - CurTime()
+	ServerTimeOffset = os.time() - CurTime()
+	offset = ServerTimeOffset
 
 	local function Sync(targets)
 		net.Start("ServerTimeSync")
@@ -30,12 +32,12 @@ if SERVER then
 	hook.Add("SetupMove", "ServerTimeSync", function(ply, _, cmd)
 		if queue[ply] and not cmd:IsForced() then
 			queue[ply] = nil
-
 			Sync(ply)
 		end
 	end)
 else
 	net.Receive("ServerTimeSync", function()
-		offset = net.ReadDouble()
+		ServerTimeOffset = net.ReadDouble()
+		offset = ServerTimeOffset
 	end)
 end
