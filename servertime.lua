@@ -1,34 +1,36 @@
--- from incredible-gmod.ru with <3'
 -- https://github.com/Be1zebub/Small-GLua-Things/blob/master/servertime.lua
 
--- ServerTime() - get server os.time on clientside
+-- synced shared unix time getter with ms precision (serverside timezone)
+-- this required for  stabillity between restarts (eg saving entity cooldown dt between restarts)
+
+local offset = 0
+
+function ServerTime()
+	return offset + CurTime()
+end
 
 if SERVER then
-	local load_queue = {}
+	offset = os.time() - CurTime()
 
-	hook.Add("PlayerInitialSpawn", "incredible-gmod.ru/ServerTime", function(ply)
-		load_queue[ply] = true
+	local queue = {}
+
+	hook.Add("PlayerInitialSpawn", "ServerTimeSync", function(ply)
+		queue[ply] = true
 	end)
 
-	hook.Add("SetupMove", "incredible-gmod.ru/ServerTime", function(ply, _, cmd)
-		if load_queue[ply] and not cmd:IsForced() then
-			load_queue[ply] = nil
+	hook.Add("SetupMove", "ServerTimeSync", function(ply, _, cmd)
+		if queue[ply] and not cmd:IsForced() then
+			queue[ply] = nil
 
-			net.Start("incredible-gmod.ru/ServerTime")
-				net.WriteUInt(os.time() - CurTime(), 32)
+			net.Start("ServerTimeSync")
+				net.WriteDouble(offset)
 			net.Send(ply)
 		end
 	end)
 
-	util.AddNetworkString("incredible-gmod.ru/ServerTime")
+	util.AddNetworkString("ServerTimeSync")
 else
-	local start = 0
-
-	function ServerTime()
-		return start + CurTime()
-	end
-
-	net.Receive("incredible-gmod.ru/ServerTime", function()
-		start = net.ReadUInt(32)
+	net.Receive("ServerTimeSync", function()
+		offset = net.ReadDouble()
 	end)
 end
