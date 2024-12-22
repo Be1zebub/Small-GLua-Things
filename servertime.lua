@@ -12,6 +12,15 @@ end
 if SERVER then
 	offset = os.time() - CurTime()
 
+	local function Sync(targets)
+		net.Start("ServerTimeSync")
+			net.WriteDouble(offset)
+		net.Send(targets)
+	end
+
+	util.AddNetworkString("ServerTimeSync")
+	Sync(player.GetHumans())
+
 	local queue = {}
 
 	hook.Add("PlayerInitialSpawn", "ServerTimeSync", function(ply)
@@ -22,13 +31,9 @@ if SERVER then
 		if queue[ply] and not cmd:IsForced() then
 			queue[ply] = nil
 
-			net.Start("ServerTimeSync")
-				net.WriteDouble(offset)
-			net.Send(ply)
+			Sync(ply)
 		end
 	end)
-
-	util.AddNetworkString("ServerTimeSync")
 else
 	net.Receive("ServerTimeSync", function()
 		offset = net.ReadDouble()
