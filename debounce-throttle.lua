@@ -39,19 +39,51 @@ function util.Throttle(func, timeout)
 	local lastCall
 
 	return function(...)
-		local args = {...}
 		local prevCall = lastCall
 		lastCall = SysTime()
 
 		local delta = prevCall and lastCall - prevCall
 
 		if delta and delta <= timeout then
+			local args = {...}
+
 			timer.Create(timerName, timeout - delta, 1, function()
 				func(unpack(args))
 			end)
 		else
-			func(unpack(args))
+			func(...)
 			timer.Create(timerName, timeout, 1, function() end)
+		end
+	end
+end
+
+-- simpler version of util.Throttle - i coded this to use it in fivem (cfx has no timer.Remove), ill leave it here for the history.
+function util.ThrottleSimple(func, timeout)
+	local throttle, running = false, false
+	local args, lastCall
+
+	return function(...)
+		local prevCall = lastCall
+		lastCall = SysTime()
+
+		local delta = prevCall and lastCall - prevCall
+
+		if running and delta and delta <= timeout then
+			throttle = true
+			args = {...}
+		else
+			func(...)
+			running = true
+
+			timer.Simple(timeout, function()
+				running = false
+
+				if throttle then
+					func(unpack(args))
+					args = nil
+					throttle = false
+				end
+			end)
 		end
 	end
 end
