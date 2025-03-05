@@ -1,10 +1,13 @@
+-- deprecated
+-- use https://github.com/Be1zebub/Small-GLua-Things/blob/master/libs/lang.lua
+
 local dictionary = {
 	_DESCRIPTION = "Translations lib. Loads translations from github, has sync & async api, has id system (useful for saving network resources, you can just send a UInt over the network instead of a giant string.)",
 	_VERSION = 1.0,
-	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/dictionary.lua",
+	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/deprecated/dictionary.lua",
 	_LICENSE = [[
 		MIT LICENSE
-		Copyright (c) 2022 incredible-gmod.ru
+		Copyright (c) 2022 gmod.one
 		Permission is hereby granted, free of charge, to any person obtaining a
 		copy of this software and associated documentation files (the
 		"Software"), to deal in the Software without restriction, including

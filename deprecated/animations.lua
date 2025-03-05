@@ -5,7 +5,7 @@ local animations = {
 	_URL 	 = "https://github.com/Be1zebub/Small-GLua-Things/blob/master/animations.lua",
 	_LICENSE = [[
 		MIT LICENSE
-		Copyright (c) 2022 incredible-gmod.ru
+		Copyright (c) 2022 gmod.one
 		Permission is hereby granted, free of charge, to any person obtaining a
 		copy of this software and associated documentation files (the
 		"Software"), to deal in the Software without restriction, including
@@ -28,7 +28,7 @@ local animations = {
 local storage = {}
 
 if SERVER then
-	util.AddNetworkString("incredible-gmod.ru/animations")
+	util.AddNetworkString("gmod.one/animations")
 
 	local act
 	function animations.start(ply, anim)
@@ -42,7 +42,7 @@ if SERVER then
 
 		storage[ply] = act
 
-		net.Start("incredible-gmod.ru/animations")
+		net.Start("gmod.one/animations")
 			net.WriteUInt(ply:EntIndex(), 7)
 			net.WriteUInt(act + 1, 32)
 		net.Broadcast()
@@ -51,7 +51,7 @@ if SERVER then
 	function animations.stop(ply)
 		storage[ply] = -1
 
-		net.Start("incredible-gmod.ru/animations")
+		net.Start("gmod.one/animations")
 			net.WriteUInt(ply:EntIndex(), 7)
 			net.WriteUInt(0, 32)
 		net.Broadcast()
@@ -70,7 +70,7 @@ if SERVER then
 		return ply:SequenceDuration(seqid)
 	end
 else
-	net.Receive("incredible-gmod.ru/animations", function()
+	net.Receive("gmod.one/animations", function()
 		storage[Entity(net.ReadUInt(7))] = net.ReadUInt(32) - 1
 	end)
 end
@@ -83,7 +83,7 @@ local PLAYER = FindMetaTable("Player")
 local IsPlayingTaunt, AnimRestartGesture, AnimSetGestureWeight, Approach = PLAYER.IsPlayingTaunt, PLAYER.AnimRestartGesture, PLAYER.AnimSetGestureWeight, math.Approach
 
 local weight, last_act, act = {}, {}
-hook.Add("UpdateAnimation", "incredible-gmod.ru/animations", function(ply)
+hook.Add("UpdateAnimation", "gmod.one/animations", function(ply)
 	if IsPlayingTaunt(ply) then return end
 
 	act = storage[ply]

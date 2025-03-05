@@ -1,4 +1,9 @@
--- chat commands wrapper
+-- chat (or console) commands wrapper
+-- iirc unfinished & never tested
+
+-- at first glance, this library seems unfinished, and some of the stylistic practices used are bad, so im not going to touch it anyway.
+
+-- idea was great, but huh - its easier for me to code a new one from scratch, then refine this one.
 
 local command = {}
 

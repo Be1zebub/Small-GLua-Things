@@ -1,9 +1,20 @@
--- идея заключается в создании сетевого враппера
--- с апи в стиле dash netvar
--- звучит весело, библиотека позволяет сократить количество сетевого кода в десятки раз
--- но я потерял интерес после разработки первой версии, т.к. был недоволен результатом
+-- The idea is to create a network wrapper
+-- with an API in the style of dash netvar.
 
---[[ примеры использования:
+-- Imagine you need to write network code where the client asks the server "Give me the link to player A's avatar."
+-- Usually, you'd go ahead and write net.Receive on the server side
+-- and add net.Start on the client side.
+-- You need to add rate limits, caching, and other things.
+-- What you end up with is one big, unstructured mess of shitty code,
+-- and you're writing the same code over and over, from project to project, feature to feature.
+-- What if you just create a wrapper that does all the work for you – and you get an excellent structure for just a few lines of code?
+
+-- Sounds great, the library helps to reduce the amount of network code by tens of times.
+-- But I lost interest after developing the first version because I was unhappy with the result and also the poor project structure – which made the code hard to maintain.
+-- This library could likely be a good solution with a more quality implementation.
+-- Its AI era now, so maybe someday ill ask LLM to rewrite it for me.
+
+--[[ usage examples:
 	-- Client asks server
 	NetAsk:Register("AvatarURL")
 	:Cache(CLIENT) -- cache based on the ask arguments.
@@ -31,8 +42,8 @@
 	NetAsk:Register("Screengrab")
 	:Ask(SERVER, net.WriteUInt, 7) -- server asks
 	:Answer(CLIENT, function(answer) -- client answer
-		hook.Add("PostRender", "incredible-gmod.ru/netask/screengrab", function()
-			hook.Remove("PostRender", "incredible-gmod.ru/netask/screengrab")
+		hook.Add("PostRender", "gmod.one/netask/screengrab", function()
+			hook.Remove("PostRender", "gmod.one/netask/screengrab")
 
 			local screenshoot = render.Capture({
 				format = "jpeg",
@@ -62,8 +73,8 @@
 	-- ask from server answer from client
 	:Ask(SERVER, net.WriteUInt, 7) -- server asks
 	:Answer(CLIENT, function(answer) -- client answer
-		hook.Add("PostRender", "incredible-gmod.ru/netask/screengrab", function()
-			hook.Remove("PostRender", "incredible-gmod.ru/netask/screengrab")
+		hook.Add("PostRender", "gmod.one/netask/screengrab", function()
+			hook.Remove("PostRender", "gmod.one/netask/screengrab")
 
 			local screenshoot = render.Capture({
 				format = "jpeg",
@@ -106,7 +117,7 @@ local NetAsk = {
 	_VERSION = 1.0,
 	_LICENSE = [[
 		MIT LICENSE
-		Copyright (c) 2021 incredible-gmod.ru
+		Copyright (c) 2021 gmod.one
 		Permission is hereby granted, free of charge, to any person obtaining a
 		copy of this software and associated documentation files (the
 		"Software"), to deal in the Software without restriction, including
@@ -375,7 +386,7 @@ NetAsk.list = {}
 function NetAsk:Register(name)
 	local t = {
 		Name = name,
-		NetString = "incredible-gmod.ru/netask/".. name,
+		NetString = "gmod.one/netask/".. name,
 		receivers = {}
 	}
 
@@ -464,7 +475,7 @@ if CLIENT then
 		})
 	end
 
-	hook.Add("Think", "incredible-gmod.ru/NetAsk/AskQueue", function()
+	hook.Add("Think", "gmod.one/NetAsk/AskQueue", function()
 		for name, asks in pairs(NetAsk.QueueAsk) do
 			local t = NetAsk:Get(name)
 			if t == nil then

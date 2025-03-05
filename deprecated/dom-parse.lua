@@ -1,5 +1,10 @@
--- unfinished html/xml > dom parser
+-- unfinished dom parser with selectors api like js
 -- the main issue is innerHTML parsing
+
+-- in fact, this lib makes no sense - just use javascript
+-- i just really love making lua patterns & parsers.
+-- gmod client? use dhtml
+-- server? use nodejs libs - eg linkedom, jsdom
 
 local NODE = {}
 
