@@ -4,6 +4,9 @@
 -- this script was created as a quick demo of Docking, so more ppl can learn it.
 -- docking system is great, without it vgui literally has no right to live - vgui is terrible, but docking saves it a little bit.
 
+-- also check https://github.com/Be1zebub/Small-GLua-Things/blob/master/examples/pages-menu.lua
+-- this example is more detailed & shows realworld usage.
+
 if IsValid(_DockingPower) then
 	_testDock:Remove()
 end
