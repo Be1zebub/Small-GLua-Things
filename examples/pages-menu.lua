@@ -1,5 +1,10 @@
+-- https://github.com/Be1zebub/Small-GLua-Things/blob/master/example/pages-menu.lua
+
 -- vgui layout guide
 -- use it for educational purposes if you want to learn vgui
+
+-- also check https://github.com/Be1zebub/Small-GLua-Things/blob/master/example/docking-power.lua
+-- this is a shorter example, a quick way to understand the basics.
 
 local menu
 local pages = {}
