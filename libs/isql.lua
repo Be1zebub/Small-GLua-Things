@@ -259,7 +259,7 @@ do
 end
 isql.connectionClass = CONNECTION
 
-local __newindex
+-- local __newindex
 do
 	local handleNewIndex = {}
 
@@ -273,13 +273,13 @@ do
 		coroutine.wrap(cback)(self, self.connectionFailReason)
 	end
 
-	function __newindex(me, k, v)
-		local handle = handleNewIndex[k]
-		if handle == nil then return end
+	-- function __newindex(me, k, v)
+	-- 	local handle = handleNewIndex[k]
+	-- 	if handle == nil then return end
 
-		handle(me, v)
-		rawset(me, k, v)
-	end
+	-- 	handle(me, v)
+	-- 	rawset(me, k, v)
+	-- end
 end
 
 function isql:New(driver, credentials)
@@ -293,7 +293,7 @@ function isql:New(driver, credentials)
 		connectionFailReason = nil
 	}, {
 		__index = CONNECTION,
-		__newindex = __newindex
+		-- __newindex = __newindex
 	})
 
 	if instance.driver.require then
