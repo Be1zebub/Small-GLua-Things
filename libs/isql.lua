@@ -49,6 +49,7 @@ local function OnConnectionFailed(me, reason, _credentials, _retry)
 	ErrorNoHaltWithStack("Sql connection failed!\n".. reason .."\n")
 
 	if _retry > 0 then
+		print("isql reconnection... (retry " .. _retry .. ")")
 		me.driver.connect(me, _credentials, _retry - 1)
 		return
 	end
@@ -273,7 +274,15 @@ do
 		coroutine.wrap(cback)(self, self.connectionFailReason)
 	end
 
+	local sourcePath = debug.getinfo(1, "S").source
+
 	function __newindex(me, k, v)
+		local whereAmI = debug.getinfo(2, "S").source
+		if whereAmI == sourcePath then -- allow direct rawset from this script
+			rawset(me, k, v)
+			return
+		end
+
 		local handle = handleNewIndex[k]
 		if handle == nil then return end
 
