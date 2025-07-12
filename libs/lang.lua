@@ -156,7 +156,7 @@ if gmod then
             net.WriteUInt(phrase.index, bitcount)
 
             for i = 1, phrase.placeholders do
-                net.WriteString(data[i])
+                net.WriteString(data and data[i] or "")
             end
 
             net.WriteUInt(math.min(len, 15), 4)
@@ -178,7 +178,7 @@ if gmod then
             net.WriteUInt(phrase.index, bitcount)
 
             for i = 1, phrase.placeholders do
-                net.WriteString(data[i])
+                net.WriteString(data and data[i] or "")
             end
 
             if targets then
