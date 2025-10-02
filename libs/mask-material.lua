@@ -68,7 +68,7 @@ function maskedMaterial:DrawMask(drawMask)
 	render.PushRenderTarget(maskTexture)
 	render.Clear(0, 0, 0, 0, true, true)
 	cam.Start2D()
-		drawMask(maskTextureSize.x, maskTextureSize.y)
+		drawMask(self.w, self.h)
 	cam.End2D()
 	render.PopRenderTarget()
 
