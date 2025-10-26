@@ -30,10 +30,9 @@ local bitCount, placeholderCount
 
 do
 	function bitCount(num)
+		local uint = tonumber(string.format("%u", num))
 		return math.floor(
-			math.log(
-				tonumber(string.format("%u", num))
-			, 2)
+			math.log(uint) / math.log(2)
 		) + 1
 	end
 
