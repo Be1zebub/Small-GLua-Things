@@ -1,29 +1,15 @@
 -- https://github.com/Be1zebub/Small-GLua-Things/blob/master/args-debug.lua
 -- from gmod.one with <3
 
--- it works like rendering throttle, this way you can push stuff in rendering stack eg in ENT:Think - no matter how much RenderingDebug will be called while some instance is alive
+-- it works like rendering throttle, this way you can push stuff in rendering stack eg in ENT:Think - no matter how much DrawDebugging will be called while some instance is alive
 
-local queue = {list = {}, map = {}}
+_G.DrawDebugging = {
+	stack = {}
+}
 
-function RenderingDebug(drawStuff, extraUID)
-	local info = debug.getinfo(1, "Sln")
-	local uid = info.source .. ":" .. info.currentline
+function DrawDebugging:Draw(hookName)
+	local queue = self.stack[hookName]
 
-	if extraUID then -- eg you call RenderingDebug in loop, you can pass uid to make it render all stuff, not just a first call
-		uid = uid .. ":" .. tostring(extraUID)
-	end
-
-	if queue.map[uid] then return end
-
-	queue.map[uid] = true
-	table.insert(queue.list, {
-		drawStuff = drawStuff,
-		ttl = CurTime() + 1,
-		uid = uid
-	})
-end
-
-hook.Add("HUDPaint", "RenderingDebug", function()
 	for i = #queue.list, 1, -1 do
 		local item = queue.list[i]
 
@@ -33,12 +19,50 @@ hook.Add("HUDPaint", "RenderingDebug", function()
 			continue
 		end
 
-		item.drawStuff()
+		item.draw()
 	end
-end)
+end
 
+function DrawDebugging:Push(hookName, draw, extraUID)
+	local info = debug.getinfo(1, "Sln")
+	local uid = info.source .. ":" .. info.currentline
+
+	-- eg you call RenderingDebug in loop, you can pass uid to make it render all stuff, not just a first call
+	if extraUID then
+		uid = uid .. ":" .. tostring(extraUID)
+	end
+
+	hookName = hookName or "2d"
+	if self.stack[hookName] == nil then
+		self.stack[hookName] = {
+			list = {},
+			map = {},
+		}
+	end
+
+	if self.stack[hookName].map[uid] then return end
+
+	self.stack[hookName].map[uid] = true
+	table.insert(self.stack[hookName].list, {
+		draw = draw,
+		ttl = CurTime() + 1,
+		uid = uid,
+	})
+
+	hook.Add(hookName, "DrawDebugging", function()
+		self:Draw(hookName)
+	end)
+end
+
+setmetatable(DrawDebugging, {
+	__call = function(self, hookName, draw, extraUID)
+		self:Push(hookName, draw, extraUID)
+	end
+})
+
+--[[
 for i = 1, 8 do
-	RenderingDebug(function() -- it should render only first green box
+	DrawDebugging("HUDPaint", function() -- it should render only first green box
 		if i % 2 == 0 then
 			surface.SetDrawColor(255, 0, 0, 255)
 		else
@@ -47,7 +71,7 @@ for i = 1, 8 do
 		surface.DrawRect(32, 32 * i, 32, 32)
 	end)
 
-	RenderingDebug(function() -- it should render all boxes, cuz we provided extraUID
+	DrawDebugging("HUDPaint", function() -- it should render all boxes, cuz we provided extraUID
 		if i % 2 == 0 then
 			surface.SetDrawColor(255, 0, 0, 255)
 		else
@@ -56,3 +80,4 @@ for i = 1, 8 do
 		surface.DrawRect(96, 32 * i, 32, 32)
 	end, i)
 end
+]]--
