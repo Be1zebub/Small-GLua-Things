@@ -1,4 +1,4 @@
--- https://github.com/Be1zebub/Small-GLua-Things/blob/master/libs/fifo.lua
+-- https://github.com/Be1zebub/Small-GLua-Things/blob/master/libs/reactive.lua
 -- smth like svelte/redux stores
 
 local reactive = {}
