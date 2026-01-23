@@ -84,8 +84,4 @@ function bench.formatTime(seconds)
 	end
 end
 
-timer.Simple(2, function()
-	bench.run(100 * 1000, 100, draw.NoTexture)
-end)
-
 return bench
