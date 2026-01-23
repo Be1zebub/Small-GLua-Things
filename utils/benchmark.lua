@@ -1,4 +1,4 @@
--- https://github.com/Be1zebub/Small-GLua-Things/blob/master/sh_benchmark.lua
+-- https://github.com/Be1zebub/Small-GLua-Things/blob/master/utils/benchmark.lua
 -- from gmod.one with <3
 
 local function sum(tbl)
