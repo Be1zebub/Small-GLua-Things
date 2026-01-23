@@ -7,10 +7,12 @@
 --[[ output example:
 iterations: 100,000
 repeats: 100
-4.563 ms avg
-4.279 ms median
-456.295 ms total
-45.629 ns per call avg
+5.059 ms avg
+4.352 ms median
+8.693 ms percentile p95
+10.755 ms percentile p99
+505.858 ms total
+50.586 ns per call avg
 ]]--
 
 local bench = {}
@@ -19,6 +21,8 @@ function bench.run(iterations, repeats, func)
 	local results = {}
 
 	for i = 1, repeats do
+		collectgarbage("collect")
+
 		local start = SysTime()
 
 		for _ = 1, iterations do
@@ -28,6 +32,8 @@ function bench.run(iterations, repeats, func)
 		results[i] = SysTime() - start
 	end
 
+	table.sort(results)
+
 	local totalTime = bench.sum(results)
 	local totalCalls = iterations * repeats
 
@@ -35,6 +41,8 @@ function bench.run(iterations, repeats, func)
 	print("repeats: " .. string.Comma(repeats))
 	print(bench.formatTime(totalTime / #results) .. " avg")
 	print(bench.formatTime(bench.median(results)) .. " median")
+	print(bench.formatTime(bench.percentile(results, 95)) .. " percentile p95")
+	print(bench.formatTime(bench.percentile(results, 99)) .. " percentile p99")
 	print(bench.formatTime(totalTime) .. " total")
 	print(bench.formatTime(totalTime / totalCalls) .. " per call avg")
 end
@@ -50,8 +58,14 @@ function bench.sum(tbl)
 end
 
 function bench.median(tbl)
-	table.sort(tbl)
-	return #tbl % 2 == 0 && (tbl[#tbl * .5] + tbl[(#tbl * .5) + 1]) * .5 || tbl[math.ceil(#tbl * .5)]
+	return #tbl % 2 == 0
+		and (tbl[#tbl * 0.5] + tbl[(#tbl * 0.5) + 1]) * 0.5
+		or tbl[math.ceil(#tbl * 0.5)]
+end
+
+function bench.percentile(tbl, p)
+	local index = math.ceil(#tbl * (p / 100))
+	return tbl[index]
 end
 
 function bench.formatTime(seconds)
@@ -69,5 +83,9 @@ function bench.formatTime(seconds)
 		return string.format("%.3e s", seconds)
 	end
 end
+
+timer.Simple(2, function()
+	bench.run(100 * 1000, 100, draw.NoTexture)
+end)
 
 return bench
