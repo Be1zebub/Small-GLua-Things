@@ -16,6 +16,7 @@ repeats: 100
 ]]--
 
 local bench = {}
+local SysTime = SysTime
 
 function bench.run(iterations, repeats, warmup, func)
 	for i = 1, warmup do
