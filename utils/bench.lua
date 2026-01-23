@@ -2,27 +2,34 @@
 -- simple benchmarking util.
 
 -- usage:
--- bench.run(100 * 1000, 100, draw.NoTexture)
+-- bench.run(100 * 1000, 100, 10, draw.NoTexture)
 
 --[[ output example:
 iterations: 100,000
 repeats: 100
-5.059 ms avg
-4.352 ms median
-8.693 ms percentile p95
-10.755 ms percentile p99
-505.858 ms total
-50.586 ns per call avg
+4.519 ms avg
+4.303 ms median (p50)
+4.976 ms percentile p95
+10.655 ms percentile p99
+451.944 ms total
+45.194 ns per call avg
 ]]--
 
 local bench = {}
 
-function bench.run(iterations, repeats, func)
+function bench.run(iterations, repeats, warmup, func)
+	for i = 1, warmup do
+		for _ = 1, iterations do
+			func()
+		end
+	end
+
+	collectgarbage("collect")
+	collectgarbage("stop")
+
 	local results = {}
 
 	for i = 1, repeats do
-		collectgarbage("collect")
-
 		local start = SysTime()
 
 		for _ = 1, iterations do
@@ -32,6 +39,8 @@ function bench.run(iterations, repeats, func)
 		results[i] = SysTime() - start
 	end
 
+	collectgarbage("restart")
+
 	table.sort(results)
 
 	local totalTime = bench.sum(results)
@@ -40,7 +49,7 @@ function bench.run(iterations, repeats, func)
 	print("iterations: " .. string.Comma(iterations))
 	print("repeats: " .. string.Comma(repeats))
 	print(bench.formatTime(totalTime / #results) .. " avg")
-	print(bench.formatTime(bench.median(results)) .. " median")
+	print(bench.formatTime(bench.median(results)) .. " median (p50)")
 	print(bench.formatTime(bench.percentile(results, 95)) .. " percentile p95")
 	print(bench.formatTime(bench.percentile(results, 99)) .. " percentile p99")
 	print(bench.formatTime(totalTime) .. " total")
@@ -58,14 +67,18 @@ function bench.sum(tbl)
 end
 
 function bench.median(tbl)
-	return #tbl % 2 == 0
-		and (tbl[#tbl * 0.5] + tbl[(#tbl * 0.5) + 1]) * 0.5
-		or tbl[math.ceil(#tbl * 0.5)]
+	local n = #tbl
+	if n % 2 == 0 then
+		local mid = n / 2
+		return (tbl[mid] + tbl[mid + 1]) / 2
+	else
+		return tbl[math.ceil(n / 2)]
+	end
 end
 
 function bench.percentile(tbl, p)
-	local index = math.ceil(#tbl * (p / 100))
-	return tbl[index]
+	local index = math.max(1, math.ceil(#tbl * (p / 100)))
+	return tbl[math.min(index, #tbl)]
 end
 
 function bench.formatTime(seconds)
