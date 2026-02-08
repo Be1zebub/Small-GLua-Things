@@ -27,7 +27,7 @@ mat:SetFloat("$alpha", 0.25)
 hook.Add("PostDrawOpaqueRenderables", "debugoverlay.Cone", function()
 	if next(upcoming) == nil then return end
 
-	for _, data in pairs(upcoming) do
+	for key, data in pairs(upcoming) do
 		local startPos = data.origin
 		local dir = data.normal
 		local size = data.range
@@ -38,6 +38,11 @@ hook.Add("PostDrawOpaqueRenderables", "debugoverlay.Cone", function()
 
 		render.SetMaterial(mat)
 		render.DrawSphere(startPos, size, 24, 16, color_white, true)
+
+		local mins = Vector(-size, -size, -size)
+		local maxs = Vector(size, size, size)
+		render.DrawWireframeBox(startPos, angle_zero, mins, maxs, color_white, true)
+		render.DrawBox(startPos, angle_zero, -mins, -maxs, color_white)
 
 		local up = Vector(0, 0, 1)
 		if math.abs(dir:Dot(up)) > 0.99 then
@@ -75,7 +80,7 @@ hook.Add("PostDrawOpaqueRenderables", "debugoverlay.Cone", function()
 		end
 
 		if data.ttl < CurTime() then
-			upcoming[data.uid] = nil
+			upcoming[key] = nil
 		end
 	end
 end)
